@@ -1,1 +1,1 @@
-Mac OS Web Simulator
+Mac OS Tahore Web Simulator
