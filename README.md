@@ -64,19 +64,34 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-### Build
+--- 
+
+### Want to Contribute?
+
+Contributions are welcome! 🚀
+
+1. Fork the repository  
+2. Create your feature branch
 
 ```bash
-npm run build
+git checkout -b feature/your-feature-name
 ```
 
-### Preview Production Build
+3. Commit your changes
 
 ```bash
-npm run preview
+git commit -m "Add: your feature"
 ```
 
----
+4. Push to the branch
+
+```bash
+git push origin feature/your-feature-name
+```
+
+5. Open a Pull Request
+
+
 
 ## Project Structure
 
