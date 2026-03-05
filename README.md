@@ -1,5 +1,8 @@
 # MacOS-Web-Simulator
 
+![preview0](preview/preview0.png)
+![preview1](preview/preview1.png)
+
 A fully interactive macOS-style web simulator built with React — complete with a boot sequence, lock screen, desktop environment, draggable app windows, a working dock, and real macOS UI polish.
 
 ---
