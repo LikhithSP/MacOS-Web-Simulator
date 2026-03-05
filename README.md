@@ -106,14 +106,6 @@ src/
 
 ---
 
-## Configuration
-
-### Wallpapers
-
-Place wallpaper or images in `public/Wallpaper/`
-
----
-
 ## License
 
 MIT
