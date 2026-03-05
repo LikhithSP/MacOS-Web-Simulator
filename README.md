@@ -1,4 +1,4 @@
-# MacOS-Web-Simulator
+# Web simulation of MacOS
 
 ![preview0](preview/preview0.png)
 ![preview1](preview/preview1.png)
