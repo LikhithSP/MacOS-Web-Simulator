@@ -56,7 +56,10 @@ export default function PowerScreen({ goNext }) {
   }, [isComplete, goNext]);
 
   return (
-    <div className="w-screen h-screen bg-black flex flex-col items-center justify-center overflow-hidden">
+    <div 
+      className="w-screen h-screen flex flex-col items-center justify-center overflow-hidden bg-cover bg-center bg-black relative"
+      style={{ backgroundImage: !bootStarted ? "url('https://wallpapercave.com/wp/wp15068545.webp')" : "none" }}
+    >
       <AnimatePresence mode="wait">
         {!bootStarted ? (
           <motion.div
@@ -64,27 +67,26 @@ export default function PowerScreen({ goNext }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center gap-6 z-10"
+            className="flex flex-col items-center justify-center gap-6 z-10 absolute bottom-32"
           >
             {/* Power Button */}
             <motion.button
               onClick={startBoot}
-              className="w-16 h-16 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors duration-200"
+              className="w-10 h-10 bg-white/5 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors duration-200 border border-white/10"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
-                <line x1="12" y1="2" x2="12" y2="12"/>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/80">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
             </motion.button>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-white/60 text-sm mt-4"
+              className="text-white/60 font-medium text-xs mt-0"
             >
-              Turn on your Mac
+              Get Started
             </motion.p>
           </motion.div>
         ) : !isComplete && (

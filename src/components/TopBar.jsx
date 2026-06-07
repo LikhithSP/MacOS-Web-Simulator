@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Calendar } from "./ui/calendar";
+import { FiSearch } from "react-icons/fi";
+import ControlCenter from "./ControlCenter";
 
 // macOS Style Apple Logo
 const AppleLogo = () => (
@@ -37,15 +39,19 @@ const MacBatteryIcon = () => (
 
 // macOS Style Control Center Icon
 const ControlCenterIcon = () => (
-  <svg width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
-    <rect x="0" y="0" width="6" height="5" rx="1.5"/>
-    <rect x="8" y="0" width="6" height="5" rx="1.5"/>
-    <rect x="0" y="7" width="6" height="5" rx="1.5"/>
-    <rect x="8" y="7" width="6" height="5" rx="1.5"/>
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor">
+    {/* Top Toggle (Off) */}
+    <path fillRule="evenodd" clipRule="evenodd" d="M3.25 2C1.73122 2 0.5 3.23122 0.5 4.75C0.5 6.26878 1.73122 7.5 3.25 7.5H11.75C13.2688 7.5 14.5 6.26878 14.5 4.75C14.5 3.23122 13.2688 2 11.75 2H3.25ZM11.75 3.5H3.25C2.55964 3.5 2 4.05964 2 4.75C2 5.44036 2.55964 6 3.25 6H11.75C12.4404 6 13 5.44036 13 4.75C13 4.05964 12.4404 3.5 11.75 3.5Z" />
+    <path d="M4.25 3.5C3.55964 3.5 3 4.05964 3 4.75C3 5.44036 3.55964 6 4.25 6H5.25C5.94036 6 6.5 5.44036 6.5 4.75C6.5 4.05964 5.94036 3.5 5.25 3.5H4.25Z" />
+    
+    {/* Bottom Toggle (On) */}
+    <path fillRule="evenodd" clipRule="evenodd" d="M3.25 8.5C1.73122 8.5 0.5 9.73122 0.5 11.25C0.5 12.7688 1.73122 14 3.25 14H11.75C13.2688 14 14.5 12.7688 14.5 11.25C14.5 9.73122 13.2688 8.5 11.75 8.5H3.25ZM12.75 11.25C12.75 11.9404 12.1904 12.5 11.5 12.5C10.8096 12.5 10.25 11.9404 10.25 11.25C10.25 10.5596 10.8096 10 11.5 10C12.1904 10 12.75 10.5596 12.75 11.25Z" />
   </svg>
 );
 
 export default function TopBar({ appTitle = "Finder", setStage }) {
+
+  const [ccOpen, setCcOpen] = useState(false);
 
   function handleAction(action) {
     if (action === "lock") setStage("lock");
@@ -68,15 +74,31 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
 
   function getTime() {
     const now = new Date();
-    const weekday = now.toLocaleString("en-US", { weekday: "short" });
-    const month = now.toLocaleString("en-US", { month: "short" });
-    const day = now.getDate();
-    const t = now.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-    return `${weekday}, ${month} ${day}  ${t}`;
+    const tz = localStorage.getItem("setup_timezone") || Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
+    try {
+      const weekday = now.toLocaleString("en-US", { weekday: "short", timeZone: tz });
+      const month = now.toLocaleString("en-US", { month: "short", timeZone: tz });
+      const day = now.toLocaleString("en-US", { day: "numeric", timeZone: tz });
+      const t = now.toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: tz
+      });
+      return `${weekday}, ${month} ${day}  ${t}`;
+    } catch (e) {
+      // Fallback if invalid timezone
+      const weekday = now.toLocaleString("en-US", { weekday: "short" });
+      const month = now.toLocaleString("en-US", { month: "short" });
+      const day = now.getDate();
+      const t = now.toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+      return `${weekday}, ${month} ${day}  ${t}`;
+    }
   }
 
   const hoverStyle =
@@ -86,7 +108,7 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
     <div 
       className="w-full h-7 flex items-center justify-between px-2 select-none backdrop-blur-sm fixed top-0 left-0 z-50 text-white"
       style={{
-        background: "rgba(0, 0, 0, 0.02)",
+        background: "transparent",
         borderBottom: "none"
       }}
     >
@@ -196,6 +218,21 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* WINDOW */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className={`cursor-pointer ${hoverStyle}`}>
+              Window
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-black/40 text-white backdrop-blur-2xl border-white/10 shadow-2xl rounded-lg min-w-[180px] mt-1">
+              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Minimize</DropdownMenuItem>
+              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Zoom</DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-white/20" />
+              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Enter Full Screen</DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-white/20" />
+              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Bring All to Front</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {/* HELP */}
           <DropdownMenu>
             <DropdownMenuTrigger className={`cursor-pointer ${hoverStyle}`}>
@@ -214,13 +251,38 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
       <div className="flex-1"></div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-2 text-[14px] font-semibold text-white">
+      <div className="flex items-center gap-4 text-[13px] font-medium text-white pr-2">
         <MacBatteryIcon />
         <MacWifiIcon />
+        <div className="cursor-pointer hover:bg-white/10 rounded overflow-hidden p-1 transition-colors">
+          <FiSearch size={14} />
+        </div>
+
+        {/* Control Center */}
+        <DropdownMenu onOpenChange={(open) => setCcOpen(open)}>
+          <DropdownMenuTrigger className={`cursor-pointer px-2 py-0.5 rounded-[6px] transition-colors flex items-center justify-center outline-none ${ccOpen ? 'bg-white/20' : 'hover:bg-white/10'}`}>
+            <ControlCenterIcon />
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent 
+            align="end" 
+            sideOffset={8}
+            className="bg-transparent border-none shadow-none p-0 scale-100 min-w-0"
+          >
+            <ControlCenter />
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Siri Fake Icon */}
+        <div className="w-4 h-4 cursor-pointer hover:bg-white/10 rounded overflow-hidden flex items-center justify-center transition-colors">
+          <div className="w-3.5 h-3.5 rounded-full" style={{
+            background: "conic-gradient(from 180deg at 50% 50%, #FF2A54 0deg, #FF9004 112.5deg, #02B6FF 221.25deg, #E62AFA 360deg)"
+          }}></div>
+        </div>
 
         {/* TIME */}
         <DropdownMenu>
-          <DropdownMenuTrigger className={`cursor-pointer ${hoverStyle}`}>
+          <DropdownMenuTrigger className={`cursor-pointer ${hoverStyle} font-medium`}>
             <span className="text-[14px] font-semibold">{time}</span>
           </DropdownMenuTrigger>
 

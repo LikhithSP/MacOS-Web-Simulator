@@ -33,6 +33,9 @@ export default function LockScreen({ goNext }) {
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [time, setTime] = useState(new Date());
   const [lockscreenWallpaper, setLockscreenWallpaper] = useState("/Wallpaper/GtB-Ex7WYAA9yAD.jpeg");
+  
+  const [passwordInput, setPasswordInput] = useState("");
+  const [isWrongPassword, setIsWrongPassword] = useState(false);
 
   // User profile state
   const [username, setUsername] = useState(() => localStorage.getItem("lock_username") || "Likhith SP");
@@ -71,17 +74,19 @@ export default function LockScreen({ goNext }) {
     setTimeout(() => goNext(), 500);
   }, [enterFullscreen, goNext]);
 
-  useEffect(() => {
-    const onKeyDown = (event) => {
-      if (showEditModal) return;
-      if (event.code === "Space" || event.key === " " || event.code === "Enter" || event.key === "Enter") {
-        event.preventDefault();
-        handleUnlock();
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [handleUnlock, showEditModal]);
+  const handleSubmitPassword = useCallback((e) => {
+    if (e) e.preventDefault();
+    
+    const requiredPassword = localStorage.getItem("lock_password") || "";
+    if (passwordInput === requiredPassword) {
+      setIsWrongPassword(false);
+      handleUnlock();
+    } else {
+      setIsWrongPassword(true);
+      setPasswordInput("");
+      setTimeout(() => setIsWrongPassword(false), 500); // Reset shake after animation
+    }
+  }, [passwordInput, handleUnlock]);
 
   const openEditModal = (e) => {
     e.stopPropagation();
@@ -113,19 +118,46 @@ export default function LockScreen({ goNext }) {
     setShowEditModal(false);
   };
 
-  const formattedTime = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
-  const weekday = time.toLocaleDateString("en-US", { weekday: "long" });
-  const day = time.getDate();
-  const month = time.toLocaleDateString("en-US", { month: "long" });
-  const formattedDate = `${weekday}, ${month} ${day}`;
+  const tz = localStorage.getItem("setup_timezone") || Intl.DateTimeFormat().resolvedOptions().timeZone;
+  
+  let formattedTime;
+  let formattedDate;
+
+  try {
+    formattedTime = new Intl.DateTimeFormat('en-US', {
+      hour: '2-digit', minute: '2-digit', hour12: false, timeZone: tz
+    }).format(time);
+    
+    const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'long', timeZone: tz }).format(time);
+    const day = new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: tz }).format(time);
+    const month = new Intl.DateTimeFormat('en-US', { month: 'long', timeZone: tz }).format(time);
+    formattedDate = `${weekday}, ${month} ${day}`;
+  } catch (e) {
+    formattedTime = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+    const weekday = time.toLocaleDateString("en-US", { weekday: "long" });
+    const day = time.getDate();
+    const month = time.toLocaleDateString("en-US", { month: "long" });
+    formattedDate = `${weekday}, ${month} ${day}`;
+  }
 
   return (
     <div
-      onClick={!showEditModal ? handleUnlock : undefined}
-      className={`relative w-screen h-screen overflow-hidden text-white font-sans select-none cursor-pointer
+      className={`relative w-screen h-screen overflow-hidden text-white font-sans select-none
         transition-transform duration-700 ease-in-out
         ${isUnlocking ? "-translate-y-full" : "translate-y-0"}`}
     >
+      <style>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          50% { transform: translateX(5px); }
+          75% { transform: translateX(-5px); }
+        }
+        .shake-animation {
+          animation: shake 0.4s ease-in-out;
+        }
+      `}</style>
+      
       {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -173,28 +205,28 @@ export default function LockScreen({ goNext }) {
       </div>
 
       {/* Bottom Avatar & Name */}
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 w-72">
         {/* Clickable profile area */}
         <div
-          className="flex flex-col items-center gap-2 group cursor-pointer"
+          className="flex flex-col items-center gap-3 group cursor-pointer"
           onClick={openEditModal}
           title="Click to edit profile"
         >
           {/* Avatar */}
-          <div className="relative w-12 h-12">
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/30 shadow-lg group-hover:border-white/60 transition-all">
+          <div className="relative w-16 h-16">
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/30 shadow-lg group-hover:border-white/60 transition-all">
               <img src={profilePhoto} alt="user" className="w-full h-full object-cover" />
             </div>
             {/* Edit hint icon */}
-            <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg width="8" height="8" viewBox="0 0 12 12" fill="white">
+            <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="white">
                 <path d="M8.5 1.5a1.5 1.5 0 0 1 2.12 2.12L9.5 4.74 7.26 2.5 8.5 1.5zM6.5 3.26L1 8.76V11h2.24l5.5-5.5L6.5 3.26z"/>
               </svg>
             </div>
           </div>
           {/* Name */}
           <span
-            className="text-[18px] font-medium text-white group-hover:text-white/80 transition-colors"
+            className="text-[20px] font-medium text-white group-hover:text-white/80 transition-colors"
             style={{
               textShadow: "0 1px 3px rgba(0,0,0,0.4)",
               fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
@@ -204,15 +236,46 @@ export default function LockScreen({ goNext }) {
           </span>
         </div>
 
-        <span
-          className="text-[11px] text-white/60"
-          style={{
-            textShadow: "0 1px 2px rgba(0,0,0,0.3)",
-            fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
-          }}
-        >
-          Click anywhere to unlock
-        </span>
+        {/* Password Entry */}
+        <div className="flex flex-col items-center gap-2 w-full">
+          <form 
+            onSubmit={handleSubmitPassword}
+            className={`relative w-48 mt-1 ${isWrongPassword ? 'shake-animation' : ''}`}
+          >
+            <input
+              type="password"
+              placeholder="Enter Password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              className="w-full h-8 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-4 text-white text-[13px] placeholder-white/60 outline-none focus:bg-white/30 focus:border-white/50 transition-all"
+              style={{
+                fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+              }}
+              autoFocus
+            />
+            {passwordInput && (
+              <button 
+                type="submit" 
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white/30 hover:bg-white/40 flex items-center justify-center transition-colors"
+              >
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14"></path>
+                  <path d="M12 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            )}
+          </form>
+
+          <span
+            className="text-[12px] text-white/80 mt-1"
+            style={{
+              textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+              fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+            }}
+          >
+            Touch ID or Enter Password
+          </span>
+        </div>
       </div>
 
       {/* Edit Profile Modal */}

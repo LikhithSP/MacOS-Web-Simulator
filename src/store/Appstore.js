@@ -1,9 +1,13 @@
 import { create } from "zustand";
 
+// Create persistent audio instance
+const audioInstance = new Audio('https://pagallworlds.com/wp-content/uploads/2023/06/I-Wanna-Be-Yours-Slowed-Reverb.mp3');
+
 export const useAppStore = create((set, get) => ({
   windows: [],
   maxZ: 1,
   isLocked: false,
+  isAudioPlaying: false,
 
   openApp: (appId, component) =>
     set((state) => {
@@ -75,4 +79,32 @@ export const useAppStore = create((set, get) => ({
     set((state) => ({
       windows: state.windows.map((w) => ({ ...w, minimized: true })),
     })),
+
+  toggleAudio: () =>
+    set((state) => {
+      if (state.isAudioPlaying) {
+        audioInstance.pause();
+      } else {
+        audioInstance.play();
+      }
+      return { isAudioPlaying: !state.isAudioPlaying };
+    }),
+
+  playAudio: () =>
+    set((state) => {
+      if (!state.isAudioPlaying) {
+        audioInstance.play();
+        return { isAudioPlaying: true };
+      }
+      return state;
+    }),
+
+  pauseAudio: () =>
+    set((state) => {
+      if (state.isAudioPlaying) {
+        audioInstance.pause();
+        return { isAudioPlaying: false };
+      }
+      return state;
+    }),
 }));

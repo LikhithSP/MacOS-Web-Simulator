@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import PowerScreen from "./layouts/PowerScreen";
 import LockScreen from "./layouts/LockScreen";
+import SetupScreen from "./layouts/SetupScreen";
+import RegionScreen from "./layouts/RegionScreen";
+import WrittenScreen from "./layouts/WrittenScreen";
+import TimezoneScreen from "./layouts/TimezoneScreen";
+import DataPrivacyScreen from "./layouts/DataPrivacyScreen";
+import CreateAccountScreen from "./layouts/CreateAccountScreen";
 import Desktop from "./layouts/DesktopWindow";
 
 const INACTIVITY_TIMEOUT = 60 * 1000; // 1 minute in milliseconds
@@ -108,10 +114,37 @@ export default function App() {
   if (!stage) return null;
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-black">
-      {stage === "power" && <PowerScreen goNext={() => setStage("lock")} />}
-      
-      {/* Desktop renders behind lock screen so it's visible during slide-up */}
+      <div className="relative w-screen h-screen overflow-hidden bg-black">
+        {stage === "power" && <PowerScreen goNext={() => setStage("setup")} />}
+        {stage === "setup" && <SetupScreen goNext={(lang) => {
+          localStorage.setItem('setup_lang', lang || "English (UK)");
+          setStage("region");
+        }} />}
+        {stage === "region" && <RegionScreen goNext={(country) => {
+          localStorage.setItem('setup_country', country || "United Kingdom");
+          setStage("written");
+        }} goBack={() => setStage("setup")} />}
+        {stage === "written" && <WrittenScreen 
+          selectedLanguage={localStorage.getItem('setup_lang') || "English (UK)"} 
+          selectedCountry={localStorage.getItem('setup_country') || "United Kingdom"} 
+          goNext={() => setStage("timezone")} 
+          goBack={() => setStage("region")} 
+        />}
+        {stage === "timezone" && <TimezoneScreen 
+          selectedCountry={localStorage.getItem('setup_country') || "United Kingdom"} 
+            goNext={() => setStage("dataprivacy")}
+            goBack={() => setStage("written")}
+          />}
+        {stage === "dataprivacy" && <DataPrivacyScreen
+          goNext={() => setStage("createaccount")}
+          goBack={() => setStage("timezone")}
+        />}
+        {stage === "createaccount" && <CreateAccountScreen
+          goNext={() => setStage("lock")}
+          goBack={() => setStage("dataprivacy")}
+        />}
+        
+        {/* Desktop renders behind lock screen so it's visible during slide-up */}
       {(stage === "lock" || stage === "desktop") && (
         <div className="absolute inset-0">
           <Desktop setStage={setStage} isLocked={stage === "lock"} />

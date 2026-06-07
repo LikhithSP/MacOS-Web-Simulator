@@ -8,6 +8,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { FiFolder, FiFile } from "react-icons/fi";
 import Finder from "../app/Finder";
 import { Terminals } from "../app/Terminal";
+import CalendarWidget from "../components/widgets/CalendarWidget";
+import WeatherWidget from "../components/widgets/WeatherWidget";
+import PhotoWidget from "../components/widgets/PhotoWidget";
+import { FiX } from "react-icons/fi";
 
 export default function Desktop({ setStage, isLocked = false }) {
   const windows = useAppStore((s) => s.windows);
@@ -30,6 +34,11 @@ export default function Desktop({ setStage, isLocked = false }) {
   const [editName, setEditName] = useState("");
   const [draggingItem, setDraggingItem] = useState(null);
   const [itemContextMenu, setItemContextMenu] = useState(null);
+
+  const [widgets, setWidgets] = useState(() => {
+    return JSON.parse(localStorage.getItem("os_desktop_widgets") || "[]");
+  });
+  const [showWidgetGallery, setShowWidgetGallery] = useState(false);
 
   // Define allDesktopItems before useEffect
   const allDesktopItems = [
@@ -61,10 +70,32 @@ export default function Desktop({ setStage, isLocked = false }) {
       setShowIcons(localStorage.getItem("desktop_show_icons") !== "false");
     };
 
+    const handleEditWidgets = () => {
+      setShowWidgetGallery(p => !p);
+    };
+
+    const handleWidgetAdded = (e) => {
+      const type = e.detail?.type;
+      if (!type) return;
+      const newWidget = {
+        id: `widget_${Date.now()}`,
+        type,
+        x: 100,
+        y: 100
+      };
+      setWidgets(prev => {
+        const next = [...prev, newWidget];
+        localStorage.setItem("os_desktop_widgets", JSON.stringify(next));
+        return next;
+      });
+    };
+
     window.addEventListener('wallpaperChanged', handleWallpaperChange);
     window.addEventListener('os_folder_created', handleFolderCreated);
     window.addEventListener('os_file_created', handleFileCreated);
     window.addEventListener('desktopIconsChanged', handleIconsChanged);
+    window.addEventListener('os_edit_widgets', handleEditWidgets);
+    window.addEventListener('os_widget_added', handleWidgetAdded);
     
     // Also listen for storage events (for cross-tab support)
     window.addEventListener('storage', (e) => {
@@ -78,76 +109,10 @@ export default function Desktop({ setStage, isLocked = false }) {
       window.removeEventListener('os_folder_created', handleFolderCreated);
       window.removeEventListener('os_file_created', handleFileCreated);
       window.removeEventListener('desktopIconsChanged', handleIconsChanged);
+      window.removeEventListener('os_edit_widgets', handleEditWidgets);
+      window.removeEventListener('os_widget_added', handleWidgetAdded);
     };
   }, [selectedItem, allDesktopItems]);
-
-  const handleDragStart = (e, item) => {
-    e.stopPropagation();
-    setDraggingItem(item.id);
-    e.dataTransfer.effectAllowed = 'move';
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
-
-  const handleDropItem = (e, item) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!draggingItem) return;
-    
-    const x = e.clientX - 40; // Center the icon
-    const y = e.clientY - 40;
-    
-    if (item.type === 'folder') {
-      const updated = desktopFolders.map(f => 
-        f.id === draggingItem ? { ...f, x, y } : f
-      );
-      setDesktopFolders(updated);
-      localStorage.setItem('os_desktop_folders', JSON.stringify(updated));
-    } else {
-      const updated = desktopFiles.map(f => 
-        f.id === draggingItem ? { ...f, x, y } : f
-      );
-      setDesktopFiles(updated);
-      localStorage.setItem('os_desktop_files', JSON.stringify(updated));
-    }
-    
-    setDraggingItem(null);
-  };
-
-  const handleDesktopDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!draggingItem) return;
-    
-    const x = e.clientX - 40;
-    const y = e.clientY - 40;
-    
-    // Check if this is a folder or file being dragged
-    const folderItem = desktopFolders.find(f => f.id === draggingItem);
-    if (folderItem) {
-      const updated = desktopFolders.map(f => 
-        f.id === draggingItem ? { ...f, x, y } : f
-      );
-      setDesktopFolders(updated);
-      localStorage.setItem('os_desktop_folders', JSON.stringify(updated));
-    } else {
-      const fileItem = desktopFiles.find(f => f.id === draggingItem);
-      if (fileItem) {
-        const updated = desktopFiles.map(f => 
-          f.id === draggingItem ? { ...f, x, y } : f
-        );
-        setDesktopFiles(updated);
-        localStorage.setItem('os_desktop_files', JSON.stringify(updated));
-      }
-    }
-    
-    setDraggingItem(null);
-  };
 
   const handleContextMenu = (e) => {
     e.preventDefault();
@@ -208,6 +173,12 @@ export default function Desktop({ setStage, isLocked = false }) {
     }
   };
 
+  const handleRemoveWidget = (id) => {
+    const updated = widgets.filter(w => w.id !== id);
+    setWidgets(updated);
+    localStorage.setItem("os_desktop_widgets", JSON.stringify(updated));
+  };
+
   return (
     <div
       className="relative w-screen h-screen max-w-screen max-h-screen overflow-hidden bg-cover bg-center desktop-area"
@@ -219,9 +190,8 @@ export default function Desktop({ setStage, isLocked = false }) {
         setContextMenu(null);
         setItemContextMenu(null);
         setSelectedItem(null);
+        setShowWidgetGallery(false);
       }}
-      onDragOver={handleDragOver}
-      onDrop={handleDesktopDrop}
     >
       {/* Only show TopBar, Windows, and Dock when NOT locked */}
       {!isLocked && (
@@ -233,28 +203,78 @@ export default function Desktop({ setStage, isLocked = false }) {
             />
           </div>
 
+          {/* Desktop Widgets */}
+          {widgets.map((widget) => {
+            return (
+              <motion.div
+                key={widget.id}
+                drag
+                dragMomentum={false}
+                initial={{ opacity: 0, scale: 0.8, x: widget.x, y: widget.y }}
+                animate={{ opacity: 1, scale: 1, x: widget.x, y: widget.y }}
+                className="absolute top-0 left-0 group z-0 cursor-grab active:cursor-grabbing pointer-events-auto"
+                onDragEnd={(e, info) => {
+                  const updated = widgets.map(w => 
+                    w.id === widget.id ? { ...w, x: w.x + info.offset.x, y: w.y + info.offset.y } : w
+                  );
+                  setWidgets(updated);
+                  localStorage.setItem("os_desktop_widgets", JSON.stringify(updated));
+                }}
+              >
+                {widget.type === 'calendar' && <CalendarWidget />}
+                {widget.type === 'weather' && <WeatherWidget />}
+                {widget.type === 'photo' && <PhotoWidget />}
+                
+                {/* Remove button (visible on hover) */}
+                <button
+                  onClick={() => handleRemoveWidget(widget.id)}
+                  className="absolute -top-2 -left-2 bg-white/80 hover:bg-white text-gray-800 rounded-full w-6 h-6 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-50 text-xs backdrop-blur-md"
+                >
+                  <FiX />
+                </button>
+              </motion.div>
+            );
+          })}
+
           {/* Desktop Icons */}
           {showIcons && (
             <div className="absolute inset-0 pointer-events-none">
-              {allDesktopItems.map((item, index) => (
+              {allDesktopItems.map((item, index) => {
+                const itemX = item.x !== undefined ? item.x : 16 + index * 100;
+                const itemY = item.y !== undefined ? item.y : 32 + index * 100;
+                return (
                 <motion.div
                   key={item.id}
-                  draggable
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  drag
+                  dragMomentum={false}
+                  dragElastic={0}
+                  dragTransition={{ power: 0, modifyTargetVelocity: () => 0 }}
+                  initial={{ opacity: 0, scale: 0.8, x: itemX, y: itemY }}
+                  animate={{ opacity: 1, scale: 1, x: itemX, y: itemY }}
                   transition={{ delay: index * 0.05 }}
                   className={`
-                    absolute pointer-events-auto flex flex-col items-center justify-center w-20 p-2 rounded-lg cursor-grab active:cursor-grabbing
+                    absolute top-0 left-0 pointer-events-auto flex flex-col items-center justify-center w-20 p-2 rounded-lg cursor-grab active:cursor-grabbing
                     ${selectedItem === item.id ? "bg-blue-500/40" : "hover:bg-white/10"}
                     transition-colors
                   `}
-                  style={{
-                    left: `${item.x || 16 + index * 100}px`,
-                    top: `${item.y || 32 + index * 100}px`,
+                  onDragEnd={(e, info) => {
+                    const newX = itemX + info.offset.x;
+                    const newY = itemY + info.offset.y;
+                    
+                    if (item.type === 'folder') {
+                      const updated = desktopFolders.map(f => 
+                        f.id === item.id ? { ...f, x: newX, y: newY } : f
+                      );
+                      setDesktopFolders(updated);
+                      localStorage.setItem('os_desktop_folders', JSON.stringify(updated));
+                    } else {
+                      const updated = desktopFiles.map(f => 
+                        f.id === item.id ? { ...f, x: newX, y: newY } : f
+                      );
+                      setDesktopFiles(updated);
+                      localStorage.setItem('os_desktop_files', JSON.stringify(updated));
+                    }
                   }}
-                  onDragStart={(e) => handleDragStart(e, item)}
-                  onDragEnd={() => setDraggingItem(null)}
-                  onDrop={(e) => handleDropItem(e, item)}
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedItem(item.id);
@@ -303,13 +323,94 @@ export default function Desktop({ setStage, isLocked = false }) {
                     </span>
                   )}
                 </motion.div>
-              ))}
+                );
+              })}
             </div>
           )}
 
           <Dock />
         </>
       )}
+
+      {/* Widget Gallery */}
+      <AnimatePresence>
+        {showWidgetGallery && (
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="absolute top-10 right-4 bottom-24 w-[360px] bg-white/20 backdrop-blur-3xl rounded-3xl shadow-2xl border border-white/20 z-40 overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+            onContextMenu={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 flex justify-between items-center bg-black/10">
+              <h2 className="text-xl font-semibold text-white cursor-default">Widgets</h2>
+              <button 
+                onClick={() => setShowWidgetGallery(false)}
+                className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center text-white hover:bg-black/30"
+              >
+                <FiX />
+              </button>
+            </div>
+            
+            <div 
+              className="flex-1 overflow-y-auto p-5 pb-10 space-y-6 hide-scrollbar"
+            >
+              <div className="flex flex-col items-center">
+                <div className="w-full mb-3 flex items-center justify-between">
+                  <span className="text-white/90 font-medium">Calendar</span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type: 'calendar' } }));
+                    }}
+                    className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
+                  <CalendarWidget />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="w-full mb-3 flex items-center justify-between">
+                  <span className="text-white/90 font-medium">Weather</span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type: 'weather' } }));
+                    }}
+                    className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
+                  <WeatherWidget />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="w-full mb-3 flex items-center justify-between">
+                  <span className="text-white/90 font-medium">Photos</span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type: 'photo' } }));
+                    }}
+                    className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
+                  <PhotoWidget />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Windows always render (even when locked) so audio/video keeps playing */}
       <div style={{ 

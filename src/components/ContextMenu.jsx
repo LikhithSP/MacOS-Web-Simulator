@@ -243,6 +243,14 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
       onClick: () => setShowWallpaperPicker(true),
     },
     {
+      label: "Edit Widgets...",
+      icon: FiLayout,
+      onClick: () => {
+        window.dispatchEvent(new Event("os_edit_widgets"));
+        onClose();
+      },
+    },
+    {
       label: showIconsOnDesktop ? "Hide Desktop Icons" : "Show Desktop Icons",
       icon: showIconsOnDesktop ? FiEyeOff : FiEye,
       onClick: handleToggleIcons,
