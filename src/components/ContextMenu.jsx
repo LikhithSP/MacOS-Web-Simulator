@@ -395,8 +395,8 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              transition={{ duration: 0.08, ease: "linear" }}
-              className="bg-gray-900/95 rounded-2xl p-6 w-[600px] max-h-[80vh] overflow-y-auto border border-white/10 shadow-2xl"
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="bg-gray-900/95 rounded-2xl p-6 w-[600px] max-h-[80vh] overflow-y-auto border border-white/10 shadow-2xl scroll-smooth scrollbar-light"
             >
               <h2 className="text-xl font-semibold text-white mb-4">Choose Wallpaper</h2>
               
@@ -405,17 +405,19 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
                   <button
                     key={wp.id}
                     onClick={() => handleChangeWallpaper(wp)}
-                    className="group relative aspect-video rounded-lg overflow-hidden border-2 border-transparent hover:border-blue-500 transition-all"
+                    className="group relative aspect-video rounded-lg overflow-hidden border-2 border-transparent hover:border-blue-500 hover:scale-[1.02] active:scale-95 transition-all duration-200 ease-out cursor-pointer transform-gpu will-change-transform shadow-sm hover:shadow-md"
                   >
                     <img
                       src={wp.src}
                       alt={wp.name}
-                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover transform-gpu"
                       onError={(e) => {
                         e.target.src = "./bg.png";
                       }}
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
                   </button>
                 ))}
               </div>

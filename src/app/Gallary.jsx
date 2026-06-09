@@ -251,18 +251,17 @@ export default function MacGallery() {
           ) : (
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
               {displayImages.map((img, i) => (
-                <motion.div
+                <div
                   key={img}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.02 }}
-                  className="relative aspect-square group cursor-pointer overflow-hidden"
+                  className="relative aspect-square group cursor-pointer overflow-hidden bg-gray-800 animate-fade-in"
                   onClick={() => openImage(img, i)}
                 >
                   <img
                     src={img}
                     alt={`Photo ${i + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 transform-gpu"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
                   
@@ -285,7 +284,7 @@ export default function MacGallery() {
                       {favorites.includes(img) ? <BsHeartFill size={14} /> : <BsHeart size={14} />}
                     </button>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           )}
