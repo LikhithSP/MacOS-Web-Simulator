@@ -104,13 +104,12 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
     " hover:bg-white/10 hover:backdrop-blur-xl rounded px-1.5 py-0.5 transition-all duration-150";
 
   return (
-    <div 
-      className="w-full h-7 flex items-center justify-between px-2 select-none backdrop-blur-sm fixed top-0 left-0 z-50 text-white"
-      style={{
-        background: "transparent",
-        borderBottom: "none"
-      }}
-    >
+<div
+  className="w-full h-7 flex items-center justify-between px-2 select-none fixed top-0 left-0 z-50 text-white"
+  style={{
+    background: "linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0))"
+  }}
+>
       {/* LEFT */}
       <div className="flex items-center gap-0 text-[14px] font-semibold text-white">
         {/* Apple Menu */}
@@ -250,17 +249,13 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
       <div className="flex-1"></div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-3 text-[13px] font-medium text-white pr-2">
+      <div className="flex items-center gap-1 text-[13px] font-medium text-white pr-2">
         <div className="cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors">
           <MacBatteryIcon />
         </div>
 
         <div className="cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors">
           <MacWifiIcon />
-        </div>
-
-        <div className="cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors">
-          <FiSearch size={14} />
         </div>
 
         {/* Control Center */}
