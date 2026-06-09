@@ -307,11 +307,12 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.1 }}
           onMouseDown={(e) => e.stopPropagation()}
-          className="fixed z-9999 min-w-[220px] py-1 rounded-lg shadow-2xl border border-white/20 overflow-hidden"
+          className="fixed z-9999 min-w-[220px] py-1 rounded-xl shadow-2xl border border-white/20 overflow-hidden backdrop-blur-xl"
           style={{
             left: adjustedPosition.x,
             top: adjustedPosition.y,
-            background: "rgba(30, 30, 30, 0.95)",
+            background: "rgba(30, 30, 30, 0.65)",
+            boxShadow: "0 10px 40px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.1)"
           }}
         >
         {menuItems.map((item, index) => {
@@ -353,9 +354,10 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
                 <motion.div
                   initial={{ opacity: 0, x: -5 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="absolute left-full top-0 ml-1 min-w-[150px] py-1 rounded-lg shadow-2xl border border-white/20"
+                  className="absolute left-full top-0 ml-1 min-w-[150px] py-1 rounded-xl shadow-2xl border border-white/20 backdrop-blur-xl"
                   style={{
-                    background: "rgba(30, 30, 30, 0.95)",
+                    background: "rgba(30, 30, 30, 0.65)",
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.1)"
                   }}
                 >
                   {item.submenu.map((subItem, subIndex) => (
@@ -396,7 +398,11 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
               exit={{ opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="bg-gray-900/95 rounded-2xl p-6 w-[600px] max-h-[80vh] overflow-y-auto border border-white/10 shadow-2xl scroll-smooth scrollbar-light"
+              className="rounded-2xl p-6 w-[600px] max-h-[80vh] overflow-y-auto border border-white/20 shadow-2xl scroll-smooth scrollbar-light backdrop-blur-xl"
+              style={{
+                background: "rgba(30, 30, 30, 0.65)",
+                boxShadow: "0 10px 40px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.1)"
+              }}
             >
               <h2 className="text-xl font-semibold text-white mb-4">Choose Wallpaper</h2>
               

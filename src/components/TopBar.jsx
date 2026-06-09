@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Calendar } from "./ui/calendar";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiMic } from "react-icons/fi";
 import ControlCenter from "./ControlCenter";
 
 // macOS Style Apple Logo
@@ -30,10 +30,9 @@ const MacWifiIcon = () => (
 
 // macOS Style Battery Icon
 const MacBatteryIcon = () => (
-  <svg width="22" height="10" viewBox="0 0 22 10" fill="currentColor">
-    <rect x="0.5" y="0.5" width="18" height="9" rx="2" ry="2" stroke="currentColor" strokeWidth="1" fill="none"/>
-    <rect x="2" y="2" width="14" height="6" rx="1" ry="1" fill="currentColor"/>
-    <path d="M19.5 3v4a1.5 1.5 0 0 0 0-4z" fill="currentColor"/>
+  <svg width="22" height="12" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0.5" y="1" width="16.5" height="10" rx="3" fill="currentColor" />
+    <rect x="17.5" y="4" width="2" height="4" rx="1" fill="currentColor" />
   </svg>
 );
 
@@ -251,10 +250,16 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
       <div className="flex-1"></div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-4 text-[13px] font-medium text-white pr-2">
-        <MacBatteryIcon />
-        <MacWifiIcon />
-        <div className="cursor-pointer hover:bg-white/10 rounded overflow-hidden p-1 transition-colors">
+      <div className="flex items-center gap-3 text-[13px] font-medium text-white pr-2">
+        <div className="cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors">
+          <MacBatteryIcon />
+        </div>
+
+        <div className="cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors">
+          <MacWifiIcon />
+        </div>
+
+        <div className="cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors">
           <FiSearch size={14} />
         </div>
 
@@ -273,11 +278,14 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Siri Fake Icon */}
-        <div className="w-4 h-4 cursor-pointer hover:bg-white/10 rounded overflow-hidden flex items-center justify-center transition-colors">
-          <div className="w-3.5 h-3.5 rounded-full" style={{
-            background: "conic-gradient(from 180deg at 50% 50%, #FF2A54 0deg, #FF9004 112.5deg, #02B6FF 221.25deg, #E62AFA 360deg)"
-          }}></div>
+        {/* Siri icon - white swirl (refined) */}
+        <div className="w-5 h-5 cursor-pointer hover:bg-white/10 rounded-full flex items-center justify-center transition-colors p-0.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+            <circle cx="12" cy="12" r="6.2" stroke="currentColor" strokeWidth="1.4" fill="none" opacity="0.95" />
+            <path d="M8.8 9.2c1-1 2.8-1.2 4-0.3 1.4 1 1.6 2.8 0.6 4.1-.6.8-1.6 1.1-2.5.9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.95" />
+            <path d="M15.2 14.8c-1 1-2.8 1.2-4 0.3-1.4-1-1.6-2.8-.6-4.1.6-.8 1.6-1.1 2.5-.9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.95" />
+            <circle cx="12" cy="12" r="1.8" fill="currentColor" opacity="0.95" />
+          </svg>
         </div>
 
         {/* TIME */}
