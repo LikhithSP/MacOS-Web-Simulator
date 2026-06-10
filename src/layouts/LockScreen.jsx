@@ -117,7 +117,7 @@ export default function LockScreen({ goNext }) {
     setShowEditModal(false);
   };
 
-  const tz = localStorage.getItem("setup_timezone") || Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   
   let formattedTime;
   let formattedDate;

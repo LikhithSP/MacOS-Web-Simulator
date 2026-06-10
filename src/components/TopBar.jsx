@@ -73,7 +73,7 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
 
   function getTime() {
     const now = new Date();
-    const tz = localStorage.getItem("setup_timezone") || Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
     try {
       const weekday = now.toLocaleString("en-US", { weekday: "short", timeZone: tz });
@@ -267,7 +267,7 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
           <DropdownMenuContent 
             align="end" 
             sideOffset={8}
-            className="bg-transparent border-none shadow-none p-0 scale-100 min-w-0"
+            className="!bg-transparent !border-none !shadow-none !p-0 !overflow-visible scale-100 min-w-0"
           >
             <ControlCenter />
           </DropdownMenuContent>
@@ -291,7 +291,7 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
             <DropdownMenuLabel className="font-semibold text-white">Calendar</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-white/20" />
             <DropdownMenuItem className="focus:bg-white/10">
-              <Calendar className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-4 text-white" />
+              <Calendar mode="single" selected={new Date()} className="bg-black/30 backdrop-blur-md border border-white/10 rounded-xl p-4 text-white" />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
