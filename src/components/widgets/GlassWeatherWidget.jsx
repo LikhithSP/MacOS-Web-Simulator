@@ -22,7 +22,10 @@ const SunsetIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
+import { useAppStore } from '../../store/Appstore';
+
 export default function GlassWeatherWidget() {
+  const isDarkMode = useAppStore((state) => state.isDarkMode);
   const hourlyData = [
     { time: '5 PM', temp: '78°', icon: <SunIcon /> },
     { time: '6 PM', temp: '77°', icon: <SunIcon /> },
@@ -33,7 +36,11 @@ export default function GlassWeatherWidget() {
   ];
 
   return (
-    <div className="w-80 h-40 bg-gradient-to-b from-white/12 to-white/4 backdrop-blur-xl border border-white/20 rounded-3xl p-4 flex flex-col justify-between shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_8px_32px_0_rgba(0,0,0,0.2)] text-white select-none shrink-0 pointer-events-auto relative overflow-hidden">
+    <div className={`w-80 h-40 backdrop-blur-xl rounded-3xl p-4 flex flex-col justify-between text-white select-none shrink-0 pointer-events-auto relative overflow-hidden transition-all duration-300
+      ${isDarkMode 
+        ? 'bg-gradient-to-b from-black/40 to-black/15 border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_0_rgba(0,0,0,0.3)]' 
+        : 'bg-gradient-to-b from-white/12 to-white/4 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_8px_32px_0_rgba(0,0,0,0.2)]'
+      }`}>
       {/* Liquid Glass Overlay Effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 pointer-events-none" />
 

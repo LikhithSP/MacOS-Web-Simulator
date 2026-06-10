@@ -18,11 +18,13 @@ import GlassWorldClockWidget from "../components/widgets/GlassWorldClockWidget";
 import GlassRemindersWidget from "../components/widgets/GlassRemindersWidget";
 import GlassMiniCalendarWidget from "../components/widgets/GlassMiniCalendarWidget";
 import GlassSFWeatherWidget from "../components/widgets/GlassSFWeatherWidget";
+import GlassDayWidget from "../components/widgets/GlassDayWidget";
 import { FiX } from "react-icons/fi";
 
 export default function Desktop({ setStage, isLocked = false }) {
   const windows = useAppStore((s) => s.windows);
   const openApp = useAppStore((s) => s.openApp);
+  const isDarkMode = useAppStore((s) => s.isDarkMode);
   const [wallpaper, setWallpaper] = useState(() => {
     return localStorage.getItem("desktop_wallpaper") || "/Wallpaper/GtB-Ex7WYAA9yAD.jpeg";
   });
@@ -238,6 +240,7 @@ export default function Desktop({ setStage, isLocked = false }) {
                 {widget.type === 'glass_reminders' && <GlassRemindersWidget />}
                 {widget.type === 'glass_mini_calendar' && <GlassMiniCalendarWidget />}
                 {widget.type === 'glass_sf_weather' && <GlassSFWeatherWidget />}
+                {widget.type === 'glass_day' && <GlassDayWidget />}
                 
                 {/* Remove button (visible on hover) */}
                 <button
@@ -540,6 +543,23 @@ export default function Desktop({ setStage, isLocked = false }) {
                   <GlassSFWeatherWidget />
                 </div>
               </div>
+
+              <div className="flex flex-col items-center">
+                <div className="w-full mb-3 flex items-center justify-between">
+                  <span className="text-white/90 font-medium">Glass Day</span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type: 'glass_day' } }));
+                    }}
+                    className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
+                  <GlassDayWidget />
+                </div>
+              </div>
             </div>
           </motion.div>
         )}
@@ -580,10 +600,14 @@ export default function Desktop({ setStage, isLocked = false }) {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.1 }}
-                className="fixed bg-white/95 backdrop-blur-md rounded-lg shadow-lg overflow-hidden z-50"
+                className={`fixed z-50 py-1.5 px-1 rounded-xl shadow-2xl border backdrop-blur-xl transition-all duration-300 min-w-[150px] ${isDarkMode ? 'border-white/10' : 'border-black/[0.08] border-white/60'}`}
                 style={{
                   left: `${itemContextMenu.x}px`,
                   top: `${itemContextMenu.y}px`,
+                  background: isDarkMode ? "rgba(18, 18, 18, 0.75)" : "rgba(245, 245, 247, 0.72)",
+                  boxShadow: isDarkMode 
+                    ? "0 10px 40px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08)" 
+                    : "0 10px 30px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.6)"
                 }}
                 onMouseLeave={() => setItemContextMenu(null)}
               >
@@ -595,7 +619,7 @@ export default function Desktop({ setStage, isLocked = false }) {
                       setItemContextMenu(null);
                     }
                   }}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-900 hover:bg-blue-500/20 transition-colors"
+                  className={`w-full px-4 py-2 text-left text-sm transition-colors duration-100 hover:bg-[#007aff] hover:text-white rounded-lg ${isDarkMode ? 'text-white/90' : 'text-gray-800'}`}
                 >
                   Rename
                 </button>
@@ -607,7 +631,7 @@ export default function Desktop({ setStage, isLocked = false }) {
                       setItemContextMenu(null);
                     }
                   }}
-                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-500/20 transition-colors border-t border-gray-200"
+                  className={`w-full px-4 py-2 text-left text-sm transition-colors duration-100 hover:bg-red-600 hover:text-white rounded-lg border-t ${isDarkMode ? 'text-red-400 border-white/10' : 'text-red-600 border-black/10'}`}
                 >
                   Delete
                 </button>

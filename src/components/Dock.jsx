@@ -14,6 +14,7 @@ export default function Dock() {
   const windows = useAppStore((s) => s.windows);
   const restoreApp = useAppStore((s) => s.restoreApp);
   const focusApp = useAppStore((s) => s.focusApp);
+  const isDarkMode = useAppStore((s) => s.isDarkMode);
   const [hoveredApp, setHoveredApp] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [bouncingAppId, setBouncingAppId] = useState(null);
@@ -183,16 +184,20 @@ export default function Dock() {
 
   return (
     <div
-      className="
+      className={`
         absolute bottom-1 left-1/2 -translate-x-1/2
         flex items-end
         px-1 py-1 rounded-2xl
         backdrop-blur-sm
-        border border-white/20
-      "
+        h-[56px] overflow-visible
+        border transition-all duration-300
+        ${isDarkMode ? 'border-white/10' : 'border-white/20'}
+      `}
       style={{ 
-        background: "rgba(0, 0, 0, 0.02)",
-        boxShadow: "0 10px 40px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.1)"
+        background: isDarkMode ? "rgba(0, 0, 0, 0.45)" : "rgba(0, 0, 0, 0.02)",
+        boxShadow: isDarkMode 
+          ? "0 10px 40px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.05)" 
+          : "0 10px 40px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.1)"
       }}
       onMouseLeave={() => {
         setHoveredApp(null);

@@ -8,6 +8,12 @@ export const useAppStore = create((set, get) => ({
   maxZ: 1,
   isLocked: false,
   isAudioPlaying: false,
+  isDarkMode: localStorage.getItem('os_dark_mode') === 'true',
+  toggleDarkMode: () => set((state) => {
+    const next = !state.isDarkMode;
+    localStorage.setItem('os_dark_mode', String(next));
+    return { isDarkMode: next };
+  }),
 
   openApp: (appId, component) =>
     set((state) => {

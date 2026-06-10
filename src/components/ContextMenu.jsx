@@ -18,6 +18,7 @@ import {
   FiLayout,
 } from "react-icons/fi";
 import { BsSortDown, BsSortUp, BsGrid3X3 } from "react-icons/bs";
+import { useAppStore } from "../store/Appstore";
 
 const wallpaperModules = import.meta.glob("/public/Wallpaper/*.{jpg,jpeg,png,gif,webp}", {
   eager: true,
@@ -51,6 +52,8 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
   const [sortBy, setSortBy] = useState(() => {
     return localStorage.getItem("desktop_sort_by") || "name";
   });
+
+  const isDarkMode = useAppStore((state) => state.isDarkMode);
 
   // Adjust position if menu would go off screen
   const [adjustedPosition, setAdjustedPosition] = useState({ x, y });
@@ -307,12 +310,14 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.1 }}
           onMouseDown={(e) => e.stopPropagation()}
-          className="fixed z-9999 min-w-[220px] py-1 rounded-xl shadow-2xl border border-white/20 overflow-hidden backdrop-blur-xl"
+          className={`fixed z-9999 min-w-[220px] py-1.5 px-1 rounded-xl shadow-2xl border backdrop-blur-xl transition-all duration-300 ${isDarkMode ? 'border-white/10' : 'border-black/[0.08] border-white/60'}`}
           style={{
             left: adjustedPosition.x,
             top: adjustedPosition.y,
-            background: "rgba(30, 30, 30, 0.65)",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.1)"
+            background: isDarkMode ? "rgba(18, 18, 18, 0.75)" : "rgba(245, 245, 247, 0.72)",
+            boxShadow: isDarkMode 
+              ? "0 10px 40px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08)" 
+              : "0 10px 30px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.6)"
           }}
         >
         {menuItems.map((item, index) => {
@@ -320,7 +325,7 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
             return (
               <div
                 key={index}
-                className="h-px bg-white/10 my-1 mx-2"
+                className={`h-px my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`}
               />
             );
           }
@@ -337,15 +342,15 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
                   e.stopPropagation();
                   item.onClick();
                 }}
-                className="w-full px-3 py-1.5 flex items-center gap-3 hover:bg-blue-500/80 text-white/90 hover:text-white transition-colors text-sm"
+                className={`w-full px-3 py-1.5 flex items-center gap-3 hover:bg-[#007aff] hover:text-white transition-colors text-sm rounded-lg group ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}
               >
-                <item.icon className="w-4 h-4 text-white/70" />
+                <item.icon className={`w-4 h-4 transition-colors ${isDarkMode ? 'text-white/60 group-hover:text-white' : 'text-gray-500 group-hover:text-white'}`} />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.shortcut && (
-                  <span className="text-xs text-white/40">{item.shortcut}</span>
+                  <span className={`text-xs transition-colors ${isDarkMode ? 'text-white/45 group-hover:text-white/80' : 'text-gray-500 group-hover:text-white/80'}`}>{item.shortcut}</span>
                 )}
                 {item.submenu && (
-                  <span className="text-white/40">▶</span>
+                  <span className={`transition-colors ${isDarkMode ? 'text-white/45 group-hover:text-white/80' : 'text-gray-400 group-hover:text-white/80'}`}>▶</span>
                 )}
               </button>
 
@@ -354,19 +359,21 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
                 <motion.div
                   initial={{ opacity: 0, x: -5 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="absolute left-full top-0 ml-1 min-w-[150px] py-1 rounded-xl shadow-2xl border border-white/20 backdrop-blur-xl"
+                  className={`absolute left-full top-0 ml-1 min-w-[150px] py-1 px-1 rounded-xl shadow-2xl border backdrop-blur-xl ${isDarkMode ? 'border-white/10' : 'border-black/[0.08] border-white/60'}`}
                   style={{
-                    background: "rgba(30, 30, 30, 0.65)",
-                    boxShadow: "0 10px 40px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.1)"
+                    background: isDarkMode ? "rgba(18, 18, 18, 0.75)" : "rgba(245, 245, 247, 0.72)",
+                    boxShadow: isDarkMode 
+                      ? "0 10px 40px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08)" 
+                      : "0 10px 30px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.6)"
                   }}
                 >
                   {item.submenu.map((subItem, subIndex) => (
                     <button
                       key={subIndex}
                       onClick={subItem.onClick}
-                      className="w-full px-3 py-1.5 flex items-center gap-2 hover:bg-blue-500/80 text-white/90 hover:text-white transition-colors text-sm"
+                      className={`w-full px-3 py-1.5 flex items-center gap-2 hover:bg-[#007aff] hover:text-white transition-colors text-sm rounded-lg ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}
                     >
-                      {subItem.checked && <span className="text-blue-400">✓</span>}
+                      {subItem.checked && <span className={isDarkMode ? "text-blue-400" : "text-blue-600"}>✓</span>}
                       <span className={subItem.checked ? "" : "pl-5"}>{subItem.label}</span>
                     </button>
                   ))}
@@ -398,13 +405,15 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
               exit={{ opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="rounded-2xl p-6 w-[600px] max-h-[80vh] overflow-y-auto border border-white/20 shadow-2xl scroll-smooth scrollbar-light backdrop-blur-xl"
+              className={`rounded-2xl p-6 w-[600px] max-h-[80vh] overflow-y-auto border shadow-2xl scroll-smooth scrollbar-light backdrop-blur-xl ${isDarkMode ? 'border-white/10' : 'border-white/25'}`}
               style={{
-                background: "rgba(30, 30, 30, 0.65)",
-                boxShadow: "0 10px 40px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.1)"
+                background: isDarkMode ? "rgba(20, 20, 20, 0.8)" : "rgba(255, 255, 255, 0.65)",
+                boxShadow: isDarkMode 
+                  ? "0 10px 40px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08)" 
+                  : "0 10px 40px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,0.35)"
               }}
             >
-              <h2 className="text-xl font-semibold text-white mb-4">Choose Wallpaper</h2>
+              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Choose Wallpaper</h2>
               
               <div className="grid grid-cols-3 gap-4 mb-4">
                 {wallpapers.map((wp) => (
@@ -441,7 +450,7 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
                     setShowWallpaperPicker(false);
                     onClose();
                   }}
-                  className="py-2 px-6 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
+                  className={`py-2 px-6 rounded-lg text-sm font-medium transition-colors ${isDarkMode ? 'bg-white/10 hover:bg-white/15 text-white' : 'bg-black/10 hover:bg-black/15 text-gray-800'}`}
                 >
                   Cancel
                 </button>
@@ -453,3 +462,4 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
     </>
   );
 }
+
