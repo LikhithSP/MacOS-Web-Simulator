@@ -11,6 +11,9 @@ import { Terminals } from "../app/Terminal";
 import CalendarWidget from "../components/widgets/CalendarWidget";
 import WeatherWidget from "../components/widgets/WeatherWidget";
 import PhotoWidget from "../components/widgets/PhotoWidget";
+import GlassClockWidget from "../components/widgets/GlassClockWidget";
+import GlassCalendarWidget from "../components/widgets/GlassCalendarWidget";
+import GlassWeatherWidget from "../components/widgets/GlassWeatherWidget";
 import { FiX } from "react-icons/fi";
 
 export default function Desktop({ setStage, isLocked = false }) {
@@ -224,6 +227,9 @@ export default function Desktop({ setStage, isLocked = false }) {
                 {widget.type === 'calendar' && <CalendarWidget />}
                 {widget.type === 'weather' && <WeatherWidget />}
                 {widget.type === 'photo' && <PhotoWidget />}
+                {widget.type === 'glass_clock' && <GlassClockWidget />}
+                {widget.type === 'glass_calendar' && <GlassCalendarWidget />}
+                {widget.type === 'glass_weather' && <GlassWeatherWidget />}
                 
                 {/* Remove button (visible on hover) */}
                 <button
@@ -405,6 +411,57 @@ export default function Desktop({ setStage, isLocked = false }) {
                 </div>
                 <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
                   <PhotoWidget />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="w-full mb-3 flex items-center justify-between">
+                  <span className="text-white/90 font-medium">Glass Clock</span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type: 'glass_clock' } }));
+                    }}
+                    className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
+                  <GlassClockWidget />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="w-full mb-3 flex items-center justify-between">
+                  <span className="text-white/90 font-medium">Glass Calendar</span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type: 'glass_calendar' } }));
+                    }}
+                    className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
+                  <GlassCalendarWidget />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="w-full mb-3 flex items-center justify-between">
+                  <span className="text-white/90 font-medium">Glass Weather</span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type: 'glass_weather' } }));
+                    }}
+                    className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
+                  <GlassWeatherWidget />
                 </div>
               </div>
             </div>

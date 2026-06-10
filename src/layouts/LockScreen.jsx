@@ -12,20 +12,19 @@ const MacSignalIcon = () => (
 
 // macOS Style Wifi Icon
 const MacWifiIcon = () => (
-  <svg width="18" height="14" viewBox="0 0 24 18" fill="currentColor">
-    <path d="M12 15.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/>
-    <path d="M12 10c2.2 0 4.2.9 5.7 2.3a1 1 0 0 1-1.4 1.4A6 6 0 0 0 12 12a6 6 0 0 0-4.3 1.7 1 1 0 1 1-1.4-1.4A8 8 0 0 1 12 10z"/>
-    <path d="M12 4.5c3.5 0 6.7 1.4 9 3.8a1 1 0 0 1-1.4 1.4A10.5 10.5 0 0 0 12 6.5c-2.9 0-5.6 1.2-7.6 3.2a1 1 0 0 1-1.4-1.4A12.5 12.5 0 0 1 12 4.5z"/>
-    <path d="M12 0c4.4 0 8.4 1.7 11.4 4.5a1 1 0 0 1-1.4 1.4A14 14 0 0 0 12 2 14 14 0 0 0 2 5.9a1 1 0 0 1-1.4-1.4A16 16 0 0 1 12 0z"/>
+  <svg width="18" height="14" viewBox="0 0 24 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="text-white">
+    <circle cx="12" cy="18" r="2" fill="currentColor" stroke="none" />
+    <path d="M8.5 14.5a5 5 0 0 1 7 0" />
+    <path d="M5 11a10 10 0 0 1 14 0" />
+    <path d="M1.5 7.5a15 15 0 0 1 21 0" />
   </svg>
 );
 
 // macOS Style Battery Icon (Full)
 const MacBatteryIcon = () => (
-  <svg width="28" height="14" viewBox="0 0 28 14" fill="currentColor">
-    <rect x="0.5" y="0.5" width="24" height="13" rx="3" ry="3" stroke="currentColor" strokeWidth="1.2" fill="none"/>
-    <rect x="2.5" y="2.5" width="20" height="9" rx="1.5" ry="1.5" fill="currentColor"/>
-    <path d="M25.5 4v6a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2z" fill="currentColor"/>
+  <svg width="28" height="14" viewBox="0 0 28 14" fill="currentColor" className="text-white">
+    <rect x="0" y="0" width="24" height="14" rx="4.5" fill="currentColor" />
+    <rect x="25.5" y="4" width="2" height="6" rx="1" fill="currentColor" />
   </svg>
 );
 
