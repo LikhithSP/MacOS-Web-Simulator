@@ -13,6 +13,7 @@ const INACTIVITY_TIMEOUT = 60 * 1000; // 1 minute in milliseconds
 
 export default function App() {
   const [stage, setStage] = useState(null);
+  const [skippedSetup, setSkippedSetup] = useState(false);
   const inactivityTimerRef = useRef(null);
   
   // Reset inactivity timer on any user activity
@@ -76,6 +77,17 @@ export default function App() {
   useEffect(() => {
     const savedState = localStorage.getItem("os_state");
     const savedTime = localStorage.getItem("os_state_time");
+    const setupCompleted = localStorage.getItem("setup_completed") === "true";
+
+    if (setupCompleted) {
+      if (savedState === "desktop") {
+        setStage("desktop");
+      } else {
+        setStage("lock");
+      }
+      return;
+    }
+
     if (!savedState || !savedTime) {
       setStage("power");
       return;
@@ -115,11 +127,24 @@ export default function App() {
 
   return (
       <div className="relative w-screen h-screen overflow-hidden bg-black">
-        {stage === "power" && <PowerScreen goNext={() => setStage("setup")} />}
-        {stage === "setup" && <SetupScreen goNext={(lang) => {
-          localStorage.setItem('setup_lang', lang || "English (UK)");
-          setStage("region");
+        {stage === "power" && <PowerScreen goNext={() => {
+          const setupCompleted = localStorage.getItem("setup_completed") === "true";
+          if (setupCompleted) {
+            setStage("lock");
+          } else {
+            setStage("setup");
+          }
         }} />}
+        {stage === "setup" && <SetupScreen 
+          goNext={(lang) => {
+            localStorage.setItem('setup_lang', lang || "English (UK)");
+            setStage("region");
+          }} 
+          onSkip={() => {
+            setSkippedSetup(true);
+            setStage("createaccount");
+          }}
+        />}
         {stage === "region" && <RegionScreen goNext={(country) => {
           localStorage.setItem('setup_country', country || "United Kingdom");
           setStage("written");
@@ -141,7 +166,14 @@ export default function App() {
         />}
         {stage === "createaccount" && <CreateAccountScreen
           goNext={() => setStage("lock")}
-          goBack={() => setStage("dataprivacy")}
+          goBack={() => {
+            if (skippedSetup) {
+              setSkippedSetup(false);
+              setStage("setup");
+            } else {
+              setStage("dataprivacy");
+            }
+          }}
         />}
         
         {/* Desktop renders behind lock screen so it's visible during slide-up */}

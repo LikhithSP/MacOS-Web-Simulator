@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function SetupScreen({ goNext }) {
+export default function SetupScreen({ goNext, onSkip }) {
   const languages = [
     "English (UK)",
     "English",
@@ -36,6 +36,14 @@ export default function SetupScreen({ goNext }) {
         transition={{ duration: 0.4 }}
         className="w-[700px] h-[520px] bg-white rounded-3xl shadow-2xl z-10 flex flex-col items-center py-12 relative overflow-hidden"
       >
+        {/* Skip Button */}
+        <button 
+          onClick={onSkip}
+          className="absolute top-6 right-6 px-4 py-1.5 rounded-full hover:bg-gray-100 transition-colors text-[13px] font-medium text-[#0066cc] z-20"
+        >
+          Skip
+        </button>
+
         {/* Globe Icon */}
         <div className="text-[#0066cc] mb-4">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

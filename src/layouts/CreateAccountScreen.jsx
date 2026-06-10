@@ -74,6 +74,7 @@ export default function CreateAccountScreen({ goNext, goBack }) {
     localStorage.setItem('lock_password', password);
     // Don't overwrite if user already changed it out of cycle, but this is setup, so we overwrite
     localStorage.setItem('lock_profile_photo', photoDataUrl);
+    localStorage.setItem('setup_completed', 'true');
 
     setTimeout(() => {
       goNext();
