@@ -231,7 +231,7 @@ export function Safari({ initialUrl = "https://www.google.com/webhp?igu=1" }) {
           ref={iframeRef}
           src={currentUrl}
           onLoad={handleIframeLoad}
-          className="w-full h-full border-none"
+          className="w-full h-full border-none hide-scrollbar"
           referrerPolicy="no-referrer"
           title="Safari Browser"
         />
