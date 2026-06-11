@@ -8,6 +8,7 @@ import TimezoneScreen from "./layouts/TimezoneScreen";
 import DataPrivacyScreen from "./layouts/DataPrivacyScreen";
 import CreateAccountScreen from "./layouts/CreateAccountScreen";
 import Desktop from "./layouts/DesktopWindow";
+import { useAppStore } from "./store/Appstore";
 
 const INACTIVITY_TIMEOUT = 60 * 1000; // 1 minute in milliseconds
 
@@ -15,6 +16,15 @@ export default function App() {
   const [stage, setStage] = useState(null);
   const [skippedSetup, setSkippedSetup] = useState(false);
   const inactivityTimerRef = useRef(null);
+  const isDarkMode = useAppStore((s) => s.isDarkMode);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkMode]);
   
   // Reset inactivity timer on any user activity
   const resetInactivityTimer = useCallback(() => {

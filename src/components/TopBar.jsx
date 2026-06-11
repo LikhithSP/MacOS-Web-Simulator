@@ -101,11 +101,11 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
   }
 
   const hoverStyle =
-    " hover:bg-white/10 hover:backdrop-blur-xl rounded px-1.5 py-0.5 transition-all duration-150";
+    "bg-transparent hover:bg-white/10 hover:backdrop-blur-xl rounded px-1.5 py-0.5 transition-all duration-150";
 
   return (
 <div
-  className="w-full h-7 flex items-center justify-between px-2 select-none fixed top-0 left-0 z-50 text-white"
+  className="w-full h-7 flex items-center justify-between px-2 select-none fixed top-0 left-0 z-[999998] text-white"
   style={{
     background: "linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0))"
   }}
@@ -260,7 +260,7 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
 
         {/* Control Center */}
         <DropdownMenu onOpenChange={(open) => setCcOpen(open)}>
-          <DropdownMenuTrigger className={`cursor-pointer px-2 py-0.5 rounded-[6px] transition-colors flex items-center justify-center outline-none ${ccOpen ? 'bg-white/20' : 'hover:bg-white/10'}`}>
+          <DropdownMenuTrigger className={`bg-transparent cursor-pointer px-2 py-0.5 rounded-[6px] transition-colors flex items-center justify-center outline-none ${ccOpen ? 'bg-white/20' : 'hover:bg-white/10'}`}>
             <ControlCenterIcon />
           </DropdownMenuTrigger>
 

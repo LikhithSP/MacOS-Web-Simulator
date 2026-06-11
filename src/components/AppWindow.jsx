@@ -1,13 +1,14 @@
+import React, { useState, useRef, useEffect } from "react";
 import { Rnd } from "react-rnd";
 import { useAppStore } from "../store/Appstore.js";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
 
 export default function AppWindow({ window: win }) {
   const close = useAppStore((s) => s.closeApp);
   const focus = useAppStore((s) => s.focusApp);
   const minimize = useAppStore((s) => s.minimizeApp);
   const toggleMaximize = useAppStore((s) => s.toggleMaximize);
+  const isDarkMode = useAppStore((s) => s.isDarkMode);
   const [isVisible, setIsVisible] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -157,8 +158,14 @@ export default function AppWindow({ window: win }) {
                 transition: { duration: 0.2, ease: "easeInOut" },
               }}
               transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-              className={`backdrop-blur-xl bg-black/40 flex flex-col border border-white/15 overflow-hidden ${
+              className={`flex flex-col overflow-hidden ${
                 win.maximized ? "rounded-none" : "rounded-xl"
+              } ${
+                win.appId === "Photos"
+                  ? isDarkMode
+                    ? "bg-[#1e1e1e] text-white border border-white/10"
+                    : "bg-white text-gray-900 border border-black/10 shadow-2xl"
+                  : "backdrop-blur-xl bg-black/40 border border-white/15 text-white shadow-xl"
               } ${isDragging ? "cursor-grabbing" : ""} ${isResizing ? "select-none" : ""}`}
               style={{
                 width: '100%',
@@ -166,66 +173,68 @@ export default function AppWindow({ window: win }) {
                 willChange: isDragging || isResizing ? 'transform' : 'auto',
               }}
             >
-              {/* Title Bar - This is the drag handle */}
-              <div 
-                className={`window-drag-handle relative h-11 bg-linear-to-b from-white/10 to-transparent flex items-center cursor-grab active:cursor-grabbing select-none ${
-                  win.maximized ? "" : "rounded-t-xl"
-                }`}
-                onDoubleClick={handleMaximize}
-              >
-                {/* Traffic Light Buttons */}
-                <div className="absolute left-4 flex items-center gap-2 group z-10">
-                  {/* Close Button */}
-                  <div
-                    className="w-3 h-3 bg-[#ff5f57] rounded-full cursor-pointer flex items-center justify-center hover:bg-[#ff4136] transition-all duration-150 shadow-sm"
-                    onClick={(e) => { e.stopPropagation(); handleClose(); }}
-                    title="Close"
-                  >
-                    <svg className="w-1.5 h-1.5 text-[#820005] opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 10 10">
-                      <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
+              {/* Title Bar - Skip for Photos since it integrates its own */}
+              {win.appId !== "Photos" && (
+                <div 
+                  className={`window-drag-handle relative h-11 bg-linear-to-b from-white/10 to-transparent flex items-center cursor-grab active:cursor-grabbing select-none ${
+                    win.maximized ? "" : "rounded-t-xl"
+                  }`}
+                  onDoubleClick={handleMaximize}
+                >
+                  {/* Traffic Light Buttons */}
+                  <div className="absolute left-4 flex items-center gap-2 group z-10">
+                    {/* Close Button */}
+                    <div
+                      className="w-3 h-3 bg-[#ff5f57] rounded-full cursor-pointer flex items-center justify-center hover:bg-[#ff4136] transition-all duration-150 shadow-sm"
+                      onClick={(e) => { e.stopPropagation(); handleClose(); }}
+                      title="Close"
+                    >
+                      <svg className="w-1.5 h-1.5 text-[#820005] opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 10 10">
+                        <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                    </div>
+                    {/* Minimize Button */}
+                    <div
+                      className="w-3 h-3 bg-[#febc2e] rounded-full cursor-pointer flex items-center justify-center hover:bg-[#ff9500] transition-all duration-150 shadow-sm"
+                      onClick={(e) => { e.stopPropagation(); handleMinimize(); }}
+                      title="Minimize"
+                    >
+                      <svg className="w-1.5 h-1.5 text-[#9a6400] opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 10 10">
+                        <path d="M1 5H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                    </div>
+                    {/* Maximize Button */}
+                    <div
+                      className="w-3 h-3 bg-[#28c840] rounded-full cursor-pointer flex items-center justify-center hover:bg-[#1aab29] transition-all duration-150 shadow-sm"
+                      onClick={(e) => { e.stopPropagation(); handleMaximize(); }}
+                      title={win.maximized ? "Restore" : "Maximize"}
+                    >
+                      <svg className="w-1.5 h-1.5 text-[#006500] opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 10 10">
+                        {win.maximized ? (
+                          <>
+                            <rect x="1.5" y="3.5" width="5" height="5" fill="none" stroke="currentColor" strokeWidth="1.2"/>
+                            <path d="M3.5 3.5V1.5H8.5V6.5H6.5" fill="none" stroke="currentColor" strokeWidth="1.2"/>
+                          </>
+                        ) : (
+                          <>
+                            <path d="M1 1L4 4M1 1V3.5M1 1H3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                            <path d="M9 9L6 6M9 9V6.5M9 9H6.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                          </>
+                        )}
+                      </svg>
+                    </div>
                   </div>
-                  {/* Minimize Button */}
-                  <div
-                    className="w-3 h-3 bg-[#febc2e] rounded-full cursor-pointer flex items-center justify-center hover:bg-[#ff9500] transition-all duration-150 shadow-sm"
-                    onClick={(e) => { e.stopPropagation(); handleMinimize(); }}
-                    title="Minimize"
-                  >
-                    <svg className="w-1.5 h-1.5 text-[#9a6400] opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 10 10">
-                      <path d="M1 5H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                  </div>
-                  {/* Maximize Button */}
-                  <div
-                    className="w-3 h-3 bg-[#28c840] rounded-full cursor-pointer flex items-center justify-center hover:bg-[#1aab29] transition-all duration-150 shadow-sm"
-                    onClick={(e) => { e.stopPropagation(); handleMaximize(); }}
-                    title={win.maximized ? "Restore" : "Maximize"}
-                  >
-                    <svg className="w-1.5 h-1.5 text-[#006500] opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 10 10">
-                      {win.maximized ? (
-                        <>
-                          <rect x="1.5" y="3.5" width="5" height="5" fill="none" stroke="currentColor" strokeWidth="1.2"/>
-                          <path d="M3.5 3.5V1.5H8.5V6.5H6.5" fill="none" stroke="currentColor" strokeWidth="1.2"/>
-                        </>
-                      ) : (
-                        <>
-                          <path d="M1 1L4 4M1 1V3.5M1 1H3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                          <path d="M9 9L6 6M9 9V6.5M9 9H6.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                        </>
-                      )}
-                    </svg>
-                  </div>
-                </div>
 
-                {/* Center Title */}
-                <div className="absolute left-1/2 -translate-x-1/2 text-white/80 font-medium text-sm tracking-wide pointer-events-none">
-                  {win.appId}
+                  {/* Center Title */}
+                  <div className="absolute left-1/2 -translate-x-1/2 text-white/80 font-medium text-sm tracking-wide pointer-events-none">
+                    {win.appId}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* App Content */}
-              <div className="flex-1 overflow-auto text-white bg-black/20">
-                {win.component}
+              <div className={`flex-1 overflow-hidden flex flex-col ${win.appId === "Photos" ? "" : "text-white bg-black/20"}`}>
+                {React.cloneElement(win.component, { windowId: win.id, maximized: win.maximized })}
               </div>
             </motion.div>
           )}
