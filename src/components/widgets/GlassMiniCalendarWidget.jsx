@@ -56,8 +56,10 @@ export default function GlassMiniCalendarWidget() {
             <div 
               key={i} 
               className={`text-[8.5px] font-semibold w-4 h-4 flex items-center justify-center rounded-full transition-all
-                ${!isCurrentMonth ? 'text-white/20' : 'text-white/85'}
-                ${isToday ? 'bg-white text-gray-900 shadow-sm font-bold scale-105' : ''}
+                ${isToday 
+                  ? 'bg-white text-neutral-900 shadow-sm font-bold scale-105' 
+                  : (!isCurrentMonth ? 'text-white/20' : 'text-white/85')
+                }
               `}
             >
               {format(day, 'd')}

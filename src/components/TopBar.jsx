@@ -266,6 +266,7 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
 
           <DropdownMenuContent 
             align="end" 
+            alignOffset={-140}
             sideOffset={8}
             className="!bg-transparent !border-none !shadow-none !p-0 !overflow-visible scale-100 min-w-0"
           >

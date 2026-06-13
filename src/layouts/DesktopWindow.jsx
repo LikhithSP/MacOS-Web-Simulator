@@ -357,22 +357,29 @@ export default function Desktop({ setStage, isLocked = false }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute top-10 right-4 bottom-24 w-[360px] bg-white/20 backdrop-blur-3xl rounded-3xl shadow-2xl border border-white/20 z-40 overflow-hidden flex flex-col"
+            className={`absolute top-10 right-4 bottom-24 w-[360px] backdrop-blur-2xl rounded-3xl z-40 overflow-hidden flex flex-col border
+              ${isDarkMode 
+                ? 'bg-gradient-to-b from-black/45 to-black/20 border-white/10 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_12px_40px_rgba(0,0,0,0.45)]' 
+                : 'bg-gradient-to-b from-white/14 to-white/4 border-white/20 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.35),0_12px_40px_rgba(0,0,0,0.18)]'
+              }`}
             onClick={(e) => e.stopPropagation()}
             onContextMenu={(e) => e.stopPropagation()}
           >
-            <div className="p-5 flex justify-between items-center bg-black/10">
+            {/* Liquid Glass Overlay Effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 pointer-events-none z-0" />
+
+            <div className="relative z-10 p-5 flex justify-between items-center bg-black/10">
               <h2 className="text-xl font-semibold text-white cursor-default">Widgets</h2>
               <button 
                 onClick={() => setShowWidgetGallery(false)}
-                className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center text-white hover:bg-black/30"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
               >
                 <FiX />
               </button>
             </div>
             
             <div 
-              className="flex-1 overflow-y-auto p-5 pb-10 space-y-6 hide-scrollbar"
+              className="relative z-10 flex-1 overflow-y-auto p-5 pb-10 space-y-6 hide-scrollbar"
             >
               <div className="flex flex-col items-center">
                 <div className="w-full mb-3 flex items-center justify-between">
