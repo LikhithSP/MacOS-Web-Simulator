@@ -156,7 +156,7 @@ export default function RegionScreen({ goNext, goBack }) {
   return (
     <div 
       className="w-screen h-screen flex flex-col items-center justify-center relative overflow-hidden bg-cover bg-center"
-      style={{ backgroundImage: "url('/Wallpaper/GtB-Ex7WYAA9yAD.jpeg')" }}
+      style={{ backgroundImage: "url('/Wallpaper/GoldenGate_6k.png')" }}
     >
       {/* Background Blur Overlay */}
       <div className="absolute inset-0 backdrop-blur-[60px] bg-black/5 z-0" />
@@ -181,7 +181,7 @@ export default function RegionScreen({ goNext, goBack }) {
         animate={{ opacity: 1, scale: 1, x: 0 }}
         exit={{ opacity: 0, scale: 0.95, x: -20 }}
         transition={{ duration: 0.4 }}
-        className="w-[700px] h-[520px] bg-white rounded-3xl shadow-2xl z-10 flex flex-col items-center py-12 relative overflow-hidden"
+        className="w-[700px] h-[520px] bg-white rounded-2xl shadow-2xl z-10 flex flex-col items-center py-12 relative overflow-hidden"
       >
         {/* Back Button */}
         <button 
@@ -195,7 +195,7 @@ export default function RegionScreen({ goNext, goBack }) {
 
         {/* Custom Earth/Continent Icon */}
         <div className="text-[#0066cc] mb-4">
-          <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <path d="M12 2c-1.5 2-2.5 4.5-2.5 8s1 6 2.5 8" opacity="0.3"></path>
             <path d="M12 22c1.5-2 2.5-4.5 2.5-8s-1-6-2.5-8" opacity="0.3"></path>
@@ -205,10 +205,10 @@ export default function RegionScreen({ goNext, goBack }) {
         </div>
 
         {/* Title */}
-        <h2 className="text-xl font-bold text-gray-900 mb-6 tracking-tight">Select Your Country or Region</h2>
+        <h2 className="text-[22px] font-bold text-gray-900 mb-5 tracking-tight w-[450px] text-left">Select Your Country or Region</h2>
 
         {/* List */}
-        <div className="w-[300px] h-[240px] overflow-y-auto bg-white/50 scrollbar-thin" style={{ border: "2px solid #7cb5ec", borderRadius: "4px", scrollbarWidth: "thin", scrollbarColor: "rgba(0,0,0,0.3) transparent" }}>
+        <div className="w-[450px] h-[240px] overflow-y-auto bg-white scrollbar-thin" style={{ border: "1px solid #7cb5ec", borderRadius: "5px" }}>
           {countries.map((country, idx) => (
             <div 
               key={idx}

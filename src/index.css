@@ -21,7 +21,12 @@
 
 /* macOS Style Scrollbar */
 .scrollbar-thin::-webkit-scrollbar {
-  width: 14px;
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-button {
+  display: none;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
@@ -29,20 +34,22 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  border: 3px solid transparent;
-  background-clip: padding-box;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 9999px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.5);
-  background-clip: padding-box;
+  background: rgba(0, 0, 0, 0.4);
 }
 
 /* MacOS Style Scrollbar - Light (for dark containers) */
 .scrollbar-light::-webkit-scrollbar {
-  width: 14px;
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-light::-webkit-scrollbar-button {
+  display: none;
 }
 
 .scrollbar-light::-webkit-scrollbar-track {
@@ -51,14 +58,11 @@
 
 .scrollbar-light::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  border: 3px solid transparent;
-  background-clip: padding-box;
+  border-radius: 9999px;
 }
 
 .scrollbar-light::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.4);
-  background-clip: padding-box;
 }
 
 /* macOS Style Cursor */

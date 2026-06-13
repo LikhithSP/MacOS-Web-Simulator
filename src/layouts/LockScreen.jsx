@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useAppStore } from "../store/Appstore";
+import { songs } from "../constants/songs";
+import { FiShuffle } from "react-icons/fi";
+import { BsFillPlayFill, BsFillPauseFill, BsFillSkipForwardFill, BsFillSkipBackwardFill } from "react-icons/bs";
 
 // macOS Style Signal Bars Icon
 const MacSignalIcon = () => (
@@ -29,16 +33,55 @@ const MacBatteryIcon = () => (
 );
 
 export default function LockScreen({ goNext }) {
+  const isAudioPlaying = useAppStore((state) => state.isAudioPlaying);
+  const currentTrack = useAppStore((state) => state.currentTrack);
+  const toggleAudio = useAppStore((state) => state.toggleAudio);
+  const nextTrack = useAppStore((state) => state.nextTrack);
+  const prevTrack = useAppStore((state) => state.prevTrack);
+
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isShuffle, setIsShuffle] = useState(false);
+
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [time, setTime] = useState(new Date());
-  const [lockscreenWallpaper, setLockscreenWallpaper] = useState("/Wallpaper/GtB-Ex7WYAA9yAD.jpeg");
+  const [lockscreenWallpaper, setLockscreenWallpaper] = useState("/Wallpaper/GoldenGate_6k.png");
   
   const [passwordInput, setPasswordInput] = useState("");
   const [isWrongPassword, setIsWrongPassword] = useState(false);
 
+  // Sync with active audio element duration & time updates
+  useEffect(() => {
+    if (!isAudioPlaying) return;
+    const interval = setInterval(() => {
+      const audioEl = document.querySelector("audio");
+      if (audioEl) {
+        setCurrentTime(audioEl.currentTime);
+        setDuration(audioEl.duration || 0);
+      }
+    }, 250);
+    return () => clearInterval(interval);
+  }, [isAudioPlaying, currentTrack.title]);
+
+  const formatTime = (secs) => {
+    if (isNaN(secs)) return "0:00";
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  const formatRemainingTime = (secs, dur) => {
+    if (isNaN(secs) || isNaN(dur) || dur === 0) return "-0:00";
+    const diff = Math.max(0, dur - secs);
+    const m = Math.floor(diff / 60);
+    const s = Math.floor(diff % 60);
+    return `-${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
   // User profile state
   const [username, setUsername] = useState(() => localStorage.getItem("lock_username") || "Likhith SP");
   const [profilePhoto, setProfilePhoto] = useState(() => localStorage.getItem("lock_profile_photo") || "https://i.pinimg.com/originals/bf/57/02/bf57026ee75af2f414000cec322f7404.gif");
+  const [profileBg, setProfileBg] = useState(() => localStorage.getItem("lock_profile_bg") || "");
   const [showEditModal, setShowEditModal] = useState(false);
   const [editName, setEditName] = useState("");
   const [editPhoto, setEditPhoto] = useState("");
@@ -52,7 +95,7 @@ export default function LockScreen({ goNext }) {
   // Preload the lockscreen wallpaper image for faster boot
   useEffect(() => {
     const img = new Image();
-    img.src = localStorage.getItem("lockscreen_wallpaper") || "/Wallpaper/GtB-Ex7WYAA9yAD.jpeg";
+    img.src = localStorage.getItem("lockscreen_wallpaper") || "/Wallpaper/GoldenGate_6k.png";
   }, []);
 
   useEffect(() => {
@@ -109,6 +152,8 @@ export default function LockScreen({ goNext }) {
     setProfilePhoto(editPhoto);
     localStorage.setItem("lock_username", name);
     localStorage.setItem("lock_profile_photo", editPhoto);
+    localStorage.setItem("lock_profile_bg", "");
+    setProfileBg("");
     setShowEditModal(false);
   };
 
@@ -155,6 +200,13 @@ export default function LockScreen({ goNext }) {
         .shake-animation {
           animation: shake 0.4s ease-in-out;
         }
+        @keyframes soundWave {
+          0%, 100% { height: 4px; }
+          50% { height: 14px; }
+        }
+        .wave-bar {
+          animation: soundWave 0.8s ease-in-out infinite;
+        }
       `}</style>
       
       {/* Background */}
@@ -175,8 +227,8 @@ export default function LockScreen({ goNext }) {
         <MacBatteryIcon />
       </div>
 
-      {/* Clock */}
-      <div className="relative z-10 w-full h-full flex flex-col items-center pt-24">
+      {/* Clock & Media Widget Container */}
+      <div className="relative z-10 w-full h-full flex flex-col items-center pt-24 pointer-events-none">
         <div className="flex flex-col items-center text-center">
           <span
             className="text-[25px] tracking-wide"
@@ -204,7 +256,122 @@ export default function LockScreen({ goNext }) {
       </div>
 
       {/* Bottom Avatar & Name */}
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 w-72">
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 w-[340px]">
+        {/* Music Widget */}
+        {isAudioPlaying && (
+          <div 
+            className="w-[320px] backdrop-blur-[32px] border border-white/20 shadow-2xl rounded-[24px] p-4 text-white flex flex-col gap-3 transition-all duration-300 mb-2"
+            style={{
+              background: "rgba(255, 255, 255, 0.08)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.05)"
+            }}
+          >
+            {/* Top row: Art, track info, visualizer */}
+            <div className="flex items-center gap-3">
+              <img 
+                src={currentTrack?.img} 
+                alt="Album Art" 
+                className="w-12 h-12 rounded-[10px] object-cover shadow-md shrink-0 border border-white/10" 
+              />
+              <div className="flex flex-col leading-tight flex-1 min-w-0 text-left">
+                <span className="font-semibold text-[13px] text-white/95 truncate tracking-wide">{currentTrack?.title}</span>
+                <span className="text-[11px] text-white/60 truncate mt-0.5">{currentTrack?.artist}</span>
+              </div>
+              
+              {/* Visualizer animation */}
+              <div className="flex items-end gap-[3px] h-3.5 w-5 shrink-0 justify-center">
+                <div className="w-[2px] bg-white/95 rounded-full wave-bar" style={{ animationDelay: '0.1s', animationDuration: '0.6s' }}></div>
+                <div className="w-[2px] bg-white/95 rounded-full wave-bar" style={{ animationDelay: '0.3s', animationDuration: '0.8s' }}></div>
+                <div className="w-[2px] bg-white/95 rounded-full wave-bar" style={{ animationDelay: '0.5s', animationDuration: '0.5s' }}></div>
+                <div className="w-[2px] bg-white/95 rounded-full wave-bar" style={{ animationDelay: '0.2s', animationDuration: '0.7s' }}></div>
+              </div>
+            </div>
+
+            {/* Middle row: Progress slider */}
+            <div className="flex flex-col gap-1.5 mt-0.5">
+              <div 
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const clickX = e.clientX - rect.left;
+                  const percentage = clickX / rect.width;
+                  const audioEl = document.querySelector("audio");
+                  if (audioEl && duration) {
+                    audioEl.currentTime = percentage * duration;
+                    setCurrentTime(percentage * duration);
+                  }
+                }}
+                className="h-1 bg-white/20 hover:h-1.5 rounded-full relative overflow-visible cursor-pointer transition-all duration-150 group"
+              >
+                <div 
+                  className="absolute top-0 left-0 bottom-0 bg-white rounded-full"
+                  style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                />
+                <div 
+                  className="absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ left: `calc(${duration ? (currentTime / duration) * 100 : 0}% - 4px)` }}
+                />
+              </div>
+              <div className="flex justify-between items-center text-[10px] font-semibold text-white/60">
+                <span>{formatTime(currentTime)}</span>
+                <span>{formatRemainingTime(currentTime, duration)}</span>
+              </div>
+            </div>
+
+            {/* Bottom row: Media Controls */}
+            <div className="flex items-center justify-between px-2 mt-0.5">
+              {/* Shuffle button */}
+              <button 
+                onClick={() => setIsShuffle(prev => !prev)}
+                className={`p-1.5 transition-colors ${isShuffle ? 'text-rose-400' : 'text-white/60 hover:text-white'}`}
+                title="Shuffle"
+              >
+                <FiShuffle size={14} />
+              </button>
+
+              {/* Prev button */}
+              <button 
+                onClick={prevTrack}
+                className="p-1.5 text-white/80 hover:text-white transition-colors"
+                title="Previous Track"
+              >
+                <BsFillSkipBackwardFill size={15} />
+              </button>
+
+              {/* Play/Pause button */}
+              <button 
+                onClick={toggleAudio}
+                className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white transition-all shadow-sm"
+                title={isAudioPlaying ? "Pause" : "Play"}
+              >
+                {isAudioPlaying ? (
+                  <BsFillPauseFill size={17} />
+                ) : (
+                  <BsFillPlayFill size={17} className="ml-0.5" />
+                )}
+              </button>
+
+              {/* Next button */}
+              <button 
+                onClick={nextTrack}
+                className="p-1.5 text-white/80 hover:text-white transition-colors"
+                title="Next Track"
+              >
+                <BsFillSkipForwardFill size={15} />
+              </button>
+
+              {/* Output / Device picker */}
+              <button 
+                className="p-1.5 text-white/60 hover:text-white transition-colors flex items-center justify-center"
+                title="AirPlay"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Clickable profile area */}
         <div
           className="flex flex-col items-center gap-3 group cursor-pointer"
@@ -213,7 +380,10 @@ export default function LockScreen({ goNext }) {
         >
           {/* Avatar */}
           <div className="relative w-16 h-16">
-            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/30 shadow-lg group-hover:border-white/60 transition-all">
+            <div 
+              className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/30 shadow-lg group-hover:border-white/60 transition-all flex items-center justify-center"
+              style={{ backgroundColor: profileBg || 'transparent' }}
+            >
               <img src={profilePhoto} alt="user" className="w-full h-full object-cover" />
             </div>
             {/* Edit hint icon */}

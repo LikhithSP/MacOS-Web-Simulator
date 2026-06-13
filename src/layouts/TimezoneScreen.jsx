@@ -78,7 +78,7 @@ export default function TimezoneScreen({ goNext, goBack, selectedCountry }) {
   return (
     <div 
       className="w-screen h-screen flex flex-col items-center justify-center relative overflow-hidden bg-cover bg-center"
-      style={{ backgroundImage: "url('/Wallpaper/GtB-Ex7WYAA9yAD.jpeg')" }}
+      style={{ backgroundImage: "url('/Wallpaper/GoldenGate_6k.png')" }}
     >
       {/* Background Blur Overlay */}
       <div className="absolute inset-0 backdrop-blur-[60px] bg-black/5 z-0" />
@@ -106,7 +106,7 @@ export default function TimezoneScreen({ goNext, goBack, selectedCountry }) {
         animate={{ opacity: 1, scale: 1, x: 0 }}
         exit={{ opacity: 0, scale: 0.95, x: -20 }}
         transition={{ duration: 0.4 }}
-        className="w-[700px] h-[520px] bg-white rounded-3xl shadow-2xl z-10 flex flex-col pt-10 pb-6 relative overflow-hidden"
+        className="w-[700px] h-[520px] bg-white rounded-2xl shadow-2xl z-10 flex flex-col pt-10 pb-6 relative overflow-hidden"
       >
         {/* Back Button */}
         <button 
@@ -118,10 +118,10 @@ export default function TimezoneScreen({ goNext, goBack, selectedCountry }) {
           </svg>
         </button>
 
-        <h2 className="text-[22px] font-bold text-gray-900 mb-4 tracking-tight mt-2 text-center w-full px-12 z-10">Select Your Time Zone</h2>
+        <h2 className="text-[22px] font-bold text-gray-900 mb-4 tracking-tight mt-2 text-left w-full px-[100px] z-10">Select Your Time Zone</h2>
 
         <div className="flex-1 flex flex-col items-center w-full overflow-y-auto overflow-x-hidden scrollbar-thin pb-4">
-          <p className="text-[12px] text-gray-600 text-center leading-relaxed mb-6 max-w-[520px] px-8 flex-shrink-0">
+          <p className="text-[13px] text-gray-500 text-left leading-relaxed mb-6 w-full px-[100px] flex-shrink-0">
             To select a time zone, click the map near your location and choose a city from the Closest City menu. 
             You can also have the time zone change automatically, if possible, based on your current location.
           </p>
@@ -146,11 +146,9 @@ export default function TimezoneScreen({ goNext, goBack, selectedCountry }) {
             <img 
               src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" 
               alt="World Map" 
-              className="w-full h-full object-contain opacity-40 select-none pointer-events-none transform scale-[1.05]"
+              className="w-full h-full object-contain opacity-40 select-none pointer-events-none transform scale-x-[1.2] scale-y-[1.08]"
               style={{ filter: "grayscale(100%)" }}
             />
-            {/* Map Pin */}
-            <div className="absolute top-[38%] left-[48%] w-2.5 h-2.5 bg-white rounded-full border-[2.5px] border-[#0066cc] shadow-sm transform -translate-x-1/2 -translate-y-1/2"></div>
           </div>
           
           {/* Spacer to force scrollability to match native layout feel */}

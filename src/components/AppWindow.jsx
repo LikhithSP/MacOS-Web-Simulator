@@ -161,7 +161,7 @@ export default function AppWindow({ window: win }) {
               className={`flex flex-col overflow-hidden ${
                 win.maximized ? "rounded-none" : "rounded-xl"
               } ${
-                win.appId === "Photos"
+                win.appId === "Photos" || win.appId === "Music"
                   ? isDarkMode
                     ? "bg-[#1e1e1e] text-white border border-white/10"
                     : "bg-white text-gray-900 border border-black/10 shadow-2xl"
@@ -173,8 +173,8 @@ export default function AppWindow({ window: win }) {
                 willChange: isDragging || isResizing ? 'transform' : 'auto',
               }}
             >
-              {/* Title Bar - Skip for Photos since it integrates its own */}
-              {win.appId !== "Photos" && (
+              {/* Title Bar - Skip for Photos and Music since they integrate their own */}
+              {win.appId !== "Photos" && win.appId !== "Music" && (
                 <div 
                   className={`window-drag-handle relative h-11 bg-linear-to-b from-white/10 to-transparent flex items-center cursor-grab active:cursor-grabbing select-none ${
                     win.maximized ? "" : "rounded-t-xl"
@@ -233,7 +233,7 @@ export default function AppWindow({ window: win }) {
               )}
 
               {/* App Content */}
-              <div className={`flex-1 overflow-hidden flex flex-col ${win.appId === "Photos" ? "" : "text-white bg-black/20"}`}>
+              <div className={`flex-1 overflow-hidden flex flex-col ${win.appId === "Photos" || win.appId === "Music" ? "" : "text-white bg-black/20"}`}>
                 {React.cloneElement(win.component, { windowId: win.id, maximized: win.maximized })}
               </div>
             </motion.div>

@@ -12,6 +12,7 @@ import { useAppStore } from '../store/Appstore';
 export default function ControlCenter() {
   const isAudioPlaying = useAppStore((state) => state.isAudioPlaying);
   const toggleAudio = useAppStore((state) => state.toggleAudio);
+  const currentTrack = useAppStore((state) => state.currentTrack);
 
   // States for toggles
   const [wifiOn, setWifiOn] = useState(true);
@@ -119,13 +120,13 @@ export default function ControlCenter() {
             ${isDarkMode ? 'bg-black/50 border-white/5 shadow-[inset_0_0.5px_1px_rgba(255,255,255,0.08)]' : 'bg-white/5 border-white/10 shadow-[inset_0_0.5px_1px_rgba(255,255,255,0.25)]'}`}>
             <div className="flex gap-3 items-center min-w-0">
               <img 
-                src="https://cdn-images.dzcdn.net/images/cover/64e54e307bd5e2bdb27ffeb662fd910d/1900x1900-000000-80-0-0.jpg" 
+                src={currentTrack.img} 
                 alt="Album" 
                 className="w-[52px] h-[52px] rounded-[11px] object-cover shadow-md border border-white/10 shrink-0" 
               />
               <div className="flex flex-col justify-center leading-tight flex-1 min-w-0">
-                <span className="font-bold text-[12px] text-white/95" title="Wanna Be Yours">Wanna Be Yours</span>
-                <span className="text-[10.5px] text-white/50 mt-0.5">Arctic Monkeys</span>
+                <span className="font-bold text-[12px] text-white/95 truncate" title={currentTrack.title}>{currentTrack.title}</span>
+                <span className="text-[10.5px] text-white/50 mt-0.5 truncate">{currentTrack.artist}</span>
               </div>
             </div>
             {/* Playback Controls */}

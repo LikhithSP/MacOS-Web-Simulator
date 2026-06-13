@@ -15,7 +15,7 @@ export default function WrittenScreen({ goNext, goBack, selectedLanguage, select
   return (
     <div 
       className="w-screen h-screen flex flex-col items-center justify-center relative overflow-hidden bg-cover bg-center"
-      style={{ backgroundImage: "url('/Wallpaper/GtB-Ex7WYAA9yAD.jpeg')" }}
+      style={{ backgroundImage: "url('/Wallpaper/GoldenGate_6k.png')" }}
     >
       {/* Background Blur Overlay */}
       <div className="absolute inset-0 backdrop-blur-[60px] bg-black/5 z-0" />
@@ -40,7 +40,7 @@ export default function WrittenScreen({ goNext, goBack, selectedLanguage, select
         animate={{ opacity: 1, scale: 1, x: 0 }}
         exit={{ opacity: 0, scale: 0.95, x: -20 }}
         transition={{ duration: 0.4 }}
-        className="w-[700px] h-[520px] bg-white rounded-3xl shadow-2xl z-10 flex flex-col py-12 px-[100px] relative overflow-hidden"
+        className="w-[700px] h-[520px] bg-white rounded-2xl shadow-2xl z-10 flex flex-col py-12 px-[100px] relative overflow-hidden"
       >
         {/* Back Button */}
         <button 
@@ -53,40 +53,44 @@ export default function WrittenScreen({ goNext, goBack, selectedLanguage, select
         </button>
 
         {/* Header Icon */}
-        <div className="flex justify-center text-[#0066cc] mb-6">
-          <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <div className="flex justify-start text-[#007aff] mb-6">
+          <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="2" y1="12" x2="22" y2="12"></line>
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            <path d="M3.6 9h16.8"></path>
+            <path d="M3.6 15h16.8"></path>
           </svg>
         </div>
 
         {/* Title & Description */}
-        <h2 className="text-xl font-bold text-gray-900 mb-2 tracking-tight text-center">Written and Spoken Languages</h2>
-        <p className="text-[13px] text-gray-600 text-center leading-relaxed mb-8 max-w-[420px] mx-auto">
+        <h2 className="text-[22px] font-bold text-gray-900 mb-2 tracking-tight text-left">Written and Spoken Languages</h2>
+        <p className="text-[14px] text-gray-500 text-left leading-relaxed mb-6 max-w-[450px]">
           The following languages are commonly used in your region. You can set up your Mac to use these settings or customise them individually.
         </p>
 
         {/* Settings List */}
-        <div className="flex flex-col gap-6 ml-6">
+        <div className="flex flex-col gap-[18px] ml-0 mt-1">
           {/* Preferred Languages */}
           <div className="flex items-start gap-4">
-            <div className="text-[#0066cc] mt-[2px]">
+            <div className="text-[#007aff] mt-[2px]">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="2" y1="12" x2="22" y2="12"></line>
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                <path d="M3.6 9h16.8"></path>
+                <path d="M3.6 15h16.8"></path>
               </svg>
             </div>
             <div>
               <div className="text-[13px] font-bold text-gray-900 leading-tight">Preferred Languages</div>
-              <div className="text-[13px] text-gray-500">{selectedLanguage}</div>
+              <div className="text-[13px] text-gray-500 mt-0.5">{selectedLanguage}</div>
             </div>
           </div>
 
           {/* Input Sources */}
           <div className="flex items-start gap-4">
-            <div className="text-[#0066cc] mt-[2px]">
+            <div className="text-[#007aff] mt-[2px]">
               <svg width="28" height="20" viewBox="0 0 24 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <rect x="1" y="1" width="22" height="14" rx="3"></rect>
                 <line x1="6" y1="5" x2="6" y2="5.01"></line>
@@ -98,13 +102,13 @@ export default function WrittenScreen({ goNext, goBack, selectedLanguage, select
             </div>
             <div>
               <div className="text-[13px] font-bold text-gray-900 leading-tight">Input Sources</div>
-              <div className="text-[13px] text-gray-500">{inputSource}</div>
+              <div className="text-[13px] text-gray-500 mt-0.5">{inputSource}</div>
             </div>
           </div>
 
           {/* Dictation */}
           <div className="flex items-start gap-4">
-            <div className="text-[#0066cc] mt-[2px]">
+            <div className="text-[#007aff] mt-[2px]">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
@@ -113,22 +117,22 @@ export default function WrittenScreen({ goNext, goBack, selectedLanguage, select
             </div>
             <div>
               <div className="text-[13px] font-bold text-gray-900 leading-tight">Dictation</div>
-              <div className="text-[13px] text-gray-500">{dictationLocale}</div>
+              <div className="text-[13px] text-gray-500 mt-0.5">{dictationLocale}</div>
             </div>
           </div>
         </div>
 
         {/* Bottom Buttons Container */}
-        <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
+        <div className="absolute bottom-8 left-8 right-8 flex items-center justify-between">
           <button 
-            className="px-4 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-[13px] font-medium transition-colors"
+            className="px-5 py-1.5 rounded-full bg-[#f5f5f7] hover:bg-gray-200 text-gray-800 text-[13px] font-medium transition-colors border border-black/5 shadow-sm"
           >
             Customise Settings
           </button>
           
           <button 
             onClick={goNext}
-            className="px-5 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-[13px] font-medium transition-colors"
+            className="px-6 py-1.5 rounded-full bg-[#f5f5f7] hover:bg-gray-200 text-gray-800 text-[13px] font-medium transition-colors border border-black/5 shadow-sm"
           >
             Continue
           </button>

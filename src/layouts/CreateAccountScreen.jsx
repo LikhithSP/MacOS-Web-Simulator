@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const avatars = [
-  { id: 'panda', emoji: '🐼', bg: 'bg-[#92e482]' },
-  { id: 'cow', emoji: '🐮', bg: 'bg-[#f4ac84]' },
-  { id: 'chicken', emoji: '🐔', bg: 'bg-[#e49ca4]' },
-  { id: 'fox', emoji: '🦊', bg: 'bg-[#c4a4f4]' },
-  { id: 'owl', emoji: '🦉', bg: 'bg-[#84c4f4]' }
+  { id: 'panda', image: '/icons/panda.png', bg: 'bg-[#92e482]', color: '#92e482' },
+  { id: 'cow', image: '/icons/cow-face.png', bg: 'bg-[#f4ac84]', color: '#f4ac84' },
+  { id: 'chicken', image: '/icons/chicken.png', bg: 'bg-[#e49ca4]', color: '#e49ca4' },
+  { id: 'fox', image: '/icons/fox.png', bg: 'bg-[#c4a4f4]', color: '#c4a4f4' },
+  { id: 'owl', image: '/icons/owl.png', bg: 'bg-[#84c4f4]', color: '#84c4f4' }
 ];
 
 export default function CreateAccountScreen({ goNext, goBack }) {
@@ -34,46 +34,53 @@ export default function CreateAccountScreen({ goNext, goBack }) {
   const savedLang = localStorage.getItem('setup_lang') || 'English';
   const selectedCountry = localStorage.getItem('setup_country') || 'United Kingdom';
   const topBarLang = savedLang.includes('French') ? 'ABC - AZERTY' :
-                     selectedCountry === 'United States' ? 'U.S.' :
-                     selectedCountry === 'India' ? 'ABC - India' : 'British';
+    selectedCountry === 'United States' ? 'U.S.' :
+      selectedCountry === 'India' ? 'ABC - India' : 'British';
 
   const canContinue = fullName && accountName && password && password === verify;
 
   const handleContinue = () => {
     if (!canContinue) return;
     setIsCreating(true);
-    
-    // Convert emoji avatar to a data URL so it can be used everywhere as an image
-    const canvas = document.createElement('canvas');
-    canvas.width = 120;
-    canvas.height = 120;
-    const ctx = canvas.getContext('2d');
-    
-    // Draw background
-    let bgColor = '#92e482'; // Default panda
-    if (selectedAvatar.id === 'cow') bgColor = '#f4ac84';
-    if (selectedAvatar.id === 'chicken') bgColor = '#e49ca4';
-    if (selectedAvatar.id === 'fox') bgColor = '#c4a4f4';
-    if (selectedAvatar.id === 'owl') bgColor = '#84c4f4';
-    
-    ctx.fillStyle = bgColor;
-    ctx.beginPath();
-    ctx.arc(60, 60, 60, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Draw emoji
-    ctx.font = '70px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(selectedAvatar.emoji, 60, 65);
-    
-    const photoDataUrl = canvas.toDataURL();
+
+    let photoUrl = "";
+
+    if (selectedAvatar.image) {
+      photoUrl = selectedAvatar.image;
+    } else {
+      // Convert emoji avatar to a data URL so it can be used everywhere as an image
+      const canvas = document.createElement('canvas');
+      canvas.width = 120;
+      canvas.height = 120;
+      const ctx = canvas.getContext('2d');
+
+      // Draw background
+      let bgColor = '#92e482'; // Default panda
+      if (selectedAvatar.id === 'cow') bgColor = '#f4ac84';
+      if (selectedAvatar.id === 'chicken') bgColor = '#e49ca4';
+      if (selectedAvatar.id === 'fox') bgColor = '#c4a4f4';
+      if (selectedAvatar.id === 'owl') bgColor = '#84c4f4';
+
+      ctx.fillStyle = bgColor;
+      ctx.beginPath();
+      ctx.arc(60, 60, 60, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw emoji
+      ctx.font = '70px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(selectedAvatar.emoji, 60, 65);
+
+      photoUrl = canvas.toDataURL();
+    }
 
     // Save to local storage for LockScreen
     localStorage.setItem('lock_username', fullName);
     localStorage.setItem('lock_password', password);
     // Don't overwrite if user already changed it out of cycle, but this is setup, so we overwrite
-    localStorage.setItem('lock_profile_photo', photoDataUrl);
+    localStorage.setItem('lock_profile_photo', photoUrl);
+    localStorage.setItem('lock_profile_bg', selectedAvatar.color || '');
     localStorage.setItem('setup_completed', 'true');
 
     setTimeout(() => {
@@ -82,9 +89,9 @@ export default function CreateAccountScreen({ goNext, goBack }) {
   };
 
   return (
-    <div 
+    <div
       className="w-screen h-screen flex flex-col items-center justify-center relative overflow-hidden bg-cover bg-center"
-      style={{ backgroundImage: "url('/Wallpaper/GtB-Ex7WYAA9yAD.jpeg')" }}
+      style={{ backgroundImage: "url('/Wallpaper/GoldenGate_6k.png')" }}
     >
       <div className="absolute inset-0 backdrop-blur-[60px] bg-black/5 z-0" />
 
@@ -101,15 +108,15 @@ export default function CreateAccountScreen({ goNext, goBack }) {
         </svg>
       </div>
 
-      <motion.div 
+      <motion.div
         key="createaccount-screen"
         initial={{ opacity: 0, scale: 0.95, x: 20 }}
         animate={{ opacity: 1, scale: 1, x: 0 }}
         exit={{ opacity: 0, scale: 0.95, x: -20 }}
         transition={{ duration: 0.4 }}
-        className="w-[700px] h-[520px] bg-white rounded-3xl shadow-2xl z-10 flex flex-col pt-12 pb-6 relative overflow-hidden"
+        className="w-[700px] h-[520px] bg-white rounded-2xl shadow-2xl z-10 flex flex-col pt-12 pb-6 relative overflow-hidden"
       >
-        <button 
+        <button
           onClick={goBack}
           disabled={isCreating}
           className="absolute top-6 left-6 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors bg-white text-[#0066cc] shadow-sm z-20 disabled:opacity-50"
@@ -122,7 +129,7 @@ export default function CreateAccountScreen({ goNext, goBack }) {
         <div className="flex-1 flex flex-col items-center w-full overflow-y-auto scrollbar-thin px-14 pb-4">
           <div className="w-[480px] text-left">
             <h2 className="text-[15px] font-bold text-gray-900 mb-1">Create a Mac Account</h2>
-            <p className="text-[13px] text-gray-500 leading-relaxed mb-6">
+            <p className="text-[15px] text-gray-500 leading-relaxed mb-6">
               The password you create here will be used to log in to this Mac.
             </p>
 
@@ -134,14 +141,18 @@ export default function CreateAccountScreen({ goNext, goBack }) {
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
               </div>
-              
+
               {avatars.map(avatar => (
-                <div 
+                <div
                   key={avatar.id}
                   onClick={() => setSelectedAvatar(avatar)}
-                  className={`w-[50px] h-[50px] rounded-full flex items-center justify-center text-2xl cursor-pointer shadow-sm transition-all ${avatar.bg} ${selectedAvatar.id === avatar.id ? 'ring-[3px] ring-[#0066cc] ring-offset-2' : ''}`}
+                  className={`w-[50px] h-[50px] rounded-full flex items-center justify-center text-2xl cursor-pointer shadow-sm transition-all overflow-hidden ${avatar.bg} ${selectedAvatar.id === avatar.id ? 'ring-[3px] ring-[#0066cc] ring-offset-2' : ''}`}
                 >
-                  {avatar.emoji}
+                  {avatar.image ? (
+                    <img src={avatar.image} alt={avatar.id} className="w-full h-full object-cover" />
+                  ) : (
+                    avatar.emoji
+                  )}
                 </div>
               ))}
             </div>
@@ -149,7 +160,7 @@ export default function CreateAccountScreen({ goNext, goBack }) {
             {/* Form Fields */}
             <div className="flex flex-col gap-[10px] w-full mt-2">
               <div>
-                <input 
+                <input
                   type="text"
                   placeholder="Full Name"
                   value={fullName}
@@ -159,7 +170,7 @@ export default function CreateAccountScreen({ goNext, goBack }) {
               </div>
 
               <div>
-                <input 
+                <input
                   type="text"
                   placeholder="Account Name"
                   value={accountName}
@@ -170,14 +181,14 @@ export default function CreateAccountScreen({ goNext, goBack }) {
               </div>
 
               <div className="flex gap-3">
-                <input 
+                <input
                   type="password"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="flex-1 border border-gray-300 rounded-md px-3 py-[7px] text-[13px] focus:outline-none focus:border-[#0066cc] focus:ring-1 focus:ring-[#0066cc]"
                 />
-                <input 
+                <input
                   type="password"
                   placeholder="Verify"
                   value={verify}
@@ -187,7 +198,7 @@ export default function CreateAccountScreen({ goNext, goBack }) {
               </div>
 
               <div>
-                <input 
+                <input
                   type="text"
                   placeholder="Hint (Optional)"
                   value={hint}
@@ -197,12 +208,12 @@ export default function CreateAccountScreen({ goNext, goBack }) {
               </div>
 
               <div className="flex items-start gap-2 mt-2">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   id="allow-reset"
                   checked={allowReset}
                   onChange={(e) => setAllowReset(e.target.checked)}
-                  className="mt-[3px] shrink-0 rounded text-[#0066cc] focus:ring-[#0066cc]"
+                  className="w-4 h-4 mt-[3px] shrink-0 rounded border border-gray-300 bg-white checked:bg-[#007aff] checked:border-[#007aff] focus:ring-1 focus:ring-[#007aff] outline-none appearance-none flex items-center justify-center after:content-[''] after:hidden checked:after:block after:w-1.5 after:h-2.5 after:border-r-2 after:border-b-2 after:border-white after:rotate-45 after:-mt-[2px] cursor-pointer"
                 />
                 <label htmlFor="allow-reset" className="text-[12px] text-gray-600 leading-snug">
                   Allow computer account password to be reset with your Apple Account. You must sign in with your Apple Account in the next step to use this feature.
@@ -210,7 +221,7 @@ export default function CreateAccountScreen({ goNext, goBack }) {
               </div>
             </div>
           </div>
-          
+
           <div className="h-4 w-full flex-shrink-0"></div>
         </div>
 
@@ -228,7 +239,7 @@ export default function CreateAccountScreen({ goNext, goBack }) {
             )}
           </div>
 
-          <button 
+          <button
             onClick={handleContinue}
             disabled={!canContinue || isCreating}
             className={`${(!canContinue || isCreating) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'} px-6 py-[6px] rounded-full bg-[#f0f0f0] text-gray-800 text-[13px] font-medium transition-colors mb-0.5 shadow-sm`}

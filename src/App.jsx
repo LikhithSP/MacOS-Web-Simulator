@@ -110,10 +110,12 @@ export default function App() {
     if (now - lastVisit < oneDay) {
       if (savedState === "power") {
         setStage("power");
-      } else if (savedState === "desktop") {
-        setStage("desktop");
+      } else if (
+        ["setup", "region", "written", "timezone", "dataprivacy", "createaccount"].includes(savedState)
+      ) {
+        setStage(savedState);
       } else {
-        setStage("lock");
+        setStage("power");
       }
       return;
     }
@@ -127,6 +129,18 @@ export default function App() {
       document.removeEventListener("contextmenu", disableRightClick);
     };
   }, []);
+  useEffect(() => {
+    const handleLockShortcut = (e) => {
+      if (stage === "desktop" && e.ctrlKey && e.key.toLowerCase() === "l") {
+        e.preventDefault();
+        setStage("lock");
+      }
+    };
+    window.addEventListener("keydown", handleLockShortcut);
+    return () => {
+      window.removeEventListener("keydown", handleLockShortcut);
+    };
+  }, [stage]);
   useEffect(() => {
     if (!stage) return;
     localStorage.setItem("os_state", stage);

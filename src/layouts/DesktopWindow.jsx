@@ -26,7 +26,7 @@ export default function Desktop({ setStage, isLocked = false }) {
   const openApp = useAppStore((s) => s.openApp);
   const isDarkMode = useAppStore((s) => s.isDarkMode);
   const [wallpaper, setWallpaper] = useState(() => {
-    return localStorage.getItem("desktop_wallpaper") || "/Wallpaper/GtB-Ex7WYAA9yAD.jpeg";
+    return localStorage.getItem("desktop_wallpaper") || "/Wallpaper/GoldenGate_6k.png";
   });
   const [contextMenu, setContextMenu] = useState(null);
   const [desktopFolders, setDesktopFolders] = useState(() => {
