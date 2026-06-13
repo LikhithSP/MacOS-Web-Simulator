@@ -38,6 +38,9 @@ export default function LockScreen({ goNext }) {
   const toggleAudio = useAppStore((state) => state.toggleAudio);
   const nextTrack = useAppStore((state) => state.nextTrack);
   const prevTrack = useAppStore((state) => state.prevTrack);
+  const windows = useAppStore((state) => state.windows);
+  
+  const isMusicOpen = windows.some((w) => w.appId === "Music");
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -86,6 +89,22 @@ export default function LockScreen({ goNext }) {
   const [editName, setEditName] = useState("");
   const [editPhoto, setEditPhoto] = useState("");
   const fileInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      if (showEditModal) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (document.activeElement !== passwordInputRef.current) {
+        if (passwordInputRef.current) {
+          passwordInputRef.current.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, [showEditModal]);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -256,154 +275,193 @@ export default function LockScreen({ goNext }) {
       </div>
 
       {/* Bottom Avatar & Name */}
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 w-[340px]">
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 w-[440px]">
         {/* Music Widget */}
-        {isAudioPlaying && (
+        {isMusicOpen && currentTrack && (
           <div 
-            className="w-[320px] backdrop-blur-[32px] border border-white/20 shadow-2xl rounded-[24px] p-4 text-white flex flex-col gap-3 transition-all duration-300 mb-2"
+            className="w-[420px] relative overflow-hidden border border-white/20 shadow-2xl rounded-[24px] p-4 text-white flex flex-col gap-3 transition-all duration-300 backdrop-blur-xl"
             style={{
-              background: "rgba(255, 255, 255, 0.08)",
-              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.05)"
+              background: "rgba(0, 0, 0, 0.2)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15)"
             }}
           >
-            {/* Top row: Art, track info, visualizer */}
-            <div className="flex items-center gap-3">
-              <img 
-                src={currentTrack?.img} 
-                alt="Album Art" 
-                className="w-12 h-12 rounded-[10px] object-cover shadow-md shrink-0 border border-white/10" 
-              />
-              <div className="flex flex-col leading-tight flex-1 min-w-0 text-left">
-                <span className="font-semibold text-[13px] text-white/95 truncate tracking-wide">{currentTrack?.title}</span>
-                <span className="text-[11px] text-white/60 truncate mt-0.5">{currentTrack?.artist}</span>
-              </div>
-              
-              {/* Visualizer animation */}
-              <div className="flex items-end gap-[3px] h-3.5 w-5 shrink-0 justify-center">
-                <div className="w-[2px] bg-white/95 rounded-full wave-bar" style={{ animationDelay: '0.1s', animationDuration: '0.6s' }}></div>
-                <div className="w-[2px] bg-white/95 rounded-full wave-bar" style={{ animationDelay: '0.3s', animationDuration: '0.8s' }}></div>
-                <div className="w-[2px] bg-white/95 rounded-full wave-bar" style={{ animationDelay: '0.5s', animationDuration: '0.5s' }}></div>
-                <div className="w-[2px] bg-white/95 rounded-full wave-bar" style={{ animationDelay: '0.2s', animationDuration: '0.7s' }}></div>
-              </div>
-            </div>
 
-            {/* Middle row: Progress slider */}
-            <div className="flex flex-col gap-1.5 mt-0.5">
-              <div 
-                onClick={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const clickX = e.clientX - rect.left;
-                  const percentage = clickX / rect.width;
-                  const audioEl = document.querySelector("audio");
-                  if (audioEl && duration) {
-                    audioEl.currentTime = percentage * duration;
-                    setCurrentTime(percentage * duration);
-                  }
-                }}
-                className="h-1 bg-white/20 hover:h-1.5 rounded-full relative overflow-visible cursor-pointer transition-all duration-150 group"
-              >
-                <div 
-                  className="absolute top-0 left-0 bottom-0 bg-white rounded-full"
-                  style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+            {/* Content Container */}
+            <div className="relative z-10 flex flex-col gap-4">
+              {/* Top row: Centered track details & menu */}
+              <div className="flex flex-col items-center text-center mt-1 px-16 relative">
+                {/* Small album art on far left */}
+                <img 
+                  src={currentTrack?.img} 
+                  alt="Album Art" 
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-14 h-14 rounded-[8px] object-cover shadow-md border border-white/10 select-none pointer-events-none" 
                 />
+                <span className="font-bold text-[15px] text-white tracking-wide truncate max-w-[280px] leading-snug">
+                  {currentTrack?.title}
+                </span>
+                <span className="text-[12.5px] text-white/60 truncate max-w-[280px] mt-0.5 leading-none">
+                  {currentTrack?.artist}
+                </span>
+                {/* Options menu on far right */}
+                <button className="absolute right-0 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="1" />
+                    <circle cx="19" cy="12" r="1" />
+                    <circle cx="5" cy="12" r="1" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Middle row: Progress slider inline with timestamps */}
+              <div className="flex items-center gap-3 px-1 mt-1">
+                <span className="text-[10px] font-semibold text-white/50 w-8 text-right select-none">
+                  {formatTime(currentTime)}
+                </span>
                 <div 
-                  className="absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ left: `calc(${duration ? (currentTime / duration) * 100 : 0}% - 4px)` }}
-                />
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const percentage = clickX / rect.width;
+                    const audioEl = document.querySelector("audio");
+                    if (audioEl && duration) {
+                      audioEl.currentTime = percentage * duration;
+                      setCurrentTime(percentage * duration);
+                    }
+                  }}
+                  className="h-6 flex-1 relative flex items-center cursor-pointer group select-none"
+                >
+                  <style>{`
+                    @keyframes squiggly-wave {
+                      0% { transform: translate3d(0, 0, 0); }
+                      100% { transform: translate3d(-40px, 0, 0); }
+                    }
+                    .animate-squiggly {
+                      animation: squiggly-wave 1.2s linear infinite;
+                    }
+                  `}</style>
+                  
+                  {/* Background Track (Flat line) */}
+                  <div className="absolute left-0 right-0 h-1 bg-white/20 rounded-full" />
+                  
+                  {/* Active Track (Squiggly when playing, flat when paused) */}
+                  <div 
+                    className="absolute left-0 h-4 overflow-hidden pointer-events-none flex items-center"
+                    style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                  >
+                    {isAudioPlaying ? (
+                      <div className="w-[1000px] h-4 flex-shrink-0 animate-squiggly flex items-center text-white">
+                        <svg width="1000" height="16" viewBox="0 0 1000 16" fill="none" className="overflow-visible">
+                          <path 
+                            d="M 0 8 Q 5 2, 10 8 T 20 8 T 30 8 T 40 8 T 50 8 T 60 8 T 70 8 T 80 8 T 90 8 T 100 8 T 110 8 T 120 8 T 130 8 T 140 8 T 150 8 T 160 8 T 170 8 T 180 8 T 190 8 T 200 8 T 210 8 T 220 8 T 230 8 T 240 8 T 250 8 T 260 8 T 270 8 T 280 8 T 290 8 T 300 8 T 310 8 T 320 8 T 330 8 T 340 8 T 350 8 T 360 8 T 370 8 T 380 8 T 390 8 T 400 8 T 410 8 T 420 8 T 430 8 T 440 8 T 450 8 T 460 8 T 470 8 T 480 8 T 490 8 T 500 8 T 510 8 T 520 8 T 530 8 T 540 8 T 550 8 T 560 8 T 570 8 T 580 8 T 590 8 T 600 8 T 610 8 T 620 8 T 630 8 T 640 8 T 650 8 T 660 8 T 670 8 T 680 8 T 690 8 T 700 8 T 710 8 T 720 8 T 730 8 T 740 8 T 750 8 T 760 8 T 770 8 T 780 8 T 790 8 T 800 8 T 810 8 T 820 8 T 830 8 T 840 8 T 850 8 T 860 8 T 870 8 T 880 8 T 890 8 T 900 8 T 910 8 T 920 8 T 930 8 T 940 8 T 950 8 T 960 8 T 970 8 T 980 8 T 990 8 T 1000 8" 
+                            stroke="currentColor" 
+                            strokeWidth="2.5" 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                    ) : (
+                      <div className="w-[1000px] h-0.5 bg-white rounded-full" />
+                    )}
+                  </div>
+                  
+                  {/* Slider Knob */}
+                  <div 
+                    className="absolute w-2.5 h-2.5 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ left: `calc(${duration ? (currentTime / duration) * 100 : 0}% - 5px)` }}
+                  />
+                </div>
+                <span className="text-[10px] font-semibold text-white/50 w-8 text-left select-none">
+                  {formatRemainingTime(currentTime, duration)}
+                </span>
               </div>
-              <div className="flex justify-between items-center text-[10px] font-semibold text-white/60">
-                <span>{formatTime(currentTime)}</span>
-                <span>{formatRemainingTime(currentTime, duration)}</span>
+
+              {/* Bottom row: Favorite star, Playback controls, Headphones output */}
+              <div className="flex items-center justify-between px-3 mt-1 mb-1">
+                {/* Favorite Star Button */}
+                <button className="text-white/60 hover:text-white transition-colors">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                </button>
+
+                {/* Centered playback controls */}
+                <div className="flex items-center gap-7">
+                  <button 
+                    onClick={prevTrack}
+                    className="text-white hover:text-white/80 active:scale-95 transition-all"
+                    title="Previous Track"
+                  >
+                    <BsFillSkipBackwardFill size={20} />
+                  </button>
+
+                  <button 
+                    onClick={toggleAudio}
+                    className="text-white hover:scale-105 active:scale-95 transition-all flex items-center justify-center"
+                    title={isAudioPlaying ? "Pause" : "Play"}
+                  >
+                    {isAudioPlaying ? (
+                      <BsFillPauseFill size={36} />
+                    ) : (
+                      <BsFillPlayFill size={36} />
+                    )}
+                  </button>
+
+                  <button 
+                    onClick={nextTrack}
+                    className="text-white hover:text-white/80 active:scale-95 transition-all"
+                    title="Next Track"
+                  >
+                    <BsFillSkipForwardFill size={20} />
+                  </button>
+                </div>
+
+                {/* Headphone Audio Output Button */}
+                <button className="text-white/60 hover:text-white transition-colors">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+                  </svg>
+                </button>
               </div>
-            </div>
-
-            {/* Bottom row: Media Controls */}
-            <div className="flex items-center justify-between px-2 mt-0.5">
-              {/* Shuffle button */}
-              <button 
-                onClick={() => setIsShuffle(prev => !prev)}
-                className={`p-1.5 transition-colors ${isShuffle ? 'text-rose-400' : 'text-white/60 hover:text-white'}`}
-                title="Shuffle"
-              >
-                <FiShuffle size={14} />
-              </button>
-
-              {/* Prev button */}
-              <button 
-                onClick={prevTrack}
-                className="p-1.5 text-white/80 hover:text-white transition-colors"
-                title="Previous Track"
-              >
-                <BsFillSkipBackwardFill size={15} />
-              </button>
-
-              {/* Play/Pause button */}
-              <button 
-                onClick={toggleAudio}
-                className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white transition-all shadow-sm"
-                title={isAudioPlaying ? "Pause" : "Play"}
-              >
-                {isAudioPlaying ? (
-                  <BsFillPauseFill size={17} />
-                ) : (
-                  <BsFillPlayFill size={17} className="ml-0.5" />
-                )}
-              </button>
-
-              {/* Next button */}
-              <button 
-                onClick={nextTrack}
-                className="p-1.5 text-white/80 hover:text-white transition-colors"
-                title="Next Track"
-              >
-                <BsFillSkipForwardFill size={15} />
-              </button>
-
-              {/* Output / Device picker */}
-              <button 
-                className="p-1.5 text-white/60 hover:text-white transition-colors flex items-center justify-center"
-                title="AirPlay"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </button>
             </div>
           </div>
         )}
 
-        {/* Clickable profile area */}
-        <div
-          className="flex flex-col items-center gap-3 group cursor-pointer"
-          onClick={openEditModal}
-          title="Click to edit profile"
-        >
-          {/* Avatar */}
-          <div className="relative w-16 h-16">
-            <div 
-              className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/30 shadow-lg group-hover:border-white/60 transition-all flex items-center justify-center"
-              style={{ backgroundColor: profileBg || 'transparent' }}
-            >
-              <img src={profilePhoto} alt="user" className="w-full h-full object-cover" />
-            </div>
-            {/* Edit hint icon */}
-            <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="white">
-                <path d="M8.5 1.5a1.5 1.5 0 0 1 2.12 2.12L9.5 4.74 7.26 2.5 8.5 1.5zM6.5 3.26L1 8.76V11h2.24l5.5-5.5L6.5 3.26z"/>
-              </svg>
-            </div>
-          </div>
-          {/* Name */}
-          <span
-            className="text-[20px] font-medium text-white group-hover:text-white/80 transition-colors"
-            style={{
-              textShadow: "0 1px 3px rgba(0,0,0,0.4)",
-              fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
-            }}
+        {/* Clickable profile area (hidden when music app is open) */}
+        {!isMusicOpen && (
+          <div
+            className="flex flex-col items-center gap-3 group cursor-pointer"
+            onClick={openEditModal}
+            title="Click to edit profile"
           >
-            {username}
-          </span>
-        </div>
+            {/* Avatar */}
+            <div className="relative w-16 h-16">
+              <div 
+                className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/30 shadow-lg group-hover:border-white/60 transition-all flex items-center justify-center"
+                style={{ backgroundColor: profileBg || 'transparent' }}
+              >
+                <img src={profilePhoto} alt="user" className="w-full h-full object-cover" />
+              </div>
+              {/* Edit hint icon */}
+              <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="white">
+                  <path d="M8.5 1.5a1.5 1.5 0 0 1 2.12 2.12L9.5 4.74 7.26 2.5 8.5 1.5zM6.5 3.26L1 8.76V11h2.24l5.5-5.5L6.5 3.26z"/>
+                </svg>
+              </div>
+            </div>
+            {/* Name */}
+            <span
+              className="text-[20px] font-medium text-white group-hover:text-white/80 transition-colors"
+              style={{
+                textShadow: "0 1px 3px rgba(0,0,0,0.4)",
+                fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+              }}
+            >
+              {username}
+            </span>
+          </div>
+        )}
 
         {/* Password Entry */}
         <div className="flex flex-col items-center gap-2 w-full">
@@ -412,11 +470,12 @@ export default function LockScreen({ goNext }) {
             className={`relative w-48 mt-1 ${isWrongPassword ? 'shake-animation' : ''}`}
           >
             <input
+              ref={passwordInputRef}
               type="password"
               placeholder="Enter Password"
               value={passwordInput}
               onChange={(e) => setPasswordInput(e.target.value)}
-              className="w-full h-8 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-4 text-white text-[13px] placeholder-white/60 outline-none focus:bg-white/30 focus:border-white/50 transition-all"
+              className="w-full h-8 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-4 text-white text-[13px] placeholder-white/60 outline-none focus:border-white/50 transition-all"
               style={{
                 fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
               }}

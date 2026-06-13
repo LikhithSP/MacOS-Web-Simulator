@@ -266,7 +266,7 @@ export default function MusicApp({ windowId }) {
           className="h-[52px] flex items-center justify-between px-6 select-none border-b border-black/[0.08] dark:border-white/10 window-drag-handle"
           style={{ background: isDarkMode ? "#1e1e1e" : "#ffffff" }}
         >
-          <span className="text-[13px] font-bold text-gray-900 dark:text-white select-none">Albums</span>
+          <span className="text-[13px] font-bold text-gray-900 dark:text-white select-none">Songs</span>
           
           {/* Search bar & Settings toggle */}
           <div className="flex items-center gap-2.5">
@@ -277,7 +277,7 @@ export default function MusicApp({ windowId }) {
               <FiSearch size={12} className="text-gray-400 mr-1.5" />
               <input 
                 type="text" 
-                placeholder="Find in Albums" 
+                placeholder="Find in Songs" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent text-[11px] outline-none text-gray-800 dark:text-gray-200 placeholder-gray-400"
@@ -291,7 +291,7 @@ export default function MusicApp({ windowId }) {
           {filteredSongs.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center text-gray-400 dark:text-gray-500">
               <FiMusic size={40} className="mb-3 text-gray-300 dark:text-gray-700" />
-              <p className="text-[13px] font-medium">No albums found matching "{searchQuery}"</p>
+              <p className="text-[13px] font-medium">No songs found matching "{searchQuery}"</p>
             </div>
           ) : (
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-6">
@@ -316,7 +316,7 @@ export default function MusicApp({ windowId }) {
                       
                       {/* Play overlay hover indicator */}
                       <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <div className="w-10 h-10 rounded-full bg-white/95 text-gray-850 shadow-md flex items-center justify-center hover:scale-105 transition-transform">
+                        <div className="w-10 h-10 rounded-full bg-white/95 text-gray-900 shadow-md flex items-center justify-center hover:scale-105 transition-transform">
                           {(currentSongIndex === originalIndex && storeIsPlaying) ? <FiPause size={14} className="fill-current" /> : <FiPlay size={14} className="fill-current ml-0.5" />}
                         </div>
                       </div>
@@ -345,12 +345,14 @@ export default function MusicApp({ windowId }) {
 
         {/* Apple Music Style Floating Media Control Player */}
         <div 
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[620px] h-[52px] rounded-full border shadow-2xl flex items-center justify-between px-5 z-40 backdrop-blur-3xl transition-all"
+          className={`absolute bottom-6 left-1/2 -translate-x-1/2 w-[620px] h-[52px] rounded-full border shadow-2xl flex items-center justify-between px-5 z-40 transition-all ${
+            isDarkMode ? "backdrop-blur-md" : "backdrop-blur-3xl"
+          }`}
           style={{
-            background: isDarkMode ? "rgba(30, 30, 30, 0.45)" : "rgba(255, 255, 255, 0.35)",
-            borderColor: isDarkMode ? "rgba(255, 255, 255, 0.15)" : "rgba(255, 255, 255, 0.5)",
+            background: isDarkMode ? "rgba(20, 20, 20, 0.05)" : "rgba(255, 255, 255, 0.35)",
+            borderColor: isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.5)",
             boxShadow: isDarkMode 
-              ? "0 10px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15)" 
+              ? "0 10px 30px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)" 
               : "0 10px 30px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.6)"
           }}
         >
