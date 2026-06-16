@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useAppStore } from "../store/Appstore.js";
-import { Terminals } from "../app/Terminal";
 import { Safari } from "../app/Safari";
 import Spotify from "../app/Spotify";
 import Settings from "../app/Settings";
@@ -29,7 +28,7 @@ export default function Dock() {
     {
       id: "Launchpad",
       label: "Launchpad",
-      icon: "https://s3.macosicons.com/macosicons/icons/nmS031CMGF/lowResPngFile_bb6cdfc3456ac1ec1ccf938473dd52aa_low_res_Launchpad.png",
+      icon: "https://s3.macosicons.com/macosicons/icons/ncy8MiCAOA/lowResPngFile_0f531e205b4ebaf7ab0b01d1bd6040cb_low_res_Launchpad__MacOS_Tahoe_.png",
       action: () => {}, // Placeholder
     },
     {
@@ -69,9 +68,21 @@ export default function Dock() {
       action: () => {},
     },
     {
+      id: "Phone",
+      label: "Phone",
+      icon: "https://s3.macosicons.com/macosicons/icons/Ji1iUu6nEa/lowResPngFile_e783299046843b81979c158cefcacf46_Ji1iUu6nEa.png",
+      action: () => {},
+    },
+    {
       id: "Calendar",
       label: "Calendar",
-      icon: "https://s3.macosicons.com/macosicons/icons/25y2FI4DUz/lowResPngFile_b4c04574d8d347c344f0dff49277c24c_25y2FI4DUz.png",
+      icon: "https://s3.macosicons.com/macosicons/icons/4GkFHZIM7u/lowResPngFile_d5fa0dee2f905f35c1467503869f42d8_4GkFHZIM7u.png",
+      action: () => {},
+    },
+    {
+      id: "Contacts",
+      label: "Contacts",
+      icon: "https://s3.macosicons.com/macosicons/icons/qxxJOsedmH/lowResPngFile_e03dd92dadf694dbe1b0ca0ad69d53d8_qxxJOsedmH.png",
       action: () => {},
     },
     {
@@ -105,16 +116,34 @@ export default function Dock() {
       action: () => {},
     },
     {
+      id: "AppStore",
+      label: "App Store",
+      icon: "https://s3.macosicons.com/macosicons/icons/ZTpqalXxE3/lowResPngFile_8f0aba462304996c37f9f506b368c53b_low_res_App_Store__MacOS_Tahoe_.png",
+      action: () => {},
+    },
+    {
+      id: "Pages",
+      label: "Pages",
+      icon: "https://s3.macosicons.com/macosicons/icons/yS4ZGNMHPE/lowResPngFile_a972c71f10ce8c450b90fceeac2cff24_low_res_Pages__Default___macOS_26.2__.png",
+      action: () => {},
+    },
+    {
+      id: "Numbers",
+      label: "Numbers",
+      icon: "https://s3.macosicons.com/macosicons/icons/orUYyfFrkH/lowResPngFile_9a2fdc6e0cdc4be97c385da2f582d669_low_res_Numbers__Default___macOS_26.2__.png",
+      action: () => {},
+    },
+    {
+      id: "Keynote",
+      label: "Keynote",
+      icon: "https://s3.macosicons.com/macosicons/icons/SlTcHVkQP5/lowResPngFile_a298aca968f43febc06df474aefb8eb5_low_res_Keynote__Apple_Creative_Studio_.png",
+      action: () => {},
+    },
+    {
       id: "Settings",
       label: "Settings",
       icon: "https://s3.macosicons.com/macosicons/icons/mTHdx8YStT/lowResPngFile_4fc1a86ec5cb831e11c424f412b8da37_low_res_Settings.png",
       comp: <Settings />,
-    },
-    {
-      id: "terminal",
-      label: "Terminal",
-      icon: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Terminalicon2.png",
-      comp: <Terminals />,
     },
     { divider: true },
     {
@@ -130,6 +159,12 @@ export default function Dock() {
       url: "https://www.linkedin.com/in/likhithsp/",
     },
     { divider: true },
+    {
+      id: "Folder",
+      label: "Folder",
+      icon: "https://s3.macosicons.com/macosicons/icons/B1JLHCpe08/lowResPngFile_11113cc80977b7c9417ce4fb349cbd35_low_res_Folder_Common.png",
+      action: () => {},
+    },
     {
       id: "Trash",
       label: "Trash",

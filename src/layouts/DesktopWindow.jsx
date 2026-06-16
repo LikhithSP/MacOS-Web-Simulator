@@ -7,7 +7,6 @@ import ContextMenu from "../components/ContextMenu";
 import { AnimatePresence, motion } from "framer-motion";
 import { FiFolder, FiFile } from "react-icons/fi";
 import Finder from "../app/Finder";
-import { Terminals } from "../app/Terminal";
 import CalendarWidget from "../components/widgets/CalendarWidget";
 import WeatherWidget from "../components/widgets/WeatherWidget";
 import PhotoWidget from "../components/widgets/PhotoWidget";
@@ -19,6 +18,8 @@ import GlassRemindersWidget from "../components/widgets/GlassRemindersWidget";
 import GlassMiniCalendarWidget from "../components/widgets/GlassMiniCalendarWidget";
 import GlassSFWeatherWidget from "../components/widgets/GlassSFWeatherWidget";
 import GlassDayWidget from "../components/widgets/GlassDayWidget";
+import GlassSmallWorldClockWidget from "../components/widgets/GlassSmallWorldClockWidget";
+import GlassWideRemindersWidget from "../components/widgets/GlassWideRemindersWidget";
 import { FiX } from "react-icons/fi";
 
 export default function Desktop({ setStage, isLocked = false }) {
@@ -135,10 +136,6 @@ export default function Desktop({ setStage, isLocked = false }) {
     openApp("Finder", <Finder initialPath={path} />);
   };
 
-  const handleOpenTerminal = () => {
-    openApp("terminal", <Terminals />);
-  };
-
   const handleItemDoubleClick = (item) => {
     if (item.type === "folder") {
       openApp("Finder", <Finder initialPath="/desktop" />);
@@ -237,7 +234,9 @@ export default function Desktop({ setStage, isLocked = false }) {
                 {widget.type === 'glass_calendar' && <GlassCalendarWidget />}
                 {widget.type === 'glass_weather' && <GlassWeatherWidget />}
                 {widget.type === 'glass_world_clock' && <GlassWorldClockWidget />}
+                {widget.type === 'glass_small_world_clock' && <GlassSmallWorldClockWidget />}
                 {widget.type === 'glass_reminders' && <GlassRemindersWidget />}
+                {widget.type === 'glass_wide_reminders' && <GlassWideRemindersWidget />}
                 {widget.type === 'glass_mini_calendar' && <GlassMiniCalendarWidget />}
                 {widget.type === 'glass_sf_weather' && <GlassSFWeatherWidget />}
                 {widget.type === 'glass_day' && <GlassDayWidget />}
@@ -519,6 +518,40 @@ export default function Desktop({ setStage, isLocked = false }) {
 
               <div className="flex flex-col items-center">
                 <div className="w-full mb-3 flex items-center justify-between">
+                  <span className="text-white/90 font-medium">Glass Wide Reminders</span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type: 'glass_wide_reminders' } }));
+                    }}
+                    className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
+                  <GlassWideRemindersWidget />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="w-full mb-3 flex items-center justify-between">
+                  <span className="text-white/90 font-medium">Glass Small World Clock</span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type: 'glass_small_world_clock' } }));
+                    }}
+                    className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
+                  <GlassSmallWorldClockWidget />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="w-full mb-3 flex items-center justify-between">
                   <span className="text-white/90 font-medium">Glass Mini Calendar</span>
                   <button 
                     onClick={() => {
@@ -594,7 +627,6 @@ export default function Desktop({ setStage, isLocked = false }) {
                 y={contextMenu.y}
                 onClose={() => setContextMenu(null)}
                 onOpenFinder={handleOpenFinder}
-                onOpenTerminal={handleOpenTerminal}
               />
             )}
           </AnimatePresence>

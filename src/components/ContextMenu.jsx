@@ -10,7 +10,6 @@ import {
   FiGrid,
   FiPlus,
   FiFile,
-  FiTerminal,
   FiCopy,
   FiClipboard,
   FiEye,
@@ -41,7 +40,7 @@ const galleryWallpapers = Object.keys(wallpaperModules)
 
 const wallpapers = [...galleryWallpapers];
 
-export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTerminal }) {
+export default function ContextMenu({ x, y, onClose, onOpenFinder }) {
   const menuRef = useRef(null);
   const preloadedWallpapers = useRef(new Set());
   const [submenu, setSubmenu] = useState(null);
@@ -210,10 +209,6 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
     onClose();
   };
 
-  const handleOpenTerminal = () => {
-    if (onOpenTerminal) onOpenTerminal();
-    onClose();
-  };
 
   const handleGetInfo = () => {
     alert(`Desktop Information\n\nScreen: ${window.innerWidth}x${window.innerHeight}\nUser Agent: ${navigator.userAgent.substring(0, 50)}...`);
@@ -276,12 +271,7 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, onOpenTermina
         onClose();
       },
     },
-    { divider: true },
-    {
-      label: "Open Terminal Here",
-      icon: FiTerminal,
-      onClick: handleOpenTerminal,
-    },
+
     {
       label: "Open in Finder",
       icon: FiFolder,

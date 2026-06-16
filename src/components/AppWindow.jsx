@@ -46,16 +46,14 @@ export default function AppWindow({ window: win }) {
   };
 
   const handleMaximize = () => {
-    if (!win.maximized) {
-      // Save current state before maximizing
-      setPreMaxState({ ...windowState });
-    }
     toggleMaximize(win.id);
   };
 
   // Handle maximize/restore
   useEffect(() => {
     if (win.maximized) {
+      // Save current state before maximizing
+      setPreMaxState({ ...windowState });
       // Maximize: fill screen below top bar
       setWindowState({
         x: 0,

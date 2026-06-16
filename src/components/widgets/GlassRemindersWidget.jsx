@@ -49,7 +49,7 @@ export default function GlassRemindersWidget() {
               )}
             </div>
             {/* Text */}
-            <span className={`text-[11px] font-medium transition-all ${item.completed ? 'line-through text-white/40' : 'text-white/90 group-hover:text-white'}`}>
+            <span className={`text-[10px] font-normal transition-all ${item.completed ? 'line-through text-white/40' : 'text-white/90 group-hover:text-white'}`}>
               {item.text}
             </span>
           </div>
