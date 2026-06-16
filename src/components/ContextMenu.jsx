@@ -40,7 +40,7 @@ const galleryWallpapers = Object.keys(wallpaperModules)
 
 const wallpapers = [...galleryWallpapers];
 
-export default function ContextMenu({ x, y, onClose, onOpenFinder }) {
+export default function ContextMenu({ x, y, onClose, onOpenFinder, hasClipboard, onPaste }) {
   const menuRef = useRef(null);
   const preloadedWallpapers = useRef(new Set());
   const [submenu, setSubmenu] = useState(null);
@@ -227,6 +227,12 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder }) {
       icon: FiFile,
       onClick: handleCreateFile,
     },
+    hasClipboard ? {
+      label: "Paste",
+      icon: FiClipboard,
+      onClick: onPaste,
+      shortcut: "⌘V",
+    } : null,
     { divider: true },
     {
       label: "Get Info",
@@ -287,7 +293,7 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder }) {
       onClick: handleRefresh,
       shortcut: "⌘R",
     },
-  ];
+  ].filter(Boolean);
 
   return (
     <>

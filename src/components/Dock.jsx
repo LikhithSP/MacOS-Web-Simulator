@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAppStore } from "../store/Appstore.js";
 import { Safari } from "../app/Safari";
 import Spotify from "../app/Spotify";
@@ -8,15 +8,94 @@ import Blogs from "../app/Blogs/BlogsSection.jsx";
 import Finder from "../app/Finder";
 import Trash from "../app/Trash";
 
+const getWindowTitle = (win) => {
+  if (win.appId === "TextEdit") {
+    return win.component?.props?.file?.name || "untitled.txt";
+  }
+  if (win.appId === "PDFViewer") {
+    return win.component?.props?.file?.name || "document.pdf";
+  }
+  if (win.appId === "Finder") {
+    const path = win.component?.props?.initialPath || "/icloud";
+    const segment = path.split("/").pop();
+    return `Finder (${segment || "Home"})`;
+  }
+  return win.appId;
+};
+
+const getWindowIcon = (win, apps) => {
+  if (win.appId === "Finder") {
+    return "https://upload.wikimedia.org/wikipedia/commons/c/c9/Finder_Icon_macOS_Big_Sur.png";
+  }
+  if (win.appId === "TextEdit") {
+    return "https://s3.macosicons.com/macosicons/icons/aExwB3ULuk/lowResPngFile_a819aac512e7261fee3310f1bbdaada7_aExwB3ULuk.png";
+  }
+  if (win.appId === "PDFViewer") {
+    return "https://s3.macosicons.com/macosicons/icons/ayIhAsqzsY/lowResPngFile_55b757e27580fefb9bd856a23abf6d0f_low_res_Pdf_Document.png";
+  }
+  const dockApp = apps?.find((a) => a.id === win.appId);
+  return dockApp?.icon || "https://s3.macosicons.com/macosicons/icons/B1JLHCpe08/lowResPngFile_11113cc80977b7c9417ce4fb349cbd35_low_res_Folder_Common.png";
+};
+
 export default function Dock() {
   const openApp = useAppStore((s) => s.openApp);
   const windows = useAppStore((s) => s.windows);
   const restoreApp = useAppStore((s) => s.restoreApp);
   const focusApp = useAppStore((s) => s.focusApp);
+  const closeApp = useAppStore((s) => s.closeApp);
   const isDarkMode = useAppStore((s) => s.isDarkMode);
   const [hoveredApp, setHoveredApp] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [bouncingAppId, setBouncingAppId] = useState(null);
+
+  const leaveTimeoutRef = useRef(null);
+
+  const [hasTrashedItems, setHasTrashedItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem("os_trash");
+      return saved ? JSON.parse(saved).length > 0 : false;
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    const handleTrashUpdated = (e) => {
+      setHasTrashedItems(e.detail.hasFiles);
+    };
+    
+    // Also listen to Finder deleting file directly (as back up / instant refresh)
+    const handleFileTrashed = () => {
+      setHasTrashedItems(true);
+    };
+
+    window.addEventListener("os_trash_updated", handleTrashUpdated);
+    window.addEventListener("os_file_trash", handleFileTrashed);
+    return () => {
+      window.removeEventListener("os_trash_updated", handleTrashUpdated);
+      window.removeEventListener("os_file_trash", handleFileTrashed);
+    };
+  }, []);
+
+  const handleMouseLeave = () => {
+    if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+    leaveTimeoutRef.current = setTimeout(() => {
+      setHoveredApp(null);
+      setHoveredIndex(null);
+    }, 250);
+  };
+
+  const handleMouseEnterIcon = (app, index) => {
+    if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+    setHoveredApp(app);
+    setHoveredIndex(index);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+    };
+  }, []);
 
   const apps = [
     {
@@ -168,13 +247,20 @@ export default function Dock() {
     {
       id: "Trash",
       label: "Trash",
-      icon: "https://s3.macosicons.com/macosicons/icons/lVRgezRq9O/lowResPngFile_0c8fd7da19979a71c397f82b7764f8df_lVRgezRq9O.png",
+      icon: hasTrashedItems
+        ? "https://s3.macosicons.com/macosicons/icons/yrypldfXBR/lowResPngFile_c3be764d323d03b2ce9921be92216fca_yrypldfXBR.png"
+        : "https://s3.macosicons.com/macosicons/icons/lVRgezRq9O/lowResPngFile_0c8fd7da19979a71c397f82b7764f8df_lVRgezRq9O.png",
       comp: <Trash />,
     },
   ];
 
   // Check if an app is currently open
-  const isAppOpen = (appId) => windows.some((w) => w.appId === appId);
+  const isAppOpen = (appId) => {
+    if (appId === "Finder") {
+      return windows.some((w) => w.appId === "Finder" || w.appId === "TextEdit" || w.appId === "PDFViewer");
+    }
+    return windows.some((w) => w.appId === appId);
+  };
   
   // Check if an app is minimized
   const isAppMinimized = (appId) => windows.some((w) => w.appId === appId && w.minimized);
@@ -225,7 +311,7 @@ export default function Dock() {
         px-1 py-1 rounded-2xl
         backdrop-blur-sm
         h-[56px] overflow-visible
-        border transition-all duration-300
+        border transition-all duration-300 z-[99999]
         ${isDarkMode ? 'border-white/10' : 'border-white/20'}
       `}
       style={{ 
@@ -234,10 +320,7 @@ export default function Dock() {
           ? "0 10px 40px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.05)" 
           : "0 10px 40px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.1)"
       }}
-      onMouseLeave={() => {
-        setHoveredApp(null);
-        setHoveredIndex(null);
-      }}
+      onMouseLeave={handleMouseLeave}
     >
       {apps.map((app, index) => {
         if (app.divider)
@@ -251,14 +334,18 @@ export default function Dock() {
         const scale = getIconScale(index);
         const baseSize = 48; // Base icon size in pixels
         const iconSize = baseSize * scale;
+        const appWindows = windows.filter((w) => {
+          if (app.id === "Finder") {
+            return w.appId === "Finder" || w.appId === "TextEdit" || w.appId === "PDFViewer";
+          }
+          return w.appId === app.id;
+        });
+        const hasWindows = appWindows.length > 0;
 
         return (
           <div
             key={app.id}
-            onMouseEnter={() => {
-              setHoveredApp(app);
-              setHoveredIndex(index);
-            }}
+            onMouseEnter={() => handleMouseEnterIcon(app, index)}
             onClick={() => handleAppClick(app)}
             className={`
               relative
@@ -272,22 +359,88 @@ export default function Dock() {
               transition: "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)"
             }}
           >
-            {/* Tooltip - positioned above each icon */}
+            {/* Tooltip / Window Previews - positioned above each icon */}
             {hoveredApp?.id === app.id && (
-              <div
-                className="
-                  absolute -top-9
-                  px-3 py-1 rounded-md
-                  bg-gray-900/95 text-white shadow-xl
-                  text-xs font-medium backdrop-blur-xl
-                  animate-fadeSlide pointer-events-none
-                  whitespace-nowrap z-50
-                  border border-white/10
-                "
-              >
-                {app.label}
-                <div className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-2 h-2 bg-gray-900/95 rotate-45 border-r border-b border-white/10" />
-              </div>
+              (hasWindows && app.id === "Finder") ? (
+                <div
+                  className="
+                    absolute -top-[140px] left-1/2 -translate-x-1/2
+                    flex gap-3 p-3 rounded-xl
+                    bg-gray-950/90 text-white shadow-2xl
+                    backdrop-blur-xl pointer-events-auto
+                    animate-fadeSlide z-50
+                    border border-white/10 min-w-[150px]
+                  "
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseEnter={() => {
+                    if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+                  }}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  {appWindows.map((win) => {
+                    const title = getWindowTitle(win);
+                    const iconUrl = getWindowIcon(win, apps);
+                    return (
+                      <div
+                        key={win.id}
+                        onClick={() => {
+                          restoreApp(win.id);
+                          focusApp(win.id);
+                        }}
+                        className={`
+                          relative group/preview flex flex-col items-center gap-1.5 p-2 rounded-lg 
+                          transition duration-150 cursor-pointer min-w-[95px] max-w-[130px]
+                          ${win.minimized ? "bg-white/5 opacity-75 hover:opacity-100 hover:bg-white/10" : "bg-white/10 hover:bg-white/15"}
+                        `}
+                      >
+                        {/* Miniature window mockup */}
+                        <div className="w-16 h-12 rounded bg-black/40 flex items-center justify-center relative shadow-inner border border-white/5">
+                          <img src={iconUrl} alt="" className="w-8 h-8 object-contain" />
+                          {win.minimized && (
+                            <span className="absolute bottom-1 right-1 text-[8px] bg-yellow-500/80 text-black px-1 rounded font-semibold scale-90">min</span>
+                          )}
+                        </div>
+                        
+                        {/* Title */}
+                        <span className="text-[10px] font-medium text-center truncate w-full text-gray-300 group-hover/preview:text-white px-0.5">
+                          {title}
+                        </span>
+
+                        {/* Close button on hover */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            closeApp(win.id);
+                          }}
+                          className="
+                            absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500/90 text-white 
+                            flex items-center justify-center text-[10px] font-bold shadow-md opacity-0 
+                            group-hover/preview:opacity-100 transition-opacity hover:bg-red-600
+                          "
+                        >
+                          ×
+                        </button>
+                      </div>
+                    );
+                  })}
+                  <div className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-2 h-2 bg-gray-955/90 rotate-45 border-r border-b border-white/10" />
+                </div>
+              ) : (
+                <div
+                  className="
+                    absolute -top-9
+                    px-3 py-1 rounded-md
+                    bg-gray-900/95 text-white shadow-xl
+                    text-xs font-medium backdrop-blur-xl
+                    animate-fadeSlide pointer-events-none
+                    whitespace-nowrap z-50
+                    border border-white/10
+                  "
+                >
+                  {app.label}
+                  <div className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-2 h-2 bg-gray-900/95 rotate-45 border-r border-b border-white/10" />
+                </div>
+              )
             )}
             
             <div

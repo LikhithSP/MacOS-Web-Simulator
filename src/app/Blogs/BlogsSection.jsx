@@ -242,7 +242,19 @@ export default function Blogs({ windowId }) {
   
   const [notes, setNotes] = useState(() => {
     const saved = localStorage.getItem("os_notes");
-    return saved ? JSON.parse(saved) : defaultNotes;
+    const parsedNotes = saved ? JSON.parse(saved) : defaultNotes;
+    
+    // Filter out the requested default notes
+    const titlesToRemove = [
+      "reasons to use apple notes",
+      "things to complete",
+      "shopping list"
+    ];
+    return parsedNotes.filter(note => {
+      if (!note || !note.title) return true;
+      const titleLower = note.title.toLowerCase();
+      return !titlesToRemove.some(t => titleLower.includes(t));
+    });
   });
   
   const [selectedFolder, setSelectedFolder] = useState("notes");
@@ -319,6 +331,40 @@ export default function Blogs({ windowId }) {
   };
 
   const activeNote = notes.find((n) => n.id === selectedNote);
+
+  const handlePaste = (e) => {
+    if (!activeNote) return;
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        e.preventDefault();
+        const file = items[i].getAsFile();
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const base64 = event.target.result;
+          const currentImages = activeNote.images || [];
+          const updatedImages = [...currentImages, base64];
+          
+          setNotes((prev) =>
+            prev.map((n) =>
+              n.id === activeNote.id
+                ? { 
+                    ...n, 
+                    images: updatedImages,
+                    thumbnail: base64,
+                    subtitle: `${updatedImages.length} photo${updatedImages.length > 1 ? 's' : ''}`,
+                    updatedAt: new Date().toISOString() 
+                  }
+                : n
+            )
+          );
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
 
   return (
     <div 
@@ -662,7 +708,10 @@ export default function Blogs({ windowId }) {
         </header>
 
         {/* Editor Body */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 select-text">
+        <div 
+          className="flex-1 overflow-y-auto px-8 py-6 select-text notes-no-scrollbar"
+          onPaste={handlePaste}
+        >
           {activeNote ? (
             <div className="max-w-xl mx-auto flex flex-col h-full">
               {/* Date display centered like macOS Notes */}
@@ -691,6 +740,42 @@ export default function Blogs({ windowId }) {
 
               {/* Special handwritten sketch display for massive stars note */}
               {activeNote.hasSketch && <SupernovaSketch />}
+
+              {/* Display pasted images */}
+              {activeNote.images && activeNote.images.length > 0 && (
+                <div className="flex flex-col gap-4 mb-4 w-full">
+                  {activeNote.images.map((img, idx) => (
+                    <div key={idx} className="relative group rounded-xl overflow-hidden border border-black/10 dark:border-white/10 shadow-sm w-full bg-black/5 dark:bg-white/5 p-1">
+                      <img src={img} className="w-full h-auto max-h-[600px] object-contain rounded-lg mx-auto" alt="Pasted attachment" />
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const updatedImages = activeNote.images.filter((_, i) => i !== idx);
+                          setNotes((prev) =>
+                            prev.map((n) =>
+                              n.id === activeNote.id
+                                ? { 
+                                    ...n, 
+                                    images: updatedImages,
+                                    thumbnail: updatedImages.length > 0 ? updatedImages[0] : null,
+                                    subtitle: updatedImages.length > 0 
+                                      ? `${updatedImages.length} photo${updatedImages.length > 1 ? 's' : ''}` 
+                                      : (n.content?.slice(0, 30) || "No additional text"),
+                                    updatedAt: new Date().toISOString() 
+                                  }
+                                : n
+                            )
+                          );
+                        }}
+                        className="absolute top-3 right-3 bg-black/75 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100 text-xs cursor-pointer shadow-md"
+                        title="Remove Image"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Body Textarea */}
               <textarea

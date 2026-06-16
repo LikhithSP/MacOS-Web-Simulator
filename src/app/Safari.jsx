@@ -54,7 +54,7 @@ const TrafficLights = ({ windowId }) => {
   );
 };
 
-export function Safari({ initialUrl = "https://www.google.com/webhp?igu=1", windowId }) {
+export function Safari({ initialUrl = "https://www.google.com/webhp?igu=1", windowId, isDragging, isResizing }) {
   const isDarkMode = useAppStore((s) => s.isDarkMode);
   const [url, setUrl] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -265,7 +265,7 @@ export function Safari({ initialUrl = "https://www.google.com/webhp?igu=1", wind
 
         {/* URL Bar */}
         <form onSubmit={handleSubmit} className="flex-1 mx-4">
-          <div className={`flex items-center gap-2 rounded-lg px-3 py-1.5 border transition-all duration-300 ${isDarkMode
+          <div className={`flex items-center gap-2 rounded-full px-3 py-1.5 border transition-all duration-300 ${isDarkMode
               ? 'bg-[#1c1c1e] border-[#3d3d3f] focus-within:border-[#007AFF]'
               : 'bg-white border-[#d0d0d0] focus-within:border-[#007AFF]'
             }`}>
@@ -332,7 +332,7 @@ export function Safari({ initialUrl = "https://www.google.com/webhp?igu=1", wind
           ref={iframeRef}
           src={currentUrl}
           onLoad={handleIframeLoad}
-          className="w-full h-full border-none hide-scrollbar"
+          className={`w-full h-full border-none hide-scrollbar ${isDragging || isResizing ? "pointer-events-none" : ""}`}
           referrerPolicy="no-referrer"
           title="Safari Browser"
         />

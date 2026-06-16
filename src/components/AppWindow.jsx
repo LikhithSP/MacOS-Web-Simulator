@@ -159,7 +159,7 @@ export default function AppWindow({ window: win }) {
               className={`flex flex-col overflow-hidden ${
                 win.maximized ? "rounded-none" : "rounded-xl"
               } ${
-                win.appId === "Photos" || win.appId === "Music" || win.appId === "Safari" || win.appId === "Notes"
+                win.appId === "Photos" || win.appId === "Music" || win.appId === "Safari" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash"
                   ? isDarkMode
                     ? "bg-[#1e1e1e] text-white border border-white/10"
                     : "bg-white text-gray-900 border border-black/10 shadow-2xl"
@@ -171,8 +171,8 @@ export default function AppWindow({ window: win }) {
                 willChange: isDragging || isResizing ? 'transform' : 'auto',
               }}
             >
-              {/* Title Bar - Skip for Photos, Music, Safari, and Notes since they integrate their own */}
-              {win.appId !== "Photos" && win.appId !== "Music" && win.appId !== "Safari" && win.appId !== "Notes" && (
+              {/* Title Bar - Skip for Photos, Music, Safari, Finder, Notes, TextEdit, PDFViewer, and Trash since they integrate their own */}
+              {win.appId !== "Photos" && win.appId !== "Music" && win.appId !== "Safari" && win.appId !== "Notes" && win.appId !== "Finder" && win.appId !== "TextEdit" && win.appId !== "PDFViewer" && win.appId !== "Trash" && (
                 <div 
                   className={`window-drag-handle relative h-11 bg-linear-to-b from-white/10 to-transparent flex items-center cursor-grab active:cursor-grabbing select-none ${
                     win.maximized ? "" : "rounded-t-xl"
@@ -231,8 +231,8 @@ export default function AppWindow({ window: win }) {
               )}
 
               {/* App Content */}
-              <div className={`flex-1 overflow-hidden flex flex-col ${win.appId === "Photos" || win.appId === "Music" || win.appId === "Safari" || win.appId === "Notes" ? "" : "text-white bg-black/20"}`}>
-                {React.cloneElement(win.component, { windowId: win.id, maximized: win.maximized })}
+              <div className={`flex-1 overflow-hidden flex flex-col ${win.appId === "Photos" || win.appId === "Music" || win.appId === "Safari" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" ? "" : "text-white bg-black/20"}`}>
+                {React.cloneElement(win.component, { windowId: win.id, maximized: win.maximized, isDragging, isResizing })}
               </div>
             </motion.div>
           )}
