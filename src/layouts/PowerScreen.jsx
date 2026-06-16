@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function PowerScreen({ goNext }) {
-  const [bootStarted, setBootStarted] = useState(false);
+export default function PowerScreen({ goNext, autoBoot = false }) {
+  const [bootStarted, setBootStarted] = useState(autoBoot);
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 

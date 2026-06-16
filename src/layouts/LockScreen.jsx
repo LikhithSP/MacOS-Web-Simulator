@@ -32,7 +32,7 @@ const MacBatteryIcon = () => (
   </svg>
 );
 
-export default function LockScreen({ goNext }) {
+export default function LockScreen({ goNext, isLocked }) {
   const isAudioPlaying = useAppStore((state) => state.isAudioPlaying);
   const currentTrack = useAppStore((state) => state.currentTrack);
   const toggleAudio = useAppStore((state) => state.toggleAudio);
@@ -48,10 +48,19 @@ export default function LockScreen({ goNext }) {
 
   const [isUnlocking, setIsUnlocking] = useState(false);
   const [time, setTime] = useState(new Date());
-  const [lockscreenWallpaper, setLockscreenWallpaper] = useState("/Wallpaper/GoldenGate_6k.png");
+  const [lockscreenWallpaper, setLockscreenWallpaper] = useState(() => {
+    return localStorage.getItem("lockscreen_wallpaper") || "/Wallpaper/GoldenGate_6k.png";
+  });
   
   const [passwordInput, setPasswordInput] = useState("");
   const [isWrongPassword, setIsWrongPassword] = useState(false);
+
+  useEffect(() => {
+    if (isLocked) {
+      setIsUnlocking(false);
+      setPasswordInput("");
+    }
+  }, [isLocked]);
 
   // Sync with active audio element duration & time updates
   useEffect(() => {
@@ -132,7 +141,7 @@ export default function LockScreen({ goNext }) {
   const handleUnlock = useCallback(() => {
     enterFullscreen();
     setIsUnlocking(true);
-    setTimeout(() => goNext(), 500);
+    setTimeout(() => goNext(), 450);
   }, [enterFullscreen, goNext]);
 
   const handleSubmitPassword = useCallback((e) => {
@@ -206,7 +215,7 @@ export default function LockScreen({ goNext }) {
   return (
     <div
       className={`relative w-screen h-screen overflow-hidden text-white font-sans select-none
-        transition-transform duration-700 ease-in-out
+        transition-transform duration-[450ms] [transition-timing-function:cubic-bezier(0.25,1,0.5,1)] transform-gpu will-change-transform
         ${isUnlocking ? "-translate-y-full" : "translate-y-0"}`}
     >
       <style>{`

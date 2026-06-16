@@ -10,6 +10,7 @@ import Finder from "../app/Finder";
 import CalendarWidget from "../components/widgets/CalendarWidget";
 import WeatherWidget from "../components/widgets/WeatherWidget";
 import PhotoWidget from "../components/widgets/PhotoWidget";
+import ClockWidget from "../components/widgets/ClockWidget";
 import GlassClockWidget from "../components/widgets/GlassClockWidget";
 import GlassCalendarWidget from "../components/widgets/GlassCalendarWidget";
 import GlassWeatherWidget from "../components/widgets/GlassWeatherWidget";
@@ -230,6 +231,7 @@ export default function Desktop({ setStage, isLocked = false }) {
                 {widget.type === 'calendar' && <CalendarWidget />}
                 {widget.type === 'weather' && <WeatherWidget />}
                 {widget.type === 'photo' && <PhotoWidget />}
+                {widget.type === 'clock' && <ClockWidget />}
                 {widget.type === 'glass_clock' && <GlassClockWidget />}
                 {widget.type === 'glass_calendar' && <GlassCalendarWidget />}
                 {widget.type === 'glass_weather' && <GlassWeatherWidget />}
@@ -428,6 +430,23 @@ export default function Desktop({ setStage, isLocked = false }) {
                 </div>
                 <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
                   <PhotoWidget />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="w-full mb-3 flex items-center justify-between">
+                  <span className="text-white/90 font-medium">Clock</span>
+                  <button 
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type: 'clock' } }));
+                    }}
+                    className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="pointer-events-none scale-100 transform origin-top w-full flex justify-center">
+                  <ClockWidget />
                 </div>
               </div>
 

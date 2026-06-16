@@ -9,7 +9,49 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Calendar } from "./ui/calendar";
-import { FiSearch, FiMic } from "react-icons/fi";
+import { useAppStore } from "../store/Appstore";
+import { 
+  FiSearch, 
+  FiMic, 
+  FiMonitor, 
+  FiSettings, 
+  FiShoppingBag, 
+  FiClock, 
+  FiXCircle, 
+  FiMoon, 
+  FiRefreshCw, 
+  FiPower, 
+  FiLock, 
+  FiUser, 
+  FiChevronRight,
+  FiFolderPlus,
+  FiPlusSquare,
+  FiPlus,
+  FiFileText,
+  FiInfo,
+  FiEdit3,
+  FiCopy,
+  FiCornerUpLeft,
+  FiCornerUpRight,
+  FiScissors,
+  FiClipboard,
+  FiMaximize,
+  FiGrid,
+  FiList,
+  FiColumns,
+  FiImage,
+  FiMinusSquare,
+  FiMaximize2,
+  FiArrowLeft,
+  FiArrowRight,
+  FiHome,
+  FiFile,
+  FiDownload,
+  FiMinus,
+  FiLayers,
+  FiHelpCircle,
+  FiAward
+} from "react-icons/fi";
 import ControlCenter from "./ControlCenter";
 
 // macOS Style Apple Logo
@@ -49,13 +91,15 @@ const ControlCenterIcon = () => (
 );
 
 export default function TopBar({ appTitle = "Finder", setStage }) {
-
+  const isDarkMode = useAppStore((state) => state.isDarkMode);
   const [ccOpen, setCcOpen] = useState(false);
+  const [username, setUsername] = useState(() => localStorage.getItem("lock_username") || "Likhith SP");
 
   function handleAction(action) {
     if (action === "lock") setStage("lock");
     if (action === "logout") setStage("lock");
     if (action === "sleep") setStage("lock");
+    if (action === "restart") setStage("restart");
     if (action === "shutdown") {
       // Try to close the tab/window
       window.close();
@@ -120,21 +164,87 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
             <AppleLogo />
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent className="bg-black/40 text-white shadow-2xl border-white/10 backdrop-blur-2xl rounded-lg min-w-[200px] mt-1">
-            <DropdownMenuLabel className="font-semibold text-white">About This Mac</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-white/20" />
-            <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white" onClick={() => handleAction("lock")}>
-              Lock Screen
+          <DropdownMenuContent 
+            align="start"
+            alignOffset={6}
+            className={`shadow-2xl backdrop-blur-2xl rounded-xl min-w-[240px] mt-1.5 p-1 select-none border transition-all duration-300
+            ${isDarkMode 
+              ? "bg-[#121212]/75 text-white border-white/10" 
+              : "bg-[#f5f5f7]/72 text-gray-900 border-black/[0.08] border-white/60"
+            }`}>
+            <DropdownMenuItem className={`flex items-center gap-2.5 px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+              <FiMonitor className="w-4 h-4 opacity-75" />
+              <span className="flex-1">About This Mac</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white" onClick={() => handleAction("logout")}>
-              Log Out Likhith SP...
+
+            <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+            <DropdownMenuItem className={`flex items-center gap-2.5 px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+              <FiSettings className="w-4 h-4 opacity-75" />
+              <span className="flex-1">System Settings...</span>
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-white/20" />
-            <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white" onClick={() => handleAction("sleep")}>
-              Sleep
+
+            <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+              <div className="flex items-center gap-2.5">
+                <FiShoppingBag className="w-4 h-4 opacity-75" />
+                <span>App Store...</span>
+              </div>
+              <span className={`text-[11px] px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-white/10 text-white/70' : 'bg-black/5 text-black/60'}`}>4 updates</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white" onClick={() => handleAction("shutdown")}>
-              Shut Down...
+
+            <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+            <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+              <div className="flex items-center gap-2.5">
+                <FiClock className="w-4 h-4 opacity-75" />
+                <span>Recent Items</span>
+              </div>
+              <FiChevronRight className="w-3.5 h-3.5 opacity-60" />
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+            <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+              <div className="flex items-center gap-2.5">
+                <FiXCircle className="w-4 h-4 opacity-75" />
+                <span>Force Quit</span>
+              </div>
+              <span className="text-xs opacity-50 font-normal">⌥⇧⌘⎋</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+            <DropdownMenuItem className={`flex items-center gap-2.5 px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`} onClick={() => handleAction("sleep")}>
+              <FiMoon className="w-4 h-4 opacity-75" />
+              <span className="flex-1">Sleep</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem className={`flex items-center gap-2.5 px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`} onClick={() => handleAction("restart")}>
+              <FiRefreshCw className="w-4 h-4 opacity-75" />
+              <span className="flex-1">Restart...</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem className={`flex items-center gap-2.5 px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`} onClick={() => handleAction("shutdown")}>
+              <FiPower className="w-4 h-4 opacity-75" />
+              <span className="flex-1">Shut Down...</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+            <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`} onClick={() => handleAction("lock")}>
+              <div className="flex items-center gap-2.5">
+                <FiLock className="w-4 h-4 opacity-75" />
+                <span>Lock Screen</span>
+              </div>
+              <span className="text-xs opacity-50 font-normal">⌃⌘Q</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`} onClick={() => handleAction("logout")}>
+              <div className="flex items-center gap-2.5">
+                <FiUser className="w-4 h-4 opacity-75" />
+                <span>Log Out {username}...</span>
+              </div>
+              <span className="text-xs opacity-50 font-normal">⇧⌘Q</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -151,16 +261,69 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
             <DropdownMenuTrigger className={`cursor-pointer ${hoverStyle}`}>
               File
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-black/40 text-white backdrop-blur-2xl border-white/10 shadow-2xl rounded-lg min-w-[180px] mt-1">
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">New Folder</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">New Finder Window</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">New Tab</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Open</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/20" />
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Get Info</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Rename</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/20" />
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Duplicate</DropdownMenuItem>
+            <DropdownMenuContent 
+              align="start"
+              alignOffset={6}
+              className={`shadow-2xl backdrop-blur-2xl rounded-xl min-w-[240px] mt-1.5 p-1 select-none border transition-all duration-300
+              ${isDarkMode 
+                ? "bg-[#121212]/75 text-white border-white/10" 
+                : "bg-[#f5f5f7]/72 text-gray-900 border-black/[0.08] border-white/60"
+              }`}>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiFolderPlus className="w-4 h-4 opacity-75" />
+                  <span>New Folder</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⇧⌘N</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiPlusSquare className="w-4 h-4 opacity-75" />
+                  <span>New Finder Window</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘N</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiPlus className="w-4 h-4 opacity-75" />
+                  <span>New Tab</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘T</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiFileText className="w-4 h-4 opacity-75" />
+                  <span>Open</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘O</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiInfo className="w-4 h-4 opacity-75" />
+                  <span>Get Info</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘I</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiEdit3 className="w-4 h-4 opacity-75" />
+                  <span>Rename</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">Enter</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiCopy className="w-4 h-4 opacity-75" />
+                  <span>Duplicate</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘D</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -169,16 +332,69 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
             <DropdownMenuTrigger className={`cursor-pointer ${hoverStyle}`}>
               Edit
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-black/40 text-white backdrop-blur-2xl border-white/10 shadow-2xl rounded-lg min-w-[180px] mt-1">
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Undo</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Redo</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/20" />
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Cut</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Copy</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Paste</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Select All</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/20" />
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Find</DropdownMenuItem>
+            <DropdownMenuContent 
+              align="start"
+              alignOffset={6}
+              className={`shadow-2xl backdrop-blur-2xl rounded-xl min-w-[240px] mt-1.5 p-1 select-none border transition-all duration-300
+              ${isDarkMode 
+                ? "bg-[#121212]/75 text-white border-white/10" 
+                : "bg-[#f5f5f7]/72 text-gray-900 border-black/[0.08] border-white/60"
+              }`}>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiCornerUpLeft className="w-4 h-4 opacity-75" />
+                  <span>Undo</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘Z</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiCornerUpRight className="w-4 h-4 opacity-75" />
+                  <span>Redo</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⇧⌘Z</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiScissors className="w-4 h-4 opacity-75" />
+                  <span>Cut</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘X</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiCopy className="w-4 h-4 opacity-75" />
+                  <span>Copy</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘C</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiClipboard className="w-4 h-4 opacity-75" />
+                  <span>Paste</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘V</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiMaximize className="w-4 h-4 opacity-75" />
+                  <span>Select All</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘A</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiSearch className="w-4 h-4 opacity-75" />
+                  <span>Find</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘F</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -187,16 +403,69 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
             <DropdownMenuTrigger className={`cursor-pointer ${hoverStyle}`}>
               View
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-black/40 text-white backdrop-blur-2xl border-white/10 shadow-2xl rounded-lg min-w-[200px] mt-1">
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">as Icons</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">as List</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">as Columns</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">as Gallery</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/20" />
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Show Sidebar</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Hide Toolbar</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/20" />
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Enter Full Screen</DropdownMenuItem>
+            <DropdownMenuContent 
+              align="start"
+              alignOffset={6}
+              className={`shadow-2xl backdrop-blur-2xl rounded-xl min-w-[240px] mt-1.5 p-1 select-none border transition-all duration-300
+              ${isDarkMode 
+                ? "bg-[#121212]/75 text-white border-white/10" 
+                : "bg-[#f5f5f7]/72 text-gray-900 border-black/[0.08] border-white/60"
+              }`}>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiGrid className="w-4 h-4 opacity-75" />
+                  <span>as Icons</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘1</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiList className="w-4 h-4 opacity-75" />
+                  <span>as List</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘2</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiColumns className="w-4 h-4 opacity-75" />
+                  <span>as Columns</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘3</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiImage className="w-4 h-4 opacity-75" />
+                  <span>as Gallery</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘4</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiColumns className="w-4 h-4 opacity-75" />
+                  <span>Show Sidebar</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌥⌘S</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiMinusSquare className="w-4 h-4 opacity-75" />
+                  <span>Hide Toolbar</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌥⌘T</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiMaximize2 className="w-4 h-4 opacity-75" />
+                  <span>Enter Full Screen</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌃⌘F</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -205,14 +474,59 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
             <DropdownMenuTrigger className={`cursor-pointer ${hoverStyle}`}>
               Go
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-black/40 text-white backdrop-blur-2xl border-white/10 shadow-2xl rounded-lg min-w-[180px] mt-1">
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Back</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Forward</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/20" />
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Desktop</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Home</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Documents</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Downloads</DropdownMenuItem>
+            <DropdownMenuContent 
+              align="start"
+              alignOffset={6}
+              className={`shadow-2xl backdrop-blur-2xl rounded-xl min-w-[240px] mt-1.5 p-1 select-none border transition-all duration-300
+              ${isDarkMode 
+                ? "bg-[#121212]/75 text-white border-white/10" 
+                : "bg-[#f5f5f7]/72 text-gray-900 border-black/[0.08] border-white/60"
+              }`}>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiArrowLeft className="w-4 h-4 opacity-75" />
+                  <span>Back</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘[</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiArrowRight className="w-4 h-4 opacity-75" />
+                  <span>Forward</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘]</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiMonitor className="w-4 h-4 opacity-75" />
+                  <span>Desktop</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⇧⌘D</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiHome className="w-4 h-4 opacity-75" />
+                  <span>Home</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⇧⌘H</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiFile className="w-4 h-4 opacity-75" />
+                  <span>Documents</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⇧⌘O</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiDownload className="w-4 h-4 opacity-75" />
+                  <span>Downloads</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌥⌘L</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -221,13 +535,48 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
             <DropdownMenuTrigger className={`cursor-pointer ${hoverStyle}`}>
               Window
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-black/40 text-white backdrop-blur-2xl border-white/10 shadow-2xl rounded-lg min-w-[180px] mt-1">
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Minimize</DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Zoom</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/20" />
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Enter Full Screen</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/20" />
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">Bring All to Front</DropdownMenuItem>
+            <DropdownMenuContent 
+              align="start"
+              alignOffset={6}
+              className={`shadow-2xl backdrop-blur-2xl rounded-xl min-w-[240px] mt-1.5 p-1 select-none border transition-all duration-300
+              ${isDarkMode 
+                ? "bg-[#121212]/75 text-white border-white/10" 
+                : "bg-[#f5f5f7]/72 text-gray-900 border-black/[0.08] border-white/60"
+              }`}>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiMinus className="w-4 h-4 opacity-75" />
+                  <span>Minimize</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘M</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiMaximize2 className="w-4 h-4 opacity-75" />
+                  <span>Zoom</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">—</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiMaximize2 className="w-4 h-4 opacity-75" />
+                  <span>Enter Full Screen</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌃⌘F</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiLayers className="w-4 h-4 opacity-75" />
+                  <span>Bring All to Front</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">—</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -236,10 +585,31 @@ export default function TopBar({ appTitle = "Finder", setStage }) {
             <DropdownMenuTrigger className={`cursor-pointer ${hoverStyle}`}>
               Help
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-black/40 text-white backdrop-blur-2xl border-white/10 shadow-2xl rounded-lg min-w-[180px] mt-1">
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">macOS Help</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/20" />
-              <DropdownMenuItem className="text-[13px] focus:bg-white/10 focus:text-white">See What's New</DropdownMenuItem>
+            <DropdownMenuContent 
+              align="start"
+              alignOffset={6}
+              className={`shadow-2xl backdrop-blur-2xl rounded-xl min-w-[240px] mt-1.5 p-1 select-none border transition-all duration-300
+              ${isDarkMode 
+                ? "bg-[#121212]/75 text-white border-white/10" 
+                : "bg-[#f5f5f7]/72 text-gray-900 border-black/[0.08] border-white/60"
+              }`}>
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiHelpCircle className="w-4 h-4 opacity-75" />
+                  <span>macOS Help</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">⌘?</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className={`my-1 mx-2 ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`} />
+
+              <DropdownMenuItem className={`flex items-center justify-between px-3 py-1.5 text-[13.5px] rounded-lg transition-colors focus:bg-[#007aff] focus:text-white cursor-default ${isDarkMode ? 'text-white/90' : 'text-gray-900'}`}>
+                <div className="flex items-center gap-2.5">
+                  <FiAward className="w-4 h-4 opacity-75" />
+                  <span>See What's New</span>
+                </div>
+                <span className="text-xs opacity-50 font-normal">—</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

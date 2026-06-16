@@ -159,6 +159,9 @@ export default function App() {
             setStage("setup");
           }
         }} />}
+        {stage === "restart" && <PowerScreen autoBoot={true} goNext={() => {
+          setStage("lock");
+        }} />}
         {stage === "setup" && <SetupScreen 
           goNext={(lang) => {
             localStorage.setItem('setup_lang', lang || "English (UK)");
@@ -208,9 +211,15 @@ export default function App() {
       )}
       
       {/* Lock screen slides up to reveal desktop */}
-      {stage === "lock" && (
-        <div className="absolute inset-0 z-50">
-          <LockScreen goNext={() => setStage("desktop")} />
+      {(stage === "lock" || stage === "desktop") && (
+        <div 
+          className="absolute inset-0 z-50"
+          style={{
+            visibility: stage === "lock" ? "visible" : "hidden",
+            pointerEvents: stage === "lock" ? "auto" : "none"
+          }}
+        >
+          <LockScreen goNext={() => setStage("desktop")} isLocked={stage === "lock"} />
         </div>
       )}
     </div>
