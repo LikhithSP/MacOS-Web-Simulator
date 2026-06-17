@@ -3,6 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "../store/Appstore.js";
 import TextEdit from "./TextEdit";
 import PDFViewer from "./PDFViewer";
+import { Safari } from "./Safari";
+import Spotify from "./Spotify";
+import Settings from "./Settings";
+import MacGallery from "./Gallary";
+import Blogs from "./Blogs/BlogsSection.jsx";
 import {
   Clock,
   Users,
@@ -124,6 +129,81 @@ export default function Finder({ initialPath = "/icloud", windowId, maximized, i
   const toggleMaximize = useAppStore((s) => s.toggleMaximize);
   const openApp = useAppStore((s) => s.openApp);
   const isDarkMode = useAppStore((s) => s.isDarkMode);
+  const windows = useAppStore((s) => s.windows);
+  const restoreApp = useAppStore((s) => s.restoreApp);
+  const focusApp = useAppStore((s) => s.focusApp);
+
+  const applicationsList = [
+    {
+      id: "app_finder",
+      appId: "Finder",
+      name: "Finder.app",
+      type: "app",
+      icon: "https://upload.wikimedia.org/wikipedia/commons/c/c9/Finder_Icon_macOS_Big_Sur.png",
+      comp: <Finder />,
+      date: "2026-06-15T10:00:00Z",
+      size: 14500000
+    },
+    {
+      id: "app_safari",
+      appId: "Safari",
+      name: "Safari.app",
+      type: "app",
+      icon: "https://s3.macosicons.com/macosicons/icons/utug9Rt8g6/lowResPngFile_a0b8d534889b5695781a9a03f388e2d4_low_res_Safari__MacOS_Tahoe_.png",
+      comp: <Safari />,
+      date: "2026-06-15T10:00:00Z",
+      size: 28400000
+    },
+    {
+      id: "app_spotify",
+      appId: "Music",
+      name: "Music.app",
+      type: "app",
+      icon: "https://s3.macosicons.com/macosicons/icons/60EVxS5XYc/lowResPngFile_43fc64dd49d0125e9b34d1d49204cafb_low_res_Music__MacOS_Tahoe_.png",
+      comp: <Spotify />,
+      date: "2026-06-15T10:00:00Z",
+      size: 42100000
+    },
+    {
+      id: "app_settings",
+      appId: "Settings",
+      name: "Settings.app",
+      type: "app",
+      icon: "https://s3.macosicons.com/macosicons/icons/mTHdx8YStT/lowResPngFile_4fc1a86ec5cb831e11c424f412b8da37_low_res_Settings.png",
+      comp: <Settings />,
+      date: "2026-06-15T10:00:00Z",
+      size: 18900000
+    },
+    {
+      id: "app_photos",
+      appId: "Photos",
+      name: "Photos.app",
+      type: "app",
+      icon: "https://s3.macosicons.com/macosicons/icons/GnoLTHQNAZ/lowResPngFile_f4e3bd7d0753d890bb3b53e3ea193cfe_low_res_Photos__MacOS_Tahoe_.png",
+      comp: <MacGallery />,
+      date: "2026-06-15T10:00:00Z",
+      size: 34500000
+    },
+    {
+      id: "app_notes",
+      appId: "Notes",
+      name: "Notes.app",
+      type: "app",
+      icon: "https://s3.macosicons.com/macosicons/icons/Tn8SuaHtAM/lowResPngFile_2a846d9fb757a742e6ab7ec9b243027e_low_res_Notes__MacOS_Tahoe_.png",
+      comp: <Blogs />,
+      date: "2026-06-15T10:00:00Z",
+      size: 12400000
+    },
+    {
+      id: "app_store",
+      appId: "AppStore",
+      name: "App Store.app",
+      type: "app",
+      icon: "https://s3.macosicons.com/macosicons/icons/ZTpqalXxE3/lowResPngFile_8f0aba462304996c37f9f506b368c53b_low_res_App_Store__MacOS_Tahoe_.png",
+      date: "2026-06-15T10:00:00Z",
+      size: 51200000
+    }
+  ];
 
   const [currentPath, setCurrentPath] = useState(initialPath);
   const [history, setHistory] = useState([initialPath]);
@@ -487,6 +567,17 @@ export default function Finder({ initialPath = "/icloud", windowId, maximized, i
     if (currentPath.startsWith("/desktop/")) {
       const folderId = currentPath.split("/")[2];
       return desktopFiles.filter((file) => file.parentFolderId === folderId);
+    }
+    if (currentPath === "/applications") {
+      return applicationsList;
+    }
+    if (currentPath === "/mac-hd") {
+      return [
+        { id: "mac_hd_applications", name: "Applications", type: "folder", date: "2026-06-15T10:00:00Z" },
+        { id: "mac_hd_library", name: "Library", type: "folder", date: "2026-06-15T10:00:00Z" },
+        { id: "mac_hd_system", name: "System", type: "folder", date: "2026-06-15T10:00:00Z" },
+        { id: "mac_hd_users", name: "Users", type: "folder", date: "2026-06-15T10:00:00Z" }
+      ];
     }
     // Seed default blank or minimal folders for other structures
     if (currentPath === "/documents") {
@@ -909,11 +1000,29 @@ export default function Finder({ initialPath = "/icloud", windowId, maximized, i
 
   const getFileIcon = (file, sizeClass = "w-12 h-12") => {
     if (file.type === "folder") {
+      if (file.name === "Applications") {
+        return (
+          <img
+            src="https://s3.macosicons.com/macosicons/icons/ZTpqalXxE3/lowResPngFile_8f0aba462304996c37f9f506b368c53b_low_res_App_Store__MacOS_Tahoe_.png"
+            alt="Applications"
+            className={`${sizeClass} object-contain rounded-xl`}
+          />
+        );
+      }
       return (
         <img
           src={BLUE_FOLDER_URL}
           alt="Folder"
           className={`${sizeClass} object-contain`}
+        />
+      );
+    }
+    if (file.type === "app") {
+      return (
+        <img
+          src={file.icon}
+          alt={file.name}
+          className={`${sizeClass} object-contain rounded-xl`}
         />
       );
     }
@@ -957,10 +1066,43 @@ export default function Finder({ initialPath = "/icloud", windowId, maximized, i
   };
 
   const handleOpenFolder = (folder) => {
+    if (folder.name === "Applications") {
+      navigateTo("/applications");
+      return;
+    }
     if (currentPath === "/icloud") {
       navigateTo(`/icloud/${folder.id}`);
     } else {
       navigateTo(`/desktop/${folder.id}`);
+    }
+  };
+
+  const handleOpenFile = (file) => {
+    if (file.type === "folder") {
+      handleOpenFolder(file);
+    } else if (file.type === "image" || file.type === "video") {
+      setPreviewImage(file);
+    } else if (file.type === "document") {
+      openApp("TextEdit", <TextEdit file={file} />);
+    } else if (file.type === "pdf") {
+      openApp("PDFViewer", <PDFViewer file={file} />);
+    } else if (file.type === "app") {
+      if (file.url) {
+        window.open(file.url, "_blank");
+      } else if (file.comp) {
+        const existingWindow = windows.find((w) => w.appId === file.appId);
+        if (existingWindow) {
+          if (existingWindow.minimized) {
+            restoreApp(existingWindow.id);
+          } else {
+            focusApp(existingWindow.id);
+          }
+        } else {
+          openApp(file.appId, file.comp);
+        }
+      } else {
+        showToast(`${file.name} is currently not available.`, "info");
+      }
     }
   };
 
@@ -1026,7 +1168,11 @@ export default function Finder({ initialPath = "/icloud", windowId, maximized, i
                 }`}
               >
                 <div className="w-4 h-4 flex items-center justify-center">
-                  <span className={`text-[12px] font-bold leading-none ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>A</span>
+                  <img
+                    src="https://s3.macosicons.com/macosicons/icons/ZTpqalXxE3/lowResPngFile_8f0aba462304996c37f9f506b368c53b_low_res_App_Store__MacOS_Tahoe_.png"
+                    alt="Applications"
+                    className="w-4 h-4 object-contain rounded"
+                  />
                 </div>
                 <span>Applications</span>
               </button>
@@ -1338,17 +1484,7 @@ export default function Finder({ initialPath = "/icloud", windowId, maximized, i
                       key={file.id}
                       onClick={(e) => handleFileClick(e, file)}
                       onContextMenu={(e) => handleFileContextMenu(e, file)}
-                      onDoubleClick={() => {
-                        if (file.type === "folder") {
-                          handleOpenFolder(file);
-                        } else if (file.type === "image" || file.type === "video") {
-                          setPreviewImage(file);
-                        } else if (file.type === "document") {
-                          openApp("TextEdit", <TextEdit file={file} />);
-                        } else if (file.type === "pdf") {
-                          openApp("PDFViewer", <PDFViewer file={file} />);
-                        }
-                      }}
+                      onDoubleClick={() => handleOpenFile(file)}
                       className={`flex flex-col items-center group cursor-pointer text-center ${isCut ? "opacity-45" : ""}`}
                     >
                       <div className={`w-18 h-18 rounded-xl flex items-center justify-center p-2 mb-1.5 transition-all relative ${
@@ -1395,17 +1531,7 @@ export default function Finder({ initialPath = "/icloud", windowId, maximized, i
                         key={file.id}
                         onClick={(e) => handleFileClick(e, file)}
                         onContextMenu={(e) => handleFileContextMenu(e, file)}
-                        onDoubleClick={() => {
-                          if (file.type === "folder") {
-                            handleOpenFolder(file);
-                          } else if (file.type === "image" || file.type === "video") {
-                            setPreviewImage(file);
-                          } else if (file.type === "document") {
-                            openApp("TextEdit", <TextEdit file={file} />);
-                          } else if (file.type === "pdf") {
-                            openApp("PDFViewer", <PDFViewer file={file} />);
-                          }
-                        }}
+                        onDoubleClick={() => handleOpenFile(file)}
                         className={`flex items-center px-4 py-1.5 text-[12px] cursor-pointer transition ${
                           isSelected 
                             ? (isDarkMode ? "bg-white/10 text-white" : "bg-[#E0EEFF] text-[#004BB3]") 
@@ -1444,17 +1570,7 @@ export default function Finder({ initialPath = "/icloud", windowId, maximized, i
                         key={file.id}
                         onClick={(e) => handleFileClick(e, file)}
                         onContextMenu={(e) => handleFileContextMenu(e, file)}
-                        onDoubleClick={() => {
-                          if (file.type === "folder") {
-                            handleOpenFolder(file);
-                          } else if (file.type === "image" || file.type === "video") {
-                            setPreviewImage(file);
-                          } else if (file.type === "document") {
-                            openApp("TextEdit", <TextEdit file={file} />);
-                          } else if (file.type === "pdf") {
-                            openApp("PDFViewer", <PDFViewer file={file} />);
-                          }
-                        }}
+                        onDoubleClick={() => handleOpenFile(file)}
                         className={`w-full flex items-center justify-between px-2.5 py-1 rounded-md text-[12px] transition-all text-left ${
                           isSelected 
                             ? "bg-[#007AFF] text-white" 
@@ -1547,17 +1663,7 @@ export default function Finder({ initialPath = "/icloud", windowId, maximized, i
                           key={file.id}
                           onClick={(e) => handleFileClick(e, file)}
                           onContextMenu={(e) => handleFileContextMenu(e, file)}
-                          onDoubleClick={() => {
-                            if (file.type === "folder") {
-                              handleOpenFolder(file);
-                            } else if (file.type === "image" || file.type === "video") {
-                              setPreviewImage(file);
-                            } else if (file.type === "document") {
-                              openApp("TextEdit", <TextEdit file={file} />);
-                            } else if (file.type === "pdf") {
-                              openApp("PDFViewer", <PDFViewer file={file} />);
-                            }
-                          }}
+                          onDoubleClick={() => handleOpenFile(file)}
                           className={`w-14 h-14 rounded-lg flex items-center justify-center shrink-0 cursor-pointer border-2 transition-all p-1 ${
                             isDarkMode ? "bg-[#2A2A2A]" : "bg-white"
                           } ${

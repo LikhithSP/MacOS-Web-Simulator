@@ -225,9 +225,9 @@ export function Safari({ initialUrl = "https://www.google.com/webhp?igu=1", wind
   return (
     <div className={`w-full h-full flex flex-col overflow-hidden transition-colors duration-300 ${isDarkMode ? 'bg-[#1c1c1e] text-white' : 'bg-white text-gray-800'}`}>
       {/* Safari Unified Toolbar */}
-      <div className={`window-drag-handle flex items-center gap-2 px-4 py-2.5 border-b transition-colors duration-300 ${isDarkMode
-          ? 'bg-[#2c2c2e] border-[#3d3d3f] text-white'
-          : 'bg-[#f3f3f3] border-[#dcdcdc] text-gray-800'
+      <div className={`window-drag-handle flex items-center gap-2 px-4 py-2.5 transition-colors duration-300 ${isDarkMode
+          ? 'bg-[#2c2c2e] text-white'
+          : 'bg-[#f3f3f3] text-gray-800'
         }`}>
         {/* macOS Traffic Light Buttons */}
         <TrafficLights windowId={windowId} />

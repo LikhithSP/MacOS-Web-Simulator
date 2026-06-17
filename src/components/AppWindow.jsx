@@ -17,8 +17,10 @@ export default function AppWindow({ window: win }) {
   // Calculate initial size and position
   const screenWidth = globalThis.innerWidth || 1200;
   const screenHeight = globalThis.innerHeight || 800;
-  const initialWidth = screenWidth * 0.7;
-  const initialHeight = screenHeight * 0.76;
+  const isLaunchpad = win.appId === "Launchpad";
+  const isMessages = win.appId === "Messages";
+  const initialWidth = isMessages ? screenWidth * 0.55 : isLaunchpad ? screenWidth * 0.45 : screenWidth * 0.7;
+  const initialHeight = isMessages ? screenHeight * 0.72 : isLaunchpad ? screenHeight * 0.65 : screenHeight * 0.76;
   const initialX = Math.max(50, (screenWidth - initialWidth) / 2);
   const initialY = Math.max(40, (screenHeight - initialHeight) / 2 - 20);
 
@@ -159,11 +161,19 @@ export default function AppWindow({ window: win }) {
               className={`flex flex-col overflow-hidden ${
                 win.maximized ? "rounded-none" : "rounded-xl"
               } ${
-                win.appId === "Photos" || win.appId === "Music" || win.appId === "Safari" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash"
+                win.appId === "Launchpad"
                   ? isDarkMode
-                    ? "bg-[#1e1e1e] text-white border border-white/10"
-                    : "bg-white text-gray-900 border border-black/10 shadow-2xl"
-                  : "backdrop-blur-xl bg-black/40 border border-white/15 text-white shadow-xl"
+                    ? "backdrop-blur-3xl bg-[#1e1e1e]/45 border border-white/10 text-white shadow-2xl"
+                    : "backdrop-blur-3xl bg-white/65 border border-black/10 text-gray-900 shadow-2xl"
+                  : win.appId === "Safari"
+                    ? isDarkMode
+                      ? "bg-[#1e1e1e] text-white"
+                      : "bg-white text-gray-900 shadow-2xl"
+                  : win.appId === "Photos" || win.appId === "Music" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" || win.appId === "Messages"
+                    ? isDarkMode
+                      ? "bg-[#1e1e1e] text-white border border-white/10"
+                      : "bg-white text-gray-900 border border-black/10 shadow-2xl"
+                    : "backdrop-blur-xl bg-black/40 border border-white/15 text-white shadow-xl"
               } ${isDragging ? "cursor-grabbing" : ""} ${isResizing ? "select-none" : ""}`}
               style={{
                 width: '100%',
@@ -171,8 +181,8 @@ export default function AppWindow({ window: win }) {
                 willChange: isDragging || isResizing ? 'transform' : 'auto',
               }}
             >
-              {/* Title Bar - Skip for Photos, Music, Safari, Finder, Notes, TextEdit, PDFViewer, and Trash since they integrate their own */}
-              {win.appId !== "Photos" && win.appId !== "Music" && win.appId !== "Safari" && win.appId !== "Notes" && win.appId !== "Finder" && win.appId !== "TextEdit" && win.appId !== "PDFViewer" && win.appId !== "Trash" && (
+              {/* Title Bar - Skip for Photos, Music, Safari, Finder, Notes, TextEdit, PDFViewer, Trash, Launchpad, and Messages since they integrate their own */}
+              {win.appId !== "Photos" && win.appId !== "Music" && win.appId !== "Safari" && win.appId !== "Notes" && win.appId !== "Finder" && win.appId !== "TextEdit" && win.appId !== "PDFViewer" && win.appId !== "Trash" && win.appId !== "Launchpad" && win.appId !== "Messages" && (
                 <div 
                   className={`window-drag-handle relative h-11 bg-linear-to-b from-white/10 to-transparent flex items-center cursor-grab active:cursor-grabbing select-none ${
                     win.maximized ? "" : "rounded-t-xl"
@@ -222,16 +232,16 @@ export default function AppWindow({ window: win }) {
                       </svg>
                     </div>
                   </div>
-
+ 
                   {/* Center Title */}
                   <div className="absolute left-1/2 -translate-x-1/2 text-white/80 font-medium text-sm tracking-wide pointer-events-none">
                     {win.appId}
                   </div>
                 </div>
               )}
-
+ 
               {/* App Content */}
-              <div className={`flex-1 overflow-hidden flex flex-col ${win.appId === "Photos" || win.appId === "Music" || win.appId === "Safari" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" ? "" : "text-white bg-black/20"}`}>
+              <div className={`flex-1 overflow-hidden flex flex-col ${win.appId === "Photos" || win.appId === "Music" || win.appId === "Safari" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" || win.appId === "Launchpad" || win.appId === "Messages" ? "" : "text-white bg-black/20"}`}>
                 {React.cloneElement(win.component, { windowId: win.id, maximized: win.maximized, isDragging, isResizing })}
               </div>
             </motion.div>

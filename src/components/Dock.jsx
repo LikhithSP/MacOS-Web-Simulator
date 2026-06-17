@@ -7,6 +7,8 @@ import MacGallery from "../app/Gallary";
 import Blogs from "../app/Blogs/BlogsSection.jsx";
 import Finder from "../app/Finder";
 import Trash from "../app/Trash";
+import Launchpad from "../app/Launchpad";
+import Messages from "../app/Messages";
 
 const getWindowTitle = (win) => {
   if (win.appId === "TextEdit") {
@@ -108,7 +110,7 @@ export default function Dock() {
       id: "Launchpad",
       label: "Launchpad",
       icon: "https://s3.macosicons.com/macosicons/icons/ncy8MiCAOA/lowResPngFile_0f531e205b4ebaf7ab0b01d1bd6040cb_low_res_Launchpad__MacOS_Tahoe_.png",
-      action: () => {}, // Placeholder
+      comp: <Launchpad />,
     },
     {
       id: "Safari",
@@ -120,7 +122,7 @@ export default function Dock() {
       id: "Messages",
       label: "Messages",
       icon: "https://s3.macosicons.com/macosicons/icons/DCoou8JdsT/lowResPngFile_82dcd5dc896ad17021f25d236b575d68_DCoou8JdsT.png",
-      action: () => {},
+      comp: <Messages />,
     },
     {
       id: "Mail",
