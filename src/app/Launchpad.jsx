@@ -8,6 +8,7 @@ import MacGallery from "./Gallary";
 import Blogs from "./Blogs/BlogsSection.jsx";
 import Finder from "./Finder";
 import Trash from "./Trash";
+import FaceTime from "./FaceTime";
 
 // Traffic lights component
 const TrafficLights = ({ windowId }) => {
@@ -138,6 +139,7 @@ export default function Launchpad({ windowId }) {
       appId: "FaceTime",
       label: "FaceTime",
       icon: "https://s3.macosicons.com/macosicons/icons/E0Ws4w1yiC/lowResPngFile_b04a7c53fd9f231f804bd3261bcb6430_low_res_Facetime.png",
+      comp: <FaceTime />,
     },
     {
       appId: "Phone",

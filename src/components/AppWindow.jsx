@@ -22,8 +22,9 @@ export default function AppWindow({ window: win }) {
   const isFinder = win.appId === "Finder";
   const isMail = win.appId === "Mail";
   const isMaps = win.appId === "Maps";
-  const initialWidth = (isMail || isMaps) ? screenWidth * 0.65 : (isMessages || isFinder) ? screenWidth * 0.55 : isLaunchpad ? screenWidth * 0.45 : screenWidth * 0.7;
-  const initialHeight = (isMessages || isFinder || isMail || isMaps) ? screenHeight * 0.72 : isLaunchpad ? screenHeight * 0.65 : screenHeight * 0.76;
+  const isFaceTime = win.appId === "FaceTime";
+  const initialWidth = (isMail || isMaps || isFaceTime) ? screenWidth * 0.65 : (isMessages || isFinder) ? screenWidth * 0.55 : isLaunchpad ? screenWidth * 0.45 : screenWidth * 0.7;
+  const initialHeight = (isMessages || isFinder || isMail || isMaps || isFaceTime) ? screenHeight * 0.72 : isLaunchpad ? screenHeight * 0.65 : screenHeight * 0.76;
   const initialX = Math.max(50, (screenWidth - initialWidth) / 2);
   const initialY = Math.max(40, (screenHeight - initialHeight) / 2 - 20);
 
@@ -150,9 +151,13 @@ export default function AppWindow({ window: win }) {
                 opacity: 1, 
                 scale: 1, 
                 y: 0,
-                boxShadow: isDragging 
-                  ? '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)' 
-                  : '0 10px 40px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+                boxShadow: isFaceTime
+                  ? isDragging 
+                    ? '0 25px 50px -12px rgba(0, 0, 0, 0.5)' 
+                    : '0 10px 40px -10px rgba(0, 0, 0, 0.4)'
+                  : isDragging 
+                    ? '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)' 
+                    : '0 10px 40px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)'
               }}
               exit={{
                 opacity: 0,
@@ -172,6 +177,10 @@ export default function AppWindow({ window: win }) {
                     ? isDarkMode
                       ? "bg-[#1e1e1e] text-white"
                       : "bg-white text-gray-900 shadow-2xl"
+                  : win.appId === "FaceTime"
+                    ? isDarkMode
+                      ? "bg-[#1e1e1e] text-white"
+                      : "bg-white text-gray-900 shadow-2xl"
                   : win.appId === "Photos" || win.appId === "Music" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" || win.appId === "Messages" || win.appId === "Mail" || win.appId === "Maps"
                     ? isDarkMode
                       ? "bg-[#1e1e1e] text-white border border-white/10"
@@ -184,8 +193,8 @@ export default function AppWindow({ window: win }) {
                 willChange: isDragging || isResizing ? 'transform' : 'auto',
               }}
             >
-              {/* Title Bar - Skip for Photos, Music, Safari, Finder, Notes, TextEdit, PDFViewer, Trash, Launchpad, Messages, Mail, and Maps since they integrate their own */}
-              {win.appId !== "Photos" && win.appId !== "Music" && win.appId !== "Safari" && win.appId !== "Notes" && win.appId !== "Finder" && win.appId !== "TextEdit" && win.appId !== "PDFViewer" && win.appId !== "Trash" && win.appId !== "Launchpad" && win.appId !== "Messages" && win.appId !== "Mail" && win.appId !== "Maps" && (
+              {/* Title Bar - Skip for Photos, Music, Safari, Finder, Notes, TextEdit, PDFViewer, Trash, Launchpad, Messages, Mail, Maps, and FaceTime since they integrate their own */}
+              {win.appId !== "Photos" && win.appId !== "Music" && win.appId !== "Safari" && win.appId !== "Notes" && win.appId !== "Finder" && win.appId !== "TextEdit" && win.appId !== "PDFViewer" && win.appId !== "Trash" && win.appId !== "Launchpad" && win.appId !== "Messages" && win.appId !== "Mail" && win.appId !== "Maps" && win.appId !== "FaceTime" && (
                 <div 
                   className={`window-drag-handle relative h-11 bg-linear-to-b from-white/10 to-transparent flex items-center cursor-grab active:cursor-grabbing select-none ${
                     win.maximized ? "" : "rounded-t-xl"

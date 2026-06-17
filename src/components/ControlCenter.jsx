@@ -129,15 +129,15 @@ export default function ControlCenter() {
         <div className="w-1/2 flex flex-col gap-3">
           {/* Media Player Card */}
           <div className={`${glassPanelClass} rounded-[28px] p-3 flex flex-col justify-between h-[148px] hover:bg-white/[0.12]`}>
-            <div className="flex flex-col gap-1 items-start min-w-0">
+            <div className="flex flex-col gap-1 items-start min-w-0 w-full">
               <img 
                 src={currentTrack.img} 
                 alt="Album" 
                 className="w-[42px] h-[42px] rounded-[12px] object-cover shadow-md border border-white/10 shrink-0" 
               />
-              <div className="flex flex-col leading-tight min-w-0 mt-1">
-                <span className="font-semibold text-[11.5px] text-white/95 truncate tracking-wide" title={currentTrack.title}>{currentTrack.title}</span>
-                <span className="text-[9.5px] text-white/50 truncate tracking-normal mt-0.5">{currentTrack.artist}</span>
+              <div className="flex flex-col leading-tight min-w-0 w-full mt-1">
+                <span className="font-semibold text-[11.5px] text-white/95 truncate tracking-wide block w-full" title={currentTrack.title}>{currentTrack.title}</span>
+                <span className="text-[9.5px] text-white/50 truncate tracking-normal mt-0.5 block w-full">{currentTrack.artist}</span>
               </div>
             </div>
             {/* Playback Controls */}

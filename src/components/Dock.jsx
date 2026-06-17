@@ -11,6 +11,7 @@ import Launchpad from "../app/Launchpad";
 import Messages from "../app/Messages";
 import Mail from "../app/Mail";
 import Maps from "../app/Maps";
+import FaceTime from "../app/FaceTime";
 
 const getWindowTitle = (win) => {
   if (win.appId === "TextEdit") {
@@ -148,7 +149,7 @@ export default function Dock() {
       id: "FaceTime",
       label: "FaceTime",
       icon: "https://s3.macosicons.com/macosicons/icons/E0Ws4w1yiC/lowResPngFile_b04a7c53fd9f231f804bd3261bcb6430_low_res_Facetime.png",
-      action: () => {},
+      comp: <FaceTime />,
     },
     {
       id: "Phone",
