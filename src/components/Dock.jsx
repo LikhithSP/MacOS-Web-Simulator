@@ -9,6 +9,8 @@ import Finder from "../app/Finder";
 import Trash from "../app/Trash";
 import Launchpad from "../app/Launchpad";
 import Messages from "../app/Messages";
+import Mail from "../app/Mail";
+import Maps from "../app/Maps";
 
 const getWindowTitle = (win) => {
   if (win.appId === "TextEdit") {
@@ -128,13 +130,13 @@ export default function Dock() {
       id: "Mail",
       label: "Mail",
       icon: "https://s3.macosicons.com/macosicons/icons/OABVbEbk1D/lowResPngFile_1b3cda920534d66fcf25849afdeee35b_low_res_Mail__MacOS_Tahoe_.png",
-      action: () => {},
+      comp: <Mail />,
     },
     {
-      id: "Maps",
-      label: "Maps",
-      icon: "https://s3.macosicons.com/macosicons/icons/5aA6m3BXxr/lowResPngFile_a3b2511cb67879107a0b6da86c3d1dc5_low_res_Maps__MacOS_Tahoe_.png",
-      url: "https://maps.apple.com",
+       id: "Maps",
+       label: "Maps",
+       icon: "https://s3.macosicons.com/macosicons/icons/5aA6m3BXxr/lowResPngFile_a3b2511cb67879107a0b6da86c3d1dc5_low_res_Maps__MacOS_Tahoe_.png",
+       comp: <Maps />,
     },
     {
       id: "Photos",

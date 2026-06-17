@@ -663,7 +663,7 @@ export default function Desktop({ setStage, isLocked = false }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className={`absolute top-10 right-4 bottom-24 w-[360px] backdrop-blur-2xl rounded-3xl z-40 overflow-hidden flex flex-col border
+            className={`absolute top-10 right-4 bottom-24 w-[360px] backdrop-blur-2xl rounded-3xl z-[100000] overflow-hidden flex flex-col border
               ${isDarkMode 
                 ? 'bg-gradient-to-b from-black/45 to-black/20 border-white/10 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_12px_40px_rgba(0,0,0,0.45)]' 
                 : 'bg-gradient-to-b from-white/14 to-white/4 border-white/20 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.35),0_12px_40px_rgba(0,0,0,0.18)]'

@@ -368,7 +368,7 @@ export default function Messages({ windowId }) {
       </aside>
 
       {/* Chat Area */}
-      <main className="flex-1 flex flex-col min-w-0 relative h-full rounded-r-xl overflow-hidden">
+      <main className="flex-1 flex flex-col min-w-0 relative h-full rounded-xl overflow-hidden">
         {/* Top Header */}
         <header className={`window-drag-handle h-[68px] flex items-center justify-between px-6 shrink-0 border-b select-none ${
           isDarkMode ? "border-white/10 bg-[#1E1E1E]" : "border-[#E5E5E5] bg-[#FFFFFF]"
