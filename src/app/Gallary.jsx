@@ -32,8 +32,10 @@ import {
   BsLock,
   BsDisplay,
   BsGrid,
-  BsFolder2Open
+  BsFolder2Open,
+  BsLayers
 } from "react-icons/bs";
+import { getDepthPreset } from "../constants/depthWallpapers";
 
 // Dynamically import all images from the Wallpaper folder
 const wallpaperModules = import.meta.glob('/public/Wallpaper/*.{jpg,jpeg,png,gif,webp}', { eager: true, query: '?url', import: 'default' });
@@ -138,6 +140,30 @@ export default function MacGallery({ windowId }) {
   const [lightboxZoom, setLightboxZoom] = useState(1);
   const [downloadNotification, setDownloadNotification] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [showLockScreenOptions, setShowLockScreenOptions] = useState(false);
+  const [tempDepthMode, setTempDepthMode] = useState(false);
+  const [depthSliderValue, setDepthSliderValue] = useState(() => {
+    return parseInt(localStorage.getItem("lockscreen_depth_subject_top") || "30", 10);
+  });
+
+  // Synchronize temporary depth mode state when popover is opened
+  useEffect(() => {
+    if (showLockScreenOptions) {
+      const isCurrentWallpaper = localStorage.getItem("lockscreen_wallpaper") === selected;
+      const currentDepth = localStorage.getItem("lockscreen_depth_effect") === "true";
+      setTempDepthMode(isCurrentWallpaper ? currentDepth : false);
+    }
+  }, [showLockScreenOptions, selected]);
+
+  // Close depth popover when selected image changes
+  useEffect(() => {
+    setShowLockScreenOptions(false);
+    // Auto-set optimal depth slider based on wallpaper preset
+    if (selected) {
+      const preset = getDepthPreset(selected);
+      setDepthSliderValue(preset.subjectTop);
+    }
+  }, [selected]);
 
   useEffect(() => {
     localStorage.setItem("photo_favorites", JSON.stringify(favorites));
@@ -199,8 +225,14 @@ export default function MacGallery({ windowId }) {
     }, 50);
   };
 
-  const setLockscreen = () => {
+  const setLockscreen = (withDepth = false) => {
     localStorage.setItem("lockscreen_wallpaper", selected);
+    localStorage.setItem("lockscreen_depth_effect", withDepth ? "true" : "false");
+    if (withDepth) {
+      localStorage.setItem("lockscreen_depth_subject_top", depthSliderValue.toString());
+    }
+    window.dispatchEvent(new Event("lockscreenDepthChanged"));
+    setShowLockScreenOptions(false);
   };
 
   const downloadImage = () => {
@@ -695,16 +727,161 @@ export default function MacGallery({ windowId }) {
                 </button>
 
                 {/* Set as Lock Screen */}
-                <button
-                  onClick={setLockscreen}
-                  className={`p-2 rounded-full transition-all flex items-center gap-1.5 ${
-                    isDarkMode ? "hover:bg-white/10 text-white" : "hover:bg-black/5 text-gray-800"
-                  }`}
-                  title="Set as Lock Screen"
-                >
-                  <BsLock size={15} />
-                  <span className="text-[11px] font-medium">Lock Screen</span>
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={() => setShowLockScreenOptions(!showLockScreenOptions)}
+                    className={`p-2 rounded-full transition-all flex items-center gap-1.5 ${
+                      isDarkMode ? "hover:bg-white/10 text-white" : "hover:bg-black/5 text-gray-800"
+                    }`}
+                    title="Set as Lock Screen"
+                  >
+                    <BsLock size={15} />
+                    <span className="text-[11px] font-medium">Lock Screen</span>
+                  </button>
+
+                  {/* Lock Screen Depth Options Popover */}
+                  <AnimatePresence>
+                    {showLockScreenOptions && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-[340px] rounded-2xl overflow-visible shadow-2xl border ${
+                          isDarkMode ? "border-zinc-800" : "border-zinc-200"
+                        }`}
+                        style={{
+                          background: isDarkMode ? "#1e1e1e" : "#f2f2f7",
+                          boxShadow: isDarkMode
+                            ? "0 30px 70px rgba(0,0,0,0.5), inset 0 0.5px 0 rgba(255,255,255,0.05)"
+                            : "0 25px 65px rgba(0,0,0,0.12), inset 0 0.5px 0 rgba(255,255,255,0.8)",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="p-4 flex flex-col">
+                          <h3 className={`text-[13px] font-semibold mb-3.5 text-center ${isDarkMode ? "text-white/90" : "text-zinc-800"}`}>
+                            Set as Lock Screen
+                          </h3>
+                          <div className="flex gap-3 mb-4">
+                            {/* Normal Preview Card */}
+                            <button
+                              onClick={() => setTempDepthMode(false)}
+                              className={`flex-1 rounded-xl overflow-hidden border-2 relative transition-all duration-250 cursor-pointer ${
+                                !tempDepthMode
+                                  ? "border-[#007AFF] shadow-[0_0_0_1px_#007AFF]"
+                                  : isDarkMode ? "border-white/10 hover:border-white/20 bg-white/[0.02]" : "border-black/5 hover:border-black/10 bg-black/[0.01]"
+                              }`}
+                            >
+                              {!tempDepthMode && (
+                                <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-[#007AFF] rounded-full flex items-center justify-center text-white shadow-md z-10">
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-2.5 h-2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                  </svg>
+                                </div>
+                              )}
+                              <div className="aspect-[16/10] relative overflow-hidden bg-black rounded-t-[10px]">
+                                <img src={selected} className="w-full h-full object-cover" alt="Normal preview" />
+                                <div className="absolute top-[12%] left-0 right-0 text-center" style={{ zIndex: 3 }}>
+                                  <div className="text-white/75 text-[3.2px] font-semibold tracking-wide" style={{ textShadow: "0 0.5px 1.5px rgba(0,0,0,0.5)" }}>Wednesday, June 19</div>
+                                  <div className="text-white/75 text-[13.5px] font-medium leading-none mt-0" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif", textShadow: "0 0.5px 2px rgba(0,0,0,0.4)" }}>12:45</div>
+                                </div>
+                              </div>
+                              <div className={`py-1.5 text-center text-[11px] font-medium ${isDarkMode ? "text-white/85 bg-white/[0.03]" : "text-zinc-700 bg-black/[0.02]"}`}>
+                                Normal
+                              </div>
+                            </button>
+
+                            {/* Depth Effect Preview Card */}
+                            <button
+                              onClick={() => setTempDepthMode(true)}
+                              className={`flex-1 rounded-xl overflow-hidden border-2 relative transition-all duration-250 cursor-pointer ${
+                                tempDepthMode
+                                  ? "border-[#007AFF] shadow-[0_0_0_1px_#007AFF]"
+                                  : isDarkMode ? "border-white/10 hover:border-white/20 bg-white/[0.02]" : "border-black/5 hover:border-black/10 bg-black/[0.01]"
+                              }`}
+                            >
+                              {tempDepthMode && (
+                                <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-[#007AFF] rounded-full flex-none flex items-center justify-center text-white shadow-md z-10">
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-2.5 h-2.5">
+                                    <polyline points="20 6 9 17 4 12" />
+                                  </svg>
+                                </div>
+                              )}
+                              <div className="aspect-[16/10] relative overflow-hidden bg-black rounded-t-[10px]">
+                                <img src={selected} className="w-full h-full object-cover" alt="Depth preview bg" />
+                                {/* Dark overlay for the unaffected area */}
+                                <div className="absolute inset-0 bg-black/45 pointer-events-none" style={{
+                                  zIndex: 1,
+                                  WebkitMaskImage: `linear-gradient(to bottom, black ${depthSliderValue - 5}%, transparent ${depthSliderValue + 8}%)`,
+                                  maskImage: `linear-gradient(to bottom, black ${depthSliderValue - 5}%, transparent ${depthSliderValue + 8}%)`,
+                                }} />
+                                <div className="absolute top-[12%] left-0 right-0 text-center" style={{ zIndex: 2 }}>
+                                  <div className="text-white/75 text-[3.2px] font-semibold tracking-wide" style={{ textShadow: "0 0.5px 1.5px rgba(0,0,0,0.5)" }}>Wednesday, June 19</div>
+                                  <div className="text-white/75 text-[13.5px] font-medium leading-none mt-0" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif", textShadow: "0 0.5px 2px rgba(0,0,0,0.4)" }}>12:45</div>
+                                </div>
+                                <div className="absolute inset-0" style={{
+                                  backgroundImage: `url('${selected}')`,
+                                  backgroundSize: "cover",
+                                  backgroundPosition: "center",
+                                  zIndex: 3,
+                                  WebkitMaskImage: `linear-gradient(to bottom, transparent ${depthSliderValue - 5}%, black ${depthSliderValue + 8}%)`,
+                                  maskImage: `linear-gradient(to bottom, transparent ${depthSliderValue - 5}%, black ${depthSliderValue + 8}%)`,
+                                }} />
+                              </div>
+                              <div className={`py-1.5 text-center text-[11px] font-medium flex items-center justify-center gap-1.5 ${isDarkMode ? "text-white/85 bg-white/[0.03]" : "text-zinc-700 bg-black/[0.02]"}`}>
+                                <BsLayers size={10} />
+                                Depth Effect
+                              </div>
+                            </button>
+                          </div>
+
+                          {/* Subject Position Slider (only shown when depth mode is selected) */}
+                          <div className={`transition-all duration-200 overflow-hidden ${tempDepthMode ? "max-h-[80px] opacity-100 mb-2" : "max-h-0 opacity-0 pointer-events-none mb-0"}`}>
+                            <div className="flex items-center justify-between mb-1.5">
+                              <span className={`text-[11px] font-medium ${isDarkMode ? "text-white/50" : "text-zinc-500"}`}>Subject Position</span>
+                              <span className={`text-[10px] font-mono font-semibold ${isDarkMode ? "text-white/40" : "text-zinc-500"}`}>{depthSliderValue}%</span>
+                            </div>
+                            <input
+                              type="range"
+                              min="5"
+                              max="50"
+                              value={depthSliderValue}
+                              onChange={(e) => setDepthSliderValue(Number(e.target.value))}
+                              className="w-full h-1 rounded-full appearance-none cursor-pointer outline-none"
+                              style={{
+                                background: `linear-gradient(to right, #007AFF 0%, #007AFF ${((depthSliderValue - 5) / 45) * 100}%, ${isDarkMode ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.1)"} ${((depthSliderValue - 5) / 45) * 100}%, ${isDarkMode ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.1)"} 100%)`
+                              }}
+                            />
+                            <div className="flex justify-between mt-1">
+                              <span className={`text-[9px] font-medium ${isDarkMode ? "text-white/30" : "text-zinc-400"}`}>Less</span>
+                              <span className={`text-[9px] font-medium ${isDarkMode ? "text-white/30" : "text-zinc-400"}`}>More</span>
+                            </div>
+                          </div>
+
+                          {/* Dialog Buttons */}
+                          <div className={`flex justify-end gap-2.5 mt-3 pt-3.5 border-t ${isDarkMode ? "border-white/[0.08]" : "border-black/[0.08]"}`}>
+                            <button
+                              onClick={() => setShowLockScreenOptions(false)}
+                              className={`px-3 py-1.5 rounded-lg text-[12px] font-medium transition-all ${
+                                isDarkMode
+                                  ? "bg-white/10 hover:bg-white/15 text-white/80 active:scale-[0.97]"
+                                  : "bg-black/5 hover:bg-black/10 text-zinc-700 active:scale-[0.97]"
+                              }`}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => setLockscreen(tempDepthMode)}
+                              className="px-3.5 py-1.5 rounded-lg text-[12px] font-semibold bg-[#007AFF] hover:bg-[#0062CC] active:scale-[0.97] text-white transition-all shadow-[0_1px_2px_rgba(0,0,0,0.15)]"
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
                 <div className={`w-px h-5 ${isDarkMode ? "bg-white/20" : "bg-black/15"}`} />
 

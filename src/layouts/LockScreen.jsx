@@ -51,7 +51,23 @@ export default function LockScreen({ goNext, isLocked }) {
   const [lockscreenWallpaper, setLockscreenWallpaper] = useState(() => {
     return localStorage.getItem("lockscreen_wallpaper") || "/Wallpaper/GoldenGate_6k.png";
   });
-  
+  const [depthEnabled, setDepthEnabled] = useState(() => {
+    return localStorage.getItem("lockscreen_depth_effect") === "true";
+  });
+  const [depthSubjectTop, setDepthSubjectTop] = useState(() => {
+    return parseInt(localStorage.getItem("lockscreen_depth_subject_top") || "30", 10);
+  });
+  const [depthForeground, setDepthForeground] = useState(() => {
+    return localStorage.getItem("lockscreen_depth_foreground") || "";
+  });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [clockPos, setClockPos] = useState(() => {
+    const saved = localStorage.getItem("lockscreen_clock_pos");
+    return saved ? JSON.parse(saved) : { x: 0, y: 0 };
+  });
+  const [isDraggingClock, setIsDraggingClock] = useState(false);
+  const dragStartRef = useRef(null);
+
   const [passwordInput, setPasswordInput] = useState("");
   const [isWrongPassword, setIsWrongPassword] = useState(false);
 
@@ -131,6 +147,20 @@ export default function LockScreen({ goNext, isLocked }) {
     if (savedWallpaper) setLockscreenWallpaper(savedWallpaper);
   }, []);
 
+  // Listen for depth effect setting changes
+  useEffect(() => {
+    const handleDepthChange = () => {
+      // Also refresh the wallpaper since it may have changed together with depth settings
+      const savedWallpaper = localStorage.getItem("lockscreen_wallpaper");
+      if (savedWallpaper) setLockscreenWallpaper(savedWallpaper);
+      setDepthEnabled(localStorage.getItem("lockscreen_depth_effect") === "true");
+      setDepthSubjectTop(parseInt(localStorage.getItem("lockscreen_depth_subject_top") || "30", 10));
+      setDepthForeground(localStorage.getItem("lockscreen_depth_foreground") || "");
+    };
+    window.addEventListener("lockscreenDepthChanged", handleDepthChange);
+    return () => window.removeEventListener("lockscreenDepthChanged", handleDepthChange);
+  }, []);
+
   const enterFullscreen = useCallback(() => {
     const elem = document.documentElement;
     if (elem.requestFullscreen) elem.requestFullscreen();
@@ -143,6 +173,40 @@ export default function LockScreen({ goNext, isLocked }) {
     setIsUnlocking(true);
     setTimeout(() => goNext(), 450);
   }, [enterFullscreen, goNext]);
+
+  // Clock drag handlers for depth mode
+  const handleClockDragStart = useCallback((e) => {
+    if (!depthEnabled) return;
+    e.preventDefault();
+    setIsDraggingClock(true);
+    dragStartRef.current = {
+      startX: e.clientX - clockPos.x,
+      startY: e.clientY - clockPos.y,
+    };
+  }, [depthEnabled, clockPos]);
+
+  useEffect(() => {
+    if (!isDraggingClock) return;
+    const handleMove = (e) => {
+      if (!dragStartRef.current) return;
+      const newX = e.clientX - dragStartRef.current.startX;
+      const newY = e.clientY - dragStartRef.current.startY;
+      setClockPos({ x: newX, y: newY });
+    };
+    const handleUp = () => {
+      setIsDraggingClock(false);
+      dragStartRef.current = null;
+      localStorage.setItem("lockscreen_clock_pos", JSON.stringify(clockPos));
+    };
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+  }, [isDraggingClock, clockPos]);
+
+
 
   const handleSubmitPassword = useCallback((e) => {
     if (e) e.preventDefault();
@@ -240,11 +304,29 @@ export default function LockScreen({ goNext, isLocked }) {
       {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('${lockscreenWallpaper}')` }}
+        style={{ 
+          backgroundImage: `url('${lockscreenWallpaper}')`,
+          zIndex: 0,
+        }}
       />
 
       {/* Subtle Overlay */}
-      <div className="absolute inset-0 bg-black/10" />
+      <div className="absolute inset-0 bg-black/10" style={{ zIndex: 1 }} />
+
+      {/* Depth Effect Foreground Layer */}
+      {depthEnabled && (
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+          style={{
+            backgroundImage: depthForeground ? `url('${depthForeground}')` : `url('${lockscreenWallpaper}')`,
+            zIndex: 10,
+            ...(depthForeground ? {} : {
+              WebkitMaskImage: `linear-gradient(to bottom, transparent ${depthSubjectTop - 5}%, black ${depthSubjectTop + 8}%)`,
+              maskImage: `linear-gradient(to bottom, transparent ${depthSubjectTop - 5}%, black ${depthSubjectTop + 8}%)`,
+            }),
+          }}
+        />
+      )}
 
       {/* Top Right Icons */}
       <div
@@ -256,8 +338,18 @@ export default function LockScreen({ goNext, isLocked }) {
       </div>
 
       {/* Clock & Media Widget Container */}
-      <div className="relative z-10 w-full h-full flex flex-col items-center pt-24 pointer-events-none">
-        <div className="flex flex-col items-center text-center">
+      <div className="relative w-full h-full flex flex-col items-center pt-24 pointer-events-none" style={{ zIndex: depthEnabled ? 5 : 10 }}>
+        <div
+          className={`flex flex-col items-center text-center ${
+            depthEnabled ? 'pointer-events-auto cursor-grab active:cursor-grabbing' : ''
+          }`}
+          style={depthEnabled ? {
+            transform: `translate(${clockPos.x}px, ${clockPos.y}px)`,
+            userSelect: 'none',
+            transition: isDraggingClock ? 'none' : 'transform 0.15s ease-out',
+          } : undefined}
+          onMouseDown={depthEnabled ? handleClockDragStart : undefined}
+        >
           <span
             className="text-[25px] tracking-wide"
             style={{
