@@ -291,7 +291,7 @@ export default function Trash({ windowId }) {
               className={`px-3 py-1 text-[11px] font-semibold rounded-lg shadow-sm transition ${
                 isDarkMode 
                   ? "bg-red-650 text-white hover:bg-red-600 border border-red-500/20" 
-                  : "bg-red-500 text-white hover:bg-red-600"
+                  : "bg-red-500 text-black hover:bg-red-600"
               }`}
             >
               Empty
@@ -416,7 +416,11 @@ export default function Trash({ windowId }) {
                 </button>
                 <button
                   onClick={emptyTrash}
-                  className="flex-1 py-2 rounded-lg bg-red-650 hover:bg-red-500 text-white shadow-sm transition"
+                  className={`flex-1 py-2 rounded-lg shadow-sm transition ${
+                    isDarkMode 
+                      ? "bg-red-650 text-white hover:bg-red-600" 
+                      : "bg-red-500 text-black hover:bg-red-600"
+                  }`}
                 >
                   Empty Trash
                 </button>

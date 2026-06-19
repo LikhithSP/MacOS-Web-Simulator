@@ -183,8 +183,52 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, hasClipboard,
       if (file) {
         const reader = new FileReader();
         reader.onload = (event) => {
-          localStorage.setItem("desktop_wallpaper", event.target.result);
-          window.dispatchEvent(new CustomEvent("wallpaperChanged", { detail: event.target.result }));
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            // Downscale image if it exceeds typical HD resolution to keep it under localStorage limits
+            const MAX_WIDTH = 1920;
+            const MAX_HEIGHT = 1080;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height = Math.round((height * MAX_WIDTH) / width);
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width = Math.round((width * MAX_HEIGHT) / height);
+                height = MAX_HEIGHT;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Compress to JPEG format with 0.8 quality (very high quality, but small payload size)
+            const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+
+            try {
+              localStorage.setItem("desktop_wallpaper", compressedDataUrl);
+              window.dispatchEvent(new CustomEvent("wallpaperChanged", { detail: compressedDataUrl }));
+            } catch (err) {
+              console.error("Error saving compressed wallpaper to localStorage:", err);
+              // Fallback to lower quality if 0.8 still fails
+              try {
+                const lowResDataUrl = canvas.toDataURL("image/jpeg", 0.5);
+                localStorage.setItem("desktop_wallpaper", lowResDataUrl);
+                window.dispatchEvent(new CustomEvent("wallpaperChanged", { detail: lowResDataUrl }));
+              } catch (fallbackErr) {
+                alert("The image is too large to set as a wallpaper. Please try a smaller file.");
+              }
+            }
+          };
         };
         reader.readAsDataURL(file);
       }

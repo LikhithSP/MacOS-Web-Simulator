@@ -963,6 +963,7 @@ export default function Finder({ initialPath = "/icloud", windowId, maximized, i
 
   const handleDrop = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDraggingOver(false);
 
     const files = Array.from(e.dataTransfer.files);
