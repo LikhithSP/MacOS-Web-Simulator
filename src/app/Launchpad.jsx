@@ -12,6 +12,7 @@ import FaceTime from "./FaceTime";
 import PhoneApp from "./Phone";
 import CalendarApp from "./Calendar";
 import ContactsApp from "./Contacts";
+import RemindersApp from "./Reminders";
 
 // Traffic lights component
 const TrafficLights = ({ windowId }) => {
@@ -172,6 +173,7 @@ export default function Launchpad({ windowId }) {
       appId: "Reminders",
       label: "Reminders",
       icon: "https://s3.macosicons.com/macosicons/icons/uFtsFtU4uA/lowResPngFile_68881de178401c6820d597d688105fea_low_res_Reminders__MacOS_Tahoe_.png",
+      comp: <RemindersApp />,
     },
     {
       appId: "Music",

@@ -25,8 +25,9 @@ export default function AppWindow({ window: win }) {
   const isFaceTime = win.appId === "FaceTime";
   const isPhone = win.appId === "Phone";
   const isContacts = win.appId === "Contacts";
-  const initialWidth = (isMail || isMaps || isFaceTime) ? screenWidth * 0.65 : (isMessages || isFinder || isPhone || isContacts) ? screenWidth * 0.55 : isLaunchpad ? screenWidth * 0.45 : screenWidth * 0.7;
-  const initialHeight = (isMessages || isFinder || isMail || isMaps || isFaceTime || isPhone || isContacts) ? screenHeight * 0.72 : isLaunchpad ? screenHeight * 0.65 : screenHeight * 0.76;
+  const isReminders = win.appId === "Reminders";
+  const initialWidth = (isMail || isMaps || isFaceTime) ? screenWidth * 0.65 : (isMessages || isFinder || isPhone || isContacts || isReminders) ? screenWidth * 0.55 : isLaunchpad ? screenWidth * 0.45 : screenWidth * 0.7;
+  const initialHeight = (isMessages || isFinder || isMail || isMaps || isFaceTime || isPhone || isContacts || isReminders) ? screenHeight * 0.72 : isLaunchpad ? screenHeight * 0.65 : screenHeight * 0.76;
   const initialX = Math.max(50, (screenWidth - initialWidth) / 2);
   const initialY = Math.max(40, (screenHeight - initialHeight) / 2 - 20);
 
@@ -183,7 +184,7 @@ export default function AppWindow({ window: win }) {
                     ? isDarkMode
                       ? "bg-[#1e1e1e] text-white"
                       : "bg-white text-gray-900 shadow-2xl"
-                  : win.appId === "Photos" || win.appId === "Music" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" || win.appId === "Messages" || win.appId === "Mail" || win.appId === "Maps" || win.appId === "Phone" || win.appId === "Calendar" || win.appId === "Contacts"
+                  : win.appId === "Photos" || win.appId === "Music" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" || win.appId === "Messages" || win.appId === "Mail" || win.appId === "Maps" || win.appId === "Phone" || win.appId === "Calendar" || win.appId === "Contacts" || win.appId === "Reminders"
                     ? isDarkMode
                       ? "bg-[#1e1e1e] text-white border border-white/10"
                       : "bg-white text-gray-900 border border-black/10 shadow-2xl"
@@ -195,8 +196,8 @@ export default function AppWindow({ window: win }) {
                 willChange: isDragging || isResizing ? 'transform' : 'auto',
               }}
             >
-              {/* Title Bar - Skip for Photos, Music, Safari, Finder, Notes, TextEdit, PDFViewer, Trash, Launchpad, Messages, Mail, Maps, FaceTime, Phone, Calendar, and Contacts since they integrate their own */}
-              {win.appId !== "Photos" && win.appId !== "Music" && win.appId !== "Safari" && win.appId !== "Notes" && win.appId !== "Finder" && win.appId !== "TextEdit" && win.appId !== "PDFViewer" && win.appId !== "Trash" && win.appId !== "Launchpad" && win.appId !== "Messages" && win.appId !== "Mail" && win.appId !== "Maps" && win.appId !== "FaceTime" && win.appId !== "Phone" && win.appId !== "Calendar" && win.appId !== "Contacts" && (
+              {/* Title Bar - Skip for Photos, Music, Safari, Finder, Notes, TextEdit, PDFViewer, Trash, Launchpad, Messages, Mail, Maps, FaceTime, Phone, Calendar, Contacts, and Reminders since they integrate their own */}
+              {win.appId !== "Photos" && win.appId !== "Music" && win.appId !== "Safari" && win.appId !== "Notes" && win.appId !== "Finder" && win.appId !== "TextEdit" && win.appId !== "PDFViewer" && win.appId !== "Trash" && win.appId !== "Launchpad" && win.appId !== "Messages" && win.appId !== "Mail" && win.appId !== "Maps" && win.appId !== "FaceTime" && win.appId !== "Phone" && win.appId !== "Calendar" && win.appId !== "Contacts" && win.appId !== "Reminders" && (
                 <div 
                   className={`window-drag-handle relative h-11 bg-linear-to-b from-white/10 to-transparent flex items-center cursor-grab active:cursor-grabbing select-none ${
                     win.maximized ? "" : "rounded-t-xl"

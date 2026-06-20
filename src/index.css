@@ -18,6 +18,11 @@
   scrollbar-width: none;
 }
 
+/* Reminders: subtask row delete button on hover (avoids nested group conflict) */
+.subtask-row:hover .subtask-delete-btn {
+  opacity: 1 !important;
+}
+
 /* Hide scrollbar for widget gallery */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;

@@ -15,6 +15,7 @@ import Maps from "../app/Maps";
 import FaceTime from "../app/FaceTime";
 import PhoneApp from "../app/Phone";
 import CalendarApp from "../app/Calendar";
+import RemindersApp from "../app/Reminders";
 
 const getWindowTitle = (win) => {
   if (win.appId === "TextEdit") {
@@ -182,7 +183,7 @@ export default function Dock() {
       id: "Reminders",
       label: "Reminders",
       icon: "https://s3.macosicons.com/macosicons/icons/uFtsFtU4uA/lowResPngFile_68881de178401c6820d597d688105fea_low_res_Reminders__MacOS_Tahoe_.png",
-      action: () => {},
+      comp: <RemindersApp />,
     },
     {
       id: "Music",
