@@ -12,6 +12,7 @@ import Messages from "../app/Messages";
 import Mail from "../app/Mail";
 import Maps from "../app/Maps";
 import FaceTime from "../app/FaceTime";
+import PhoneApp from "../app/Phone";
 
 const getWindowTitle = (win) => {
   if (win.appId === "TextEdit") {
@@ -155,7 +156,7 @@ export default function Dock() {
       id: "Phone",
       label: "Phone",
       icon: "https://s3.macosicons.com/macosicons/icons/Ji1iUu6nEa/lowResPngFile_e783299046843b81979c158cefcacf46_Ji1iUu6nEa.png",
-      action: () => {},
+      comp: <PhoneApp />,
     },
     {
       id: "Calendar",

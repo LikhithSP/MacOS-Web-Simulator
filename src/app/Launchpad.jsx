@@ -9,6 +9,7 @@ import Blogs from "./Blogs/BlogsSection.jsx";
 import Finder from "./Finder";
 import Trash from "./Trash";
 import FaceTime from "./FaceTime";
+import PhoneApp from "./Phone";
 
 // Traffic lights component
 const TrafficLights = ({ windowId }) => {
@@ -145,6 +146,7 @@ export default function Launchpad({ windowId }) {
       appId: "Phone",
       label: "Phone",
       icon: "https://s3.macosicons.com/macosicons/icons/Ji1iUu6nEa/lowResPngFile_e783299046843b81979c158cefcacf46_Ji1iUu6nEa.png",
+      comp: <PhoneApp />,
     },
     {
       appId: "Calendar",
