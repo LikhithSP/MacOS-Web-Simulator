@@ -61,17 +61,28 @@ export default function Messages({ windowId }) {
   const [inputVal, setInputVal] = useState("");
   const messagesEndRef = useRef(null);
 
+  const resolveAvatarBg = (bgString) => {
+    if (!bgString) return "bg-gray-100";
+    const parts = bgString.split(" ");
+    const darkPart = parts.find(p => p.startsWith("dark:bg-"));
+    const lightPart = parts.find(p => !p.startsWith("dark:"));
+    if (isDarkMode && darkPart) {
+      return darkPart.replace("dark:", "");
+    }
+    return lightPart || "bg-gray-200";
+  };
+
   // Mock Pinned Contacts
   const pinnedContacts = [
-    { id: "ashley", name: "Ashley", avatar: "/icons/PngItem_4082636.png", bg: "bg-red-100", tip: "Did the kids finish their homework?", hasUnread: true, isImage: true },
-    { id: "dawn", name: "Dawn", avatar: "/icons/PngItem_4409921.png", bg: "bg-amber-100", isImage: true },
-    { id: "rico", name: "Rico Family", avatar: "/icons/PngItem_4608119.png", bg: "bg-sky-100", hasUnread: true, isImage: true },
-    { id: "olivia", name: "Olivia", avatar: "/icons/PngItem_5031003.png", bg: "bg-purple-100", badge: "🌈", hasUnread: true, isImage: true },
-    { id: "will", name: "Will", avatar: "/icons/PngItem_6304991.png", bg: "bg-green-100", badge: "❤️", isImage: true },
-    { id: "animation", name: "Animation Team", avatar: "/icons/PngItem_6452863.png", bg: "bg-orange-200", isImage: true },
-    { id: "foodie", name: "Foodie Friends", avatar: "/icons/PngItem_4082636.png", bg: "bg-teal-200", isImage: true },
-    { id: "hiker", name: "Hiker Neighbors", avatar: "/icons/PngItem_4409921.png", bg: "bg-blue-200", isImage: true },
-    { id: "aileen", name: "Aileen & Rich", avatar: "/icons/PngItem_4608119.png", bg: "bg-rose-200", isImage: true }
+    { id: "ashley", name: "Ashley", avatar: "/icons/PngItem_4082636.png", bg: "bg-red-100 dark:bg-red-950/40", tip: "Did the kids finish their homework?", hasUnread: true, isImage: true },
+    { id: "dawn", name: "Dawn", avatar: "/icons/PngItem_4409921.png", bg: "bg-amber-100 dark:bg-amber-950/40", isImage: true },
+    { id: "rico", name: "Rico Family", avatar: "/icons/PngItem_4608119.png", bg: "bg-sky-100 dark:bg-sky-950/40", hasUnread: true, isImage: true },
+    { id: "olivia", name: "Olivia", avatar: "/icons/PngItem_5031003.png", bg: "bg-purple-100 dark:bg-purple-950/40", badge: "🌈", hasUnread: true, isImage: true },
+    { id: "will", name: "Will", avatar: "/icons/PngItem_6304991.png", bg: "bg-green-100 dark:bg-green-950/40", badge: "❤️", isImage: true },
+    { id: "animation", name: "Animation Team", avatar: "/icons/PngItem_6452863.png", bg: "bg-orange-200 dark:bg-orange-950/40", isImage: true },
+    { id: "foodie", name: "Foodie Friends", avatar: "/icons/PngItem_4082636.png", bg: "bg-teal-200 dark:bg-teal-950/40", isImage: true },
+    { id: "hiker", name: "Hiker Neighbors", avatar: "/icons/PngItem_4409921.png", bg: "bg-blue-200 dark:bg-blue-950/40", isImage: true },
+    { id: "aileen", name: "Aileen & Rich", avatar: "/icons/PngItem_4608119.png", bg: "bg-rose-200 dark:bg-rose-950/40", isImage: true }
   ];
 
   // Conversations and Chat History
@@ -80,7 +91,7 @@ export default function Messages({ windowId }) {
       id: "orkun",
       name: "Orkun Kucuksevim",
       avatar: "/icons/PngItem_4608119.png",
-      avatarBg: "bg-orange-50",
+      avatarBg: "bg-orange-100 dark:bg-orange-950/40",
       isImage: true,
       date: "Sunday",
       isGroup: false,
@@ -104,7 +115,7 @@ export default function Messages({ windowId }) {
       id: "hiker",
       name: "Hiker Neighbors",
       avatar: "/icons/PngItem_4409921.png",
-      avatarBg: "bg-blue-100",
+      avatarBg: "bg-blue-100 dark:bg-blue-950/40",
       isImage: true,
       date: "Sunday",
       isGroup: true,
@@ -120,7 +131,7 @@ export default function Messages({ windowId }) {
       id: "trev",
       name: "Trev Smith",
       avatar: "/icons/PngItem_6452863.png",
-      avatarBg: "bg-yellow-50",
+      avatarBg: "bg-amber-100 dark:bg-amber-950/40",
       isImage: true,
       date: "Yesterday",
       isGroup: false,
@@ -133,7 +144,7 @@ export default function Messages({ windowId }) {
       id: "antonio",
       name: "Antonio Manriquez",
       avatar: "/icons/PngItem_6452863.png",
-      avatarBg: "bg-green-50",
+      avatarBg: "bg-green-100 dark:bg-green-950/40",
       isImage: true,
       date: "Sunday",
       isGroup: false,
@@ -146,7 +157,7 @@ export default function Messages({ windowId }) {
       id: "xiaomeng",
       name: "Xiaomeng Zhong",
       avatar: "/icons/PngItem_5031003.png",
-      avatarBg: "bg-purple-50",
+      avatarBg: "bg-purple-100 dark:bg-purple-950/40",
       isImage: true,
       date: "Sunday",
       isGroup: false,
@@ -159,7 +170,7 @@ export default function Messages({ windowId }) {
       id: "jasmine",
       name: "Jasmine Garcia",
       avatar: "/icons/PngItem_4082636.png",
-      avatarBg: "bg-rose-50",
+      avatarBg: "bg-rose-100 dark:bg-rose-950/40",
       isImage: true,
       date: "Saturday",
       isGroup: false,
@@ -172,7 +183,7 @@ export default function Messages({ windowId }) {
       id: "nisha",
       name: "Nisha Kumar",
       avatar: "/icons/PngItem_5031003.png",
-      avatarBg: "bg-teal-50",
+      avatarBg: "bg-teal-100 dark:bg-teal-950/40",
       isImage: true,
       date: "Friday",
       isGroup: false,
@@ -291,7 +302,7 @@ export default function Messages({ windowId }) {
                 className="flex flex-col items-center cursor-pointer relative group text-center"
               >
                 <div className="relative w-[72px] h-[72px]">
-                  <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden transition-all duration-200 ${contact.bg} ${
+                  <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden transition-all duration-200 ${resolveAvatarBg(contact.bg)} ${
                     isSelected ? "ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-[#1E1E1E]" : "group-hover:scale-105"
                   } shadow-md p-1`}>
                     {contact.isImage ? (
@@ -343,7 +354,7 @@ export default function Messages({ windowId }) {
                     : isDarkMode ? "hover:bg-white/5" : "hover:bg-black/[0.02]"
                 }`}
               >
-                <div className={`w-11 h-11 rounded-full flex items-center justify-center overflow-hidden shrink-0 ${chat.avatarBg} shadow-sm p-0.5`}>
+                <div className={`w-11 h-11 rounded-full flex items-center justify-center overflow-hidden shrink-0 ${resolveAvatarBg(chat.avatarBg)} shadow-sm p-0.5`}>
                   {chat.isImage ? (
                     <img src={chat.avatar} alt={chat.name} className="w-full h-full object-contain" />
                   ) : (
@@ -384,7 +395,7 @@ export default function Messages({ windowId }) {
 
           {/* Active Chat info - Stacked layout matching native iMessage */}
           <div className="flex flex-col items-center cursor-pointer py-1 group">
-            <div className={`w-[34px] h-[34px] rounded-full flex items-center justify-center overflow-hidden text-[12px] bg-gray-200 dark:bg-gray-700 p-0.5 shadow-sm border border-black/5 dark:border-white/10`}>
+            <div className={`w-[34px] h-[34px] rounded-full flex items-center justify-center overflow-hidden text-[12px] p-0.5 shadow-sm border border-black/5 dark:border-white/10 ${resolveAvatarBg(activeChat.avatarBg)}`}>
               {activeChat.isImage ? (
                 <img src={activeChat.avatar} alt={activeChat.name} className="w-full h-full object-contain" />
               ) : (

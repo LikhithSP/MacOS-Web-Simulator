@@ -11,6 +11,7 @@ import Trash from "./Trash";
 import FaceTime from "./FaceTime";
 import PhoneApp from "./Phone";
 import CalendarApp from "./Calendar";
+import ContactsApp from "./Contacts";
 
 // Traffic lights component
 const TrafficLights = ({ windowId }) => {
@@ -159,6 +160,7 @@ export default function Launchpad({ windowId }) {
       appId: "Contacts",
       label: "Contacts",
       icon: "https://s3.macosicons.com/macosicons/icons/qxxJOsedmH/lowResPngFile_e03dd92dadf694dbe1b0ca0ad69d53d8_qxxJOsedmH.png",
+      comp: <ContactsApp />,
     },
     {
       appId: "Notes",

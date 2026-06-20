@@ -4,6 +4,7 @@ import { Safari } from "../app/Safari";
 import Spotify from "../app/Spotify";
 import Settings from "../app/Settings";
 import MacGallery from "../app/Gallary";
+import ContactsApp from "../app/Contacts";
 import Blogs from "../app/Blogs/BlogsSection.jsx";
 import Finder from "../app/Finder";
 import Trash from "../app/Trash";
@@ -169,7 +170,7 @@ export default function Dock() {
       id: "Contacts",
       label: "Contacts",
       icon: "https://s3.macosicons.com/macosicons/icons/qxxJOsedmH/lowResPngFile_e03dd92dadf694dbe1b0ca0ad69d53d8_qxxJOsedmH.png",
-      action: () => {},
+      comp: <ContactsApp />,
     },
     {
       id: "Notes",
