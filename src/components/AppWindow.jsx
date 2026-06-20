@@ -182,7 +182,7 @@ export default function AppWindow({ window: win }) {
                     ? isDarkMode
                       ? "bg-[#1e1e1e] text-white"
                       : "bg-white text-gray-900 shadow-2xl"
-                  : win.appId === "Photos" || win.appId === "Music" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" || win.appId === "Messages" || win.appId === "Mail" || win.appId === "Maps" || win.appId === "Phone"
+                  : win.appId === "Photos" || win.appId === "Music" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" || win.appId === "Messages" || win.appId === "Mail" || win.appId === "Maps" || win.appId === "Phone" || win.appId === "Calendar"
                     ? isDarkMode
                       ? "bg-[#1e1e1e] text-white border border-white/10"
                       : "bg-white text-gray-900 border border-black/10 shadow-2xl"
@@ -194,8 +194,8 @@ export default function AppWindow({ window: win }) {
                 willChange: isDragging || isResizing ? 'transform' : 'auto',
               }}
             >
-              {/* Title Bar - Skip for Photos, Music, Safari, Finder, Notes, TextEdit, PDFViewer, Trash, Launchpad, Messages, Mail, Maps, FaceTime, and Phone since they integrate their own */}
-              {win.appId !== "Photos" && win.appId !== "Music" && win.appId !== "Safari" && win.appId !== "Notes" && win.appId !== "Finder" && win.appId !== "TextEdit" && win.appId !== "PDFViewer" && win.appId !== "Trash" && win.appId !== "Launchpad" && win.appId !== "Messages" && win.appId !== "Mail" && win.appId !== "Maps" && win.appId !== "FaceTime" && win.appId !== "Phone" && (
+              {/* Title Bar - Skip for Photos, Music, Safari, Finder, Notes, TextEdit, PDFViewer, Trash, Launchpad, Messages, Mail, Maps, FaceTime, Phone, and Calendar since they integrate their own */}
+              {win.appId !== "Photos" && win.appId !== "Music" && win.appId !== "Safari" && win.appId !== "Notes" && win.appId !== "Finder" && win.appId !== "TextEdit" && win.appId !== "PDFViewer" && win.appId !== "Trash" && win.appId !== "Launchpad" && win.appId !== "Messages" && win.appId !== "Mail" && win.appId !== "Maps" && win.appId !== "FaceTime" && win.appId !== "Phone" && win.appId !== "Calendar" && (
                 <div 
                   className={`window-drag-handle relative h-11 bg-linear-to-b from-white/10 to-transparent flex items-center cursor-grab active:cursor-grabbing select-none ${
                     win.maximized ? "" : "rounded-t-xl"
@@ -254,7 +254,7 @@ export default function AppWindow({ window: win }) {
               )}
  
               {/* App Content */}
-              <div className={`flex-1 overflow-hidden flex flex-col ${win.appId === "Photos" || win.appId === "Music" || win.appId === "Safari" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" || win.appId === "Launchpad" || win.appId === "Messages" ? "" : "text-white bg-black/20"}`}>
+              <div className={`flex-1 overflow-hidden flex flex-col ${win.appId === "Photos" || win.appId === "Music" || win.appId === "Safari" || win.appId === "Notes" || win.appId === "Finder" || win.appId === "TextEdit" || win.appId === "PDFViewer" || win.appId === "Trash" || win.appId === "Launchpad" || win.appId === "Messages" || win.appId === "Calendar" ? "" : "text-white bg-black/20"}`}>
                 {React.cloneElement(win.component, { windowId: win.id, maximized: win.maximized, isDragging, isResizing })}
               </div>
             </motion.div>

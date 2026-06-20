@@ -367,7 +367,7 @@ export default function PhoneApp({ windowId }) {
 
         {/* Recents list heading */}
         <div className="px-5 pt-4 pb-1 shrink-0">
-          <span className={`font-extrabold text-[15px] ${isDarkMode ? "text-white" : "text-gray-900"}`}>Recents</span>
+          <span className={`font-semibold text-[15px] ${isDarkMode ? "text-white" : "text-gray-900"}`}>Recents</span>
         </div>
 
         {/* Recents List Scrollable */}
@@ -396,7 +396,7 @@ export default function PhoneApp({ windowId }) {
                     </div>
                     
                     <div className="flex flex-col min-w-0">
-                      <span className={`font-bold text-[13.5px] truncate ${
+                      <span className={`font-semibold text-[13.5px] truncate ${
                         isSelected 
                           ? isDarkMode ? "text-white" : "text-black"
                           : isDarkMode ? "text-white" : "text-gray-900"
@@ -504,7 +504,7 @@ export default function PhoneApp({ windowId }) {
               <img src={activeCallContact.avatar} alt="" className="w-full h-full object-contain" />
             </div>
 
-            <h2 className="text-xl font-bold tracking-wide">{activeCallContact.name}</h2>
+            <h2 className="text-xl font-semibold tracking-wide">{activeCallContact.name}</h2>
             <p className="text-sm text-gray-400 mt-1">{formatTime(callDuration)}</p>
             <p className="text-xs text-green-400 mt-0.5 animate-pulse">Calling...</p>
 
@@ -538,7 +538,7 @@ export default function PhoneApp({ windowId }) {
                 readOnly
                 placeholder="Enter Number"
                 value={dialedNumber}
-                className="w-full text-center text-2xl font-bold bg-transparent outline-none border-none placeholder-gray-500 tracking-wider text-inherit"
+                className="w-full text-center text-2xl font-semibold bg-transparent outline-none border-none placeholder-gray-500 tracking-wider text-inherit"
               />
               {dialedNumber && (
                 <button onClick={handleBackspace} className="p-1 hover:opacity-80 transition">
@@ -563,8 +563,8 @@ export default function PhoneApp({ windowId }) {
                       : "bg-black/[0.04] hover:bg-black/[0.08] text-gray-800"
                   }`}
                 >
-                  <span className="text-lg font-semibold">{key.n}</span>
-                  {key.s && <span className="text-[8px] text-gray-500 font-bold uppercase tracking-widest">{key.s}</span>}
+                  <span className="text-lg font-medium">{key.n}</span>
+                  {key.s && <span className="text-[8px] text-gray-500 font-semibold uppercase tracking-widest">{key.s}</span>}
                 </button>
               ))}
             </div>
@@ -611,7 +611,7 @@ export default function PhoneApp({ windowId }) {
 
               {/* Top Row: Edit (Translucent Glass Pill Button at Top Right) */}
               <div className="z-10 flex justify-end">
-                <button className="bg-black/10 hover:bg-black/15 dark:bg-white/15 dark:hover:bg-white/25 border border-black/10 dark:border-white/20 text-slate-800 dark:text-white text-[12px] font-bold px-4 py-1.5 rounded-full backdrop-blur-md transition shadow-sm">
+                <button className="bg-black/10 hover:bg-black/15 dark:bg-white/15 dark:hover:bg-white/25 border border-black/10 dark:border-white/20 text-slate-800 dark:text-white text-[12px] font-semibold px-4 py-1.5 rounded-full backdrop-blur-md transition shadow-sm">
                   Edit
                 </button>
               </div>
@@ -622,7 +622,7 @@ export default function PhoneApp({ windowId }) {
               {/* Lower Section: Name, Buttons, Tab bar, Details Card */}
               <div className="z-20 w-full flex flex-col items-center mt-auto">
                 {/* Adaptive Big Contact Name */}
-                <h1 className="text-slate-800 dark:text-white text-[32px] font-extrabold tracking-wide text-center drop-shadow-md select-text mb-4">
+                <h1 className="text-slate-800 dark:text-white text-[32px] font-bold tracking-wide text-center drop-shadow-md select-text mb-4">
                   {selectedContact.name}
                 </h1>
 
@@ -646,7 +646,7 @@ export default function PhoneApp({ windowId }) {
                 <div className="flex items-center justify-center gap-1.5 pb-2 mb-3.5 select-none">
                   <button 
                     onClick={() => setRightTab("details")}
-                    className={`text-[12px] font-bold px-4 py-1 rounded-full transition-all duration-150 ${
+                    className={`text-[12px] font-semibold px-4 py-1 rounded-full transition-all duration-150 ${
                       rightTab === "details"
                         ? "bg-black/15 dark:bg-white/35 text-slate-800 dark:text-white shadow-xs backdrop-blur-md"
                         : "text-slate-600 dark:text-white/80 hover:text-slate-800 dark:hover:text-white"
@@ -656,7 +656,7 @@ export default function PhoneApp({ windowId }) {
                   </button>
                   <button 
                     onClick={() => setRightTab("voicemails")}
-                    className={`text-[12px] font-bold px-4 py-1 rounded-full transition-all duration-150 ${
+                    className={`text-[12px] font-semibold px-4 py-1 rounded-full transition-all duration-150 ${
                       rightTab === "voicemails"
                         ? "bg-black/15 dark:bg-white/35 text-slate-800 dark:text-white shadow-xs backdrop-blur-md"
                         : "text-slate-600 dark:text-white/80 hover:text-slate-800 dark:hover:text-white"
@@ -669,7 +669,7 @@ export default function PhoneApp({ windowId }) {
                 {/* Details Call History translucent glass card */}
                 {rightTab === "details" ? (
                   <div className="w-full max-w-[460px] bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/15 backdrop-blur-md rounded-2xl p-4 text-slate-800 dark:text-white shadow-lg transition duration-200">
-                    <div className="flex justify-between items-center text-[12px] font-semibold text-slate-800/90 dark:text-white/95">
+                    <div className="flex justify-between items-center text-[12px] font-medium text-slate-800/90 dark:text-white/95">
                       <span>
                         {selectedContact.history[0]?.type || "Outgoing Call"}
                       </span>
@@ -678,20 +678,20 @@ export default function PhoneApp({ windowId }) {
                       </span>
                     </div>
                     
-                    <div className="text-[15px] font-bold mt-1 text-slate-900 dark:text-white">
+                    <div className="text-[15px] font-semibold mt-1 text-slate-900 dark:text-white">
                       {selectedContact.history[0]?.duration || "31 seconds"}
                     </div>
 
                     <div className="my-3.5 border-t border-black/5 dark:border-white/10" />
 
                     <div className="pt-0.5 flex items-center justify-between cursor-pointer group select-none text-slate-800 dark:text-white/90 hover:text-slate-900 dark:hover:text-white">
-                      <span className="text-xs font-semibold">Call History</span>
+                      <span className="text-xs font-medium">Call History</span>
                       <ChevronRight size={14} className="text-slate-600 dark:text-white/80 group-hover:text-slate-900 group-hover:dark:text-white transition" />
                     </div>
                   </div>
                 ) : (
                   <div className="w-full max-w-[460px] bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/10 backdrop-blur-md rounded-2xl p-6 text-center text-slate-700 dark:text-white/70">
-                    <span className="text-xs font-semibold">No Voicemails</span>
+                    <span className="text-xs font-medium">No Voicemails</span>
                   </div>
                 )}
               </div>
@@ -700,7 +700,7 @@ export default function PhoneApp({ windowId }) {
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-400 select-none">
             <Phone size={42} className="stroke-[1.5] mb-3 text-gray-500" />
-            <h3 className="text-sm font-semibold">Select a contact</h3>
+            <h3 className="text-sm font-medium">Select a contact</h3>
             <p className="text-xs text-gray-500 mt-1">Select a contact from recents to view caller details.</p>
           </div>
         )}

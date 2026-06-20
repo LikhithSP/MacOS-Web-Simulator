@@ -10,6 +10,7 @@ import Finder from "./Finder";
 import Trash from "./Trash";
 import FaceTime from "./FaceTime";
 import PhoneApp from "./Phone";
+import CalendarApp from "./Calendar";
 
 // Traffic lights component
 const TrafficLights = ({ windowId }) => {
@@ -152,6 +153,7 @@ export default function Launchpad({ windowId }) {
       appId: "Calendar",
       label: "Calendar",
       icon: "https://s3.macosicons.com/macosicons/icons/4GkFHZIM7u/lowResPngFile_d5fa0dee2f905f35c1467503869f42d8_4GkFHZIM7u.png",
+      comp: <CalendarApp />,
     },
     {
       appId: "Contacts",

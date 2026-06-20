@@ -149,91 +149,16 @@ const SupernovaSketch = () => (
 
 const defaultNotes = [
   {
-    id: 1,
-    title: "Plant Sketch",
+    id: 10,
+    title: "Hello, Welcome to Mac",
     subtitle: "1 photo",
-    content: "My sketch of the new office plants and layout planning. Added monstera and snake plant configurations near the eastern window.",
-    date: "4/1/25",
+    content: "Welcome to your new macOS simulator! Experience the premium design, fluid animations, and custom integrated applications.",
+    date: "6/9/26",
     pinned: true,
     folder: "notes",
-    thumbnail: "https://images.unsplash.com/photo-1512428559087-560fa5ceab42?w=100&auto=format&fit=crop&q=60",
-    updatedAt: "2025-04-01T10:00:00Z"
-  },
-  {
-    id: 2,
-    title: "Monday Morning Meeting",
-    subtitle: "#Policy #Housing #Art",
-    content: "Meeting notes: review housing policy changes and exhibition art designs. Team aligned on the new layout prototypes.",
-    date: "4/1/25",
-    pinned: true,
-    folder: "notes",
-    thumbnail: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100&auto=format&fit=crop&q=60",
-    updatedAt: "2025-04-01T09:00:00Z"
-  },
-  {
-    id: 3,
-    title: "Retirement Celebration",
-    subtitle: "Locked",
-    content: "[Locked note] Celebration planning details for Mr. Henderson's retirement banquet.",
-    date: "4/1/25",
-    pinned: false,
-    folder: "notes",
-    isLocked: true,
-    updatedAt: "2025-04-01T15:00:00Z"
-  },
-  {
-    id: 4,
-    title: "Family Fun",
-    subtitle: "Vote for your favorite!",
-    content: "Ideas for family trip:\n- Camping\n- Beach house\n- Theme park\nVote for your favorite!",
-    date: "4/1/25",
-    pinned: false,
-    folder: "shared",
-    thumbnail: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=100&auto=format&fit=crop&q=60",
-    updatedAt: "2025-04-01T11:00:00Z"
-  },
-  {
-    id: 5,
-    title: "Places to hike",
-    subtitle: "3 photos",
-    content: "Recommended hiking trails:\n- Yosemite Falls\n- Half Dome\n- Mist Trail",
-    date: "3/30/25",
-    pinned: false,
-    folder: "notes",
-    thumbnail: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=100&auto=format&fit=crop&q=60",
-    updatedAt: "2025-03-30T14:00:00Z"
-  },
-  {
-    id: 6,
-    title: "20-Minute Daily Gym Workout Pl...",
-    subtitle: "Week 1: Foundation Phase (Fo...",
-    content: "Week 1: Foundation Phase (Focus on form and stamina)\n- 5 min warm-up\n- 10 min high-intensity circuits\n- 5 min cool-down",
-    date: "3/27/25",
-    pinned: false,
-    folder: "notes",
-    updatedAt: "2025-03-27T08:00:00Z"
-  },
-  {
-    id: 7,
-    title: "The Evolution of Massive Stars: Supernovae",
-    subtitle: "Handwritten note",
-    content: "Supernovae are the dramatic end-stages of massive stellar evolution. Type I and Type II supernovae represent different mechanisms of collapse and spectral features.",
-    date: "3/25/25",
-    pinned: false,
-    folder: "notes",
-    hasSketch: true,
-    updatedAt: "2025-03-25T14:55:00Z"
-  },
-  {
-    id: 8,
-    title: "Sunlight and Circadian R...",
-    subtitle: "#school #psychology #",
-    content: "Study on circadian rhythms and morning light exposure. Sleep schedules are heavily influenced by blue-wavelength light.",
-    date: "3/21/25",
-    pinned: false,
-    folder: "notes",
-    thumbnail: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=100&auto=format&fit=crop&q=60",
-    updatedAt: "2025-03-21T16:00:00Z"
+    thumbnail: "/images/macos27.png",
+    images: ["/images/macos27.png"],
+    updatedAt: "2026-06-09T10:00:00Z"
   }
 ];
 
@@ -242,23 +167,16 @@ export default function Blogs({ windowId }) {
   
   const [notes, setNotes] = useState(() => {
     const saved = localStorage.getItem("os_notes");
-    const parsedNotes = saved ? JSON.parse(saved) : defaultNotes;
-    
-    // Filter out the requested default notes
-    const titlesToRemove = [
-      "reasons to use apple notes",
-      "things to complete",
-      "shopping list"
-    ];
-    return parsedNotes.filter(note => {
-      if (!note || !note.title) return true;
-      const titleLower = note.title.toLowerCase();
-      return !titlesToRemove.some(t => titleLower.includes(t));
-    });
+    const parsed = saved ? JSON.parse(saved) : defaultNotes;
+    const filtered = parsed.filter(n => n.id > 8);
+    if (!filtered.some(n => n.id === 10)) {
+      return [defaultNotes[0], ...filtered];
+    }
+    return filtered;
   });
   
   const [selectedFolder, setSelectedFolder] = useState("notes");
-  const [selectedNote, setSelectedNote] = useState(7); // default to Supernovae note
+  const [selectedNote, setSelectedNote] = useState(10); // default to welcome note
   const [searchQuery, setSearchQuery] = useState("");
   const [editContent, setEditContent] = useState("");
   const [editTitle, setEditTitle] = useState("");
@@ -377,7 +295,7 @@ export default function Blogs({ windowId }) {
       {/* 1. Sidebar Panel */}
       {isSidebarOpen && (
         <aside
-          className="w-52 h-full flex flex-col flex-shrink-0 border-r window-drag-handle"
+          className="w-52 flex flex-col flex-shrink-0 m-2 rounded-2xl border window-drag-handle overflow-hidden shadow-sm"
           style={{
             background: isDarkMode ? "rgba(37, 37, 37, 0.9)" : "rgba(250, 250, 248, 0.9)",
             borderColor: isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)"
@@ -404,7 +322,7 @@ export default function Blogs({ windowId }) {
           {/* Sidebar folder items */}
           <nav className="flex-1 overflow-y-auto px-2 py-2 space-y-4">
             <div>
-              <div className="flex items-center gap-1.5 px-3 py-1 text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+              <div className="flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                 <BsPeople size={12} className="opacity-70" />
                 <span>Shared</span>
               </div>
@@ -427,7 +345,7 @@ export default function Blogs({ windowId }) {
             </div>
 
             <div>
-              <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-3 select-none">iCloud</span>
+              <span className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-3 select-none">iCloud</span>
               <div className="mt-1 space-y-0.5">
                 <button
                   onClick={() => setSelectedFolder("all")}
@@ -478,7 +396,7 @@ export default function Blogs({ windowId }) {
 
             {/* Tags Header */}
             <div>
-              <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-3 select-none">Tags</span>
+              <span className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-3 select-none">Tags</span>
               <div className="mt-1 space-y-0.5 px-3 py-1.5 text-xs text-gray-400 dark:text-gray-500 italic">
                 No Tags
               </div>
@@ -498,7 +416,7 @@ export default function Blogs({ windowId }) {
         {/* Title & Count Header */}
         <div className="h-[52px] flex items-center justify-between px-4 mt-2 border-b border-black/[0.05] dark:border-white/5">
           <div>
-            <div className="text-[14px] font-extrabold text-gray-800 dark:text-white leading-none">Notes</div>
+            <div className="text-[14px] font-semibold text-gray-800 dark:text-white leading-none">Notes</div>
             <div className="text-[10px] text-gray-400 mt-1 select-none font-medium">
               {visibleNotes.length} {visibleNotes.length === 1 ? 'note' : 'notes'}
             </div>
@@ -525,7 +443,7 @@ export default function Blogs({ windowId }) {
           {/* Pinned notes */}
           {pinnedNotes.length > 0 && (
             <div>
-              <div className="text-[10px] font-bold text-gray-400 uppercase px-2 mb-1">Pinned</div>
+              <div className="text-[10px] font-semibold text-gray-400 uppercase px-2 mb-1">Pinned</div>
               <div className="space-y-1">
                 {pinnedNotes.map((note) => (
                   <div
@@ -538,7 +456,7 @@ export default function Blogs({ windowId }) {
                     }`}
                   >
                     <div className="flex-1 min-w-0 pr-2">
-                      <div className="text-[12px] font-bold text-gray-800 dark:text-white truncate">{note.title || "Untitled Note"}</div>
+                      <div className="text-[12px] font-semibold text-gray-800 dark:text-white truncate">{note.title || "Untitled Note"}</div>
                       <div className="flex items-center gap-1.5 text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
                         <span className="font-semibold">{note.date}</span>
                         <span className="truncate">{note.subtitle || "No attachment"}</span>
@@ -556,7 +474,7 @@ export default function Blogs({ windowId }) {
           {/* April notes */}
           {aprilNotes.length > 0 && (
             <div>
-              <div className="text-[10px] font-bold text-gray-400 uppercase px-2 mb-1">April</div>
+              <div className="text-[10px] font-semibold text-gray-400 uppercase px-2 mb-1">April</div>
               <div className="space-y-1">
                 {aprilNotes.map((note) => (
                   <div
@@ -569,7 +487,7 @@ export default function Blogs({ windowId }) {
                     }`}
                   >
                     <div className="flex-1 min-w-0 pr-2">
-                      <div className="text-[12px] font-bold text-gray-800 dark:text-white truncate">{note.title || "Untitled Note"}</div>
+                      <div className="text-[12px] font-semibold text-gray-800 dark:text-white truncate">{note.title || "Untitled Note"}</div>
                       <div className="flex items-center gap-1.5 text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
                         <span className="font-semibold">{note.date}</span>
                         <span className="truncate">{note.subtitle || "No attachment"}</span>
@@ -587,7 +505,7 @@ export default function Blogs({ windowId }) {
           {/* March notes */}
           {marchNotes.length > 0 && (
             <div>
-              <div className="text-[10px] font-bold text-gray-400 uppercase px-2 mb-1">March</div>
+              <div className="text-[10px] font-semibold text-gray-400 uppercase px-2 mb-1">March</div>
               <div className="space-y-1">
                 {marchNotes.map((note) => (
                   <div
@@ -600,7 +518,7 @@ export default function Blogs({ windowId }) {
                     }`}
                   >
                     <div className="flex-1 min-w-0 pr-2">
-                      <div className="text-[12px] font-bold text-gray-800 dark:text-white truncate">{note.title || "Untitled Note"}</div>
+                      <div className="text-[12px] font-semibold text-gray-800 dark:text-white truncate">{note.title || "Untitled Note"}</div>
                       <div className="flex items-center gap-1.5 text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
                         <span className="font-semibold">{note.date}</span>
                         <span className="truncate">{note.subtitle || "No attachment"}</span>
@@ -618,7 +536,7 @@ export default function Blogs({ windowId }) {
           {/* Older notes */}
           {olderNotes.length > 0 && (
             <div>
-              <div className="text-[10px] font-bold text-gray-400 uppercase px-2 mb-1">Previous</div>
+              <div className="text-[10px] font-semibold text-gray-400 uppercase px-2 mb-1">Previous</div>
               <div className="space-y-1">
                 {olderNotes.map((note) => (
                   <div
@@ -631,7 +549,7 @@ export default function Blogs({ windowId }) {
                     }`}
                   >
                     <div className="flex-1 min-w-0 pr-2">
-                      <div className="text-[12px] font-bold text-gray-800 dark:text-white truncate">{note.title || "Untitled Note"}</div>
+                      <div className="text-[12px] font-semibold text-gray-800 dark:text-white truncate">{note.title || "Untitled Note"}</div>
                       <div className="flex items-center gap-1.5 text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
                         <span className="font-semibold">{note.date || "Unknown"}</span>
                         <span className="truncate">{note.subtitle || "No attachment"}</span>
@@ -663,7 +581,7 @@ export default function Blogs({ windowId }) {
             {!isSidebarOpen && (
               <button
                 onClick={() => setIsSidebarOpen(true)}
-                className="p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/5 transition-colors mr-1"
+                className="w-8 h-8 rounded-full flex items-center justify-center border transition backdrop-blur-md border-black/5 bg-white/40 hover:bg-white/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 shadow-2xs mr-1"
                 title="Show Sidebar"
               >
                 <SidebarToggleIcon />
@@ -673,10 +591,10 @@ export default function Blogs({ windowId }) {
             {/* Create New Note button */}
             <button 
               onClick={handleNewNote}
-              className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 text-amber-500 rounded-md transition-colors"
+              className="w-8 h-8 rounded-full flex items-center justify-center border transition backdrop-blur-md border-black/5 bg-white/40 hover:bg-white/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 text-amber-500 shadow-2xs"
               title="New Note"
             >
-              <FiEdit size={16} />
+              <FiEdit size={14} />
             </button>
           </div>
 
@@ -690,18 +608,18 @@ export default function Blogs({ windowId }) {
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-1">
-            <button className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 rounded" title="Share"><FiShare size={15} /></button>
-            <button className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 rounded" title="More Options"><FiMoreHorizontal size={16} /></button>
-            <button className="p-1.5 hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 rounded" title="Search Note"><FiSearch size={15} /></button>
+          <div className="flex items-center gap-1.5">
+            <button className="w-8 h-8 rounded-full flex items-center justify-center border transition backdrop-blur-md border-black/5 bg-white/40 hover:bg-white/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 shadow-2xs" title="Share"><FiShare size={14} /></button>
+            <button className="w-8 h-8 rounded-full flex items-center justify-center border transition backdrop-blur-md border-black/5 bg-white/40 hover:bg-white/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 shadow-2xs" title="More Options"><FiMoreHorizontal size={15} /></button>
+            <button className="w-8 h-8 rounded-full flex items-center justify-center border transition backdrop-blur-md border-black/5 bg-white/40 hover:bg-white/60 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 shadow-2xs" title="Search Note"><FiSearch size={14} /></button>
             
             {activeNote && (
               <button 
                 onClick={() => handleDeleteNote(activeNote.id)}
-                className="p-1.5 hover:bg-red-500/10 text-red-500 rounded"
+                className="w-8 h-8 rounded-full flex items-center justify-center border transition backdrop-blur-md border-red-500/10 bg-red-500/5 hover:bg-red-500/10 dark:border-red-500/20 dark:bg-red-500/10 dark:hover:bg-red-500/20 text-red-500 shadow-2xs"
                 title="Delete Note"
               >
-                <FiTrash2 size={15} />
+                <FiTrash2 size={14} />
               </button>
             )}
           </div>
@@ -734,7 +652,7 @@ export default function Blogs({ windowId }) {
                   setEditTitle(e.target.value);
                   handleUpdateNote(activeNote.id, e.target.value, editContent);
                 }}
-                className="w-full bg-transparent text-[22px] font-extrabold text-gray-800 dark:text-white outline-none placeholder-gray-300 dark:placeholder-gray-700 leading-tight mb-4"
+                className="w-full bg-transparent text-[22px] font-bold text-gray-800 dark:text-white outline-none placeholder-gray-300 dark:placeholder-gray-700 leading-tight mb-4"
                 placeholder="New Note"
               />
 
