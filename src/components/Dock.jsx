@@ -17,6 +17,8 @@ import PhoneApp from "../app/Phone";
 import CalendarApp from "../app/Calendar";
 import RemindersApp from "../app/Reminders";
 
+import { GlassSurface } from "./ui/glass-surface";
+
 const getWindowTitle = (win) => {
   if (win.appId === "TextEdit") {
     return win.component?.props?.file?.name || "untitled.txt";
@@ -314,23 +316,17 @@ export default function Dock() {
 
   return (
     <div
-      className={`
-        absolute bottom-1 left-1/2 -translate-x-1/2
-        flex items-end
-        px-1 py-1 rounded-2xl
-        backdrop-blur-sm
-        h-[56px] overflow-visible
-        border transition-all duration-300 z-[99999]
-        ${isDarkMode ? 'border-white/10' : 'border-white/20'}
-      `}
-      style={{ 
-        background: isDarkMode ? "rgba(0, 0, 0, 0.45)" : "rgba(0, 0, 0, 0.02)",
-        boxShadow: isDarkMode 
-          ? "0 10px 40px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.05)" 
-          : "0 10px 40px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.1)"
-      }}
+      className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-end px-1 py-1 rounded-2xl h-[56px] overflow-visible transition-all duration-300 z-[99999]"
       onMouseLeave={handleMouseLeave}
     >
+      <GlassSurface
+        tint={isDarkMode ? 0.05 : 0.02}
+        radius={16}
+        blur={20}
+        chroma={0.1}
+        specular={false}
+        className="absolute inset-0 -z-10"
+      />
       {apps.map((app, index) => {
         if (app.divider)
           return (

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../store/Appstore';
+import { GlassSurface } from '../ui/glass-surface';
 
 function MiniAnalogClock({ timezone, cityCode }) {
   const [time, setTime] = useState(new Date());
@@ -86,13 +87,14 @@ export default function GlassSmallWorldClockWidget() {
   ];
 
   return (
-    <div className={`w-40 h-40 backdrop-blur-xl rounded-3xl p-2 flex flex-col justify-center text-white select-none shrink-0 pointer-events-auto relative overflow-hidden transition-all duration-300
-      ${isDarkMode 
-        ? 'bg-gradient-to-b from-black/40 to-black/15 border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_0_rgba(0,0,0,0.3)]' 
-        : 'bg-gradient-to-b from-white/12 to-white/4 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_8px_32px_0_rgba(0,0,0,0.2)]'
-      }`}>
-      {/* Liquid Glass Overlay Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/10 pointer-events-none" />
+    <div className="w-40 h-40 p-2 flex flex-col justify-center text-white select-none shrink-0 pointer-events-auto relative overflow-hidden transition-all duration-300 rounded-3xl">
+      <GlassSurface
+        tint={isDarkMode ? 0.05 : 0.02}
+        radius={24}
+        blur={20}
+        chroma={0.1}
+        className="absolute inset-0 -z-10"
+      />
 
       {/* 2x2 Clocks Layout */}
       <div className="relative z-10 grid grid-cols-2 gap-0.5 w-full h-full justify-items-center items-center">
@@ -103,3 +105,5 @@ export default function GlassSmallWorldClockWidget() {
     </div>
   );
 }
+
+

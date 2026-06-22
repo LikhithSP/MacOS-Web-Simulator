@@ -9,6 +9,7 @@ import {
 } from 'react-icons/fi';
 import { BsFillPlayFill, BsFillSkipForwardFill, BsFillSkipBackwardFill, BsFillPauseFill } from 'react-icons/bs';
 import { useAppStore } from '../store/Appstore';
+import { GlassSurface } from './ui/glass-surface';
 
 export default function ControlCenter() {
   const isAudioPlaying = useAppStore((state) => state.isAudioPlaying);
@@ -38,18 +39,9 @@ export default function ControlCenter() {
     setter(pct);
   };
 
-  // Glass effect class helper
-  const glassPanelClass = `backdrop-blur-2xl border transition-all duration-300 ${
-    isDarkMode 
-      ? 'bg-gradient-to-b from-black/40 to-black/15 border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)]' 
-      : 'bg-gradient-to-b from-white/12 to-white/4 border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_8px_32px_rgba(0,0,0,0.2)]'
-  }`;
-  
-  const glassCircleClass = `w-[68px] h-[68px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 backdrop-blur-2xl border ${
-    isDarkMode 
-      ? 'bg-gradient-to-b from-black/40 to-black/15 border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_8px_32px_rgba(0,0,0,0.3)]' 
-      : 'bg-gradient-to-b from-white/12 to-white/4 border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_8px_32px_rgba(0,0,0,0.2)]'
-  }`;
+  // Glass effect class helper (now base classes since GlassSurface provides backdrop, shadows, borders)
+  const glassPanelClass = `relative overflow-hidden transition-all duration-300`;
+  const glassCircleClass = `w-[68px] h-[68px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 relative overflow-hidden`;
 
   return (
     <div className="w-[330px] flex flex-col gap-3 text-white p-1 select-none transition-all duration-300">
@@ -61,8 +53,15 @@ export default function ControlCenter() {
           {/* Wi-Fi Card */}
           <div 
             onClick={() => setWifiOn(prev => !prev)}
-            className={`${glassPanelClass} rounded-[36px] p-2.5 flex items-center gap-3 cursor-pointer h-[68px] hover:bg-white/[0.12]`}
+            className={`${glassPanelClass} rounded-[36px] p-2.5 flex items-center gap-3 cursor-pointer h-[68px] hover:bg-white/[0.04]`}
           >
+            <GlassSurface
+              tint={isDarkMode ? 0.05 : 0.02}
+              radius={36}
+              blur={20}
+              chroma={0.1}
+              className="absolute inset-0 -z-10"
+            />
             <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
               wifiOn 
                 ? 'bg-white text-[#0a84ff] shadow-[0_2px_10px_rgba(10,132,255,0.3)]' 
@@ -83,9 +82,18 @@ export default function ControlCenter() {
               onClick={() => setBluetoothOn(prev => !prev)}
               className={bluetoothOn 
                 ? `w-[68px] h-[68px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 bg-white text-[#0a84ff] shadow-[0_2px_10px_rgba(10,132,255,0.3)]`
-                : `${glassCircleClass} hover:bg-white/[0.12] text-white/80`
+                : `${glassCircleClass} hover:bg-white/[0.04] text-white/80`
               }
             >
+              {!bluetoothOn && (
+                <GlassSurface
+                  tint={isDarkMode ? 0.05 : 0.02}
+                  radius={34}
+                  blur={20}
+                  chroma={0.1}
+                  className="absolute inset-0 -z-10"
+                />
+              )}
               <FiBluetooth size={24} strokeWidth={2.5} />
             </div>
 
@@ -94,9 +102,18 @@ export default function ControlCenter() {
               onClick={() => setAirdropOn(prev => !prev)}
               className={airdropOn 
                 ? `w-[68px] h-[68px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 bg-white text-[#0a84ff] shadow-[0_2px_10px_rgba(10,132,255,0.3)]`
-                : `${glassCircleClass} hover:bg-white/[0.12] text-white/80`
+                : `${glassCircleClass} hover:bg-white/[0.04] text-white/80`
               }
             >
+              {!airdropOn && (
+                <GlassSurface
+                  tint={isDarkMode ? 0.05 : 0.02}
+                  radius={34}
+                  blur={20}
+                  chroma={0.1}
+                  className="absolute inset-0 -z-10"
+                />
+              )}
               <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" className={airdropOn ? 'text-[#0a84ff]' : 'text-white'} />
                 <path d="M 9.1 15.4 A 4.5 4.5 0 1 1 14.9 15.4" />
@@ -109,8 +126,15 @@ export default function ControlCenter() {
           {/* Focus Card */}
           <div 
             onClick={() => setFocusOn(prev => !prev)}
-            className={`${glassPanelClass} rounded-[36px] p-2.5 flex items-center gap-3 cursor-pointer h-[68px] hover:bg-white/[0.12]`}
+            className={`${glassPanelClass} rounded-[36px] p-2.5 flex items-center gap-3 cursor-pointer h-[68px] hover:bg-white/[0.04]`}
           >
+            <GlassSurface
+              tint={isDarkMode ? 0.05 : 0.02}
+              radius={36}
+              blur={20}
+              chroma={0.1}
+              className="absolute inset-0 -z-10"
+            />
             <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300 ${
               focusOn 
                 ? 'bg-white text-[#ff9f0a] shadow-[0_2px_10px_rgba(255,159,10,0.3)]' 
@@ -128,7 +152,14 @@ export default function ControlCenter() {
         {/* Right Column (Media Player & Toggles) */}
         <div className="w-1/2 flex flex-col gap-3">
           {/* Media Player Card */}
-          <div className={`${glassPanelClass} rounded-[28px] p-3 flex flex-col justify-between h-[148px] hover:bg-white/[0.12]`}>
+          <div className={`${glassPanelClass} rounded-[28px] p-3 flex flex-col justify-between h-[148px] hover:bg-white/[0.04]`}>
+            <GlassSurface
+              tint={isDarkMode ? 0.05 : 0.02}
+              radius={28}
+              blur={20}
+              chroma={0.1}
+              className="absolute inset-0 -z-10"
+            />
             <div className="flex flex-col gap-1 items-start min-w-0 w-full">
               <img 
                 src={currentTrack.img} 
@@ -164,9 +195,18 @@ export default function ControlCenter() {
               onClick={() => setStageManagerOn(prev => !prev)}
               className={stageManagerOn 
                 ? `w-[68px] h-[68px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 bg-white/20 border border-white/25 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]`
-                : `${glassCircleClass} hover:bg-white/[0.12] text-white/80`
+                : `${glassCircleClass} hover:bg-white/[0.04] text-white/80`
               }
             >
+              {!stageManagerOn && (
+                <GlassSurface
+                  tint={isDarkMode ? 0.05 : 0.02}
+                  radius={34}
+                  blur={20}
+                  chroma={0.1}
+                  className="absolute inset-0 -z-10"
+                />
+              )}
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="9" y="5" width="11" height="14" rx="2"></rect>
                 <path d="M4 7h2"></path>
@@ -179,9 +219,18 @@ export default function ControlCenter() {
               onClick={() => setMirroringOn(prev => !prev)}
               className={mirroringOn 
                 ? `w-[68px] h-[68px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 bg-white/20 border border-white/25 text-white shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]`
-                : `${glassCircleClass} hover:bg-white/[0.12] text-white/80`
+                : `${glassCircleClass} hover:bg-white/[0.04] text-white/80`
               }
             >
+              {!mirroringOn && (
+                <GlassSurface
+                  tint={isDarkMode ? 0.05 : 0.02}
+                  radius={34}
+                  blur={20}
+                  chroma={0.1}
+                  className="absolute inset-0 -z-10"
+                />
+              )}
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="4" y="4" width="12" height="12" rx="2"></rect>
                 <path d="M8 20h12V8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -192,7 +241,14 @@ export default function ControlCenter() {
       </div>
       
       {/* Display Slider Card */}
-      <div className={`${glassPanelClass} rounded-[28px] p-3 flex flex-col gap-2 h-[72px] justify-center hover:bg-white/[0.10]`}>
+      <div className={`${glassPanelClass} rounded-[28px] p-3 flex flex-col gap-2 h-[72px] justify-center hover:bg-white/[0.04]`}>
+        <GlassSurface
+          tint={isDarkMode ? 0.05 : 0.02}
+          radius={28}
+          blur={20}
+          chroma={0.1}
+          className="absolute inset-0 -z-10"
+        />
         <span className="font-bold text-[12px] ml-1 tracking-wide">Display</span>
         <div className="flex items-center gap-3">
           <FiSun size={13} className="text-white/60 shrink-0 ml-0.5" />
@@ -211,7 +267,14 @@ export default function ControlCenter() {
       </div>
 
       {/* Sound Slider Card */}
-      <div className={`${glassPanelClass} rounded-[28px] p-3 flex flex-col gap-2 h-[72px] justify-center hover:bg-white/[0.10]`}>
+      <div className={`${glassPanelClass} rounded-[28px] p-3 flex flex-col gap-2 h-[72px] justify-center hover:bg-white/[0.04]`}>
+        <GlassSurface
+          tint={isDarkMode ? 0.05 : 0.02}
+          radius={28}
+          blur={20}
+          chroma={0.1}
+          className="absolute inset-0 -z-10"
+        />
         <span className="font-bold text-[12px] ml-1 tracking-wide">Sound</span>
         <div className="flex items-center gap-3">
           <FiVolume size={15} className="text-white/60 shrink-0 ml-0.5" />
@@ -243,8 +306,15 @@ export default function ControlCenter() {
         {/* Contrast / Dark Mode toggle */}
         <div 
           onClick={toggleDarkMode}
-          className={`${glassCircleClass} w-[68px] h-[68px] hover:bg-white/[0.12]`}
+          className={`${glassCircleClass} w-[68px] h-[68px] hover:bg-white/[0.04]`}
         >
+          <GlassSurface
+            tint={isDarkMode ? 0.05 : 0.02}
+            radius={34}
+            blur={20}
+            chroma={0.1}
+            className="absolute inset-0 -z-10"
+          />
           <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
             <path d="M12 18a6 6 0 1 0 0-12v12z" fill="currentColor" />
@@ -252,7 +322,14 @@ export default function ControlCenter() {
         </div>
 
         {/* Calculator */}
-        <div className={`${glassCircleClass} w-[68px] h-[68px] hover:bg-white/[0.12]`}>
+        <div className={`${glassCircleClass} w-[68px] h-[68px] hover:bg-white/[0.04]`}>
+          <GlassSurface
+            tint={isDarkMode ? 0.05 : 0.02}
+            radius={34}
+            blur={20}
+            chroma={0.1}
+            className="absolute inset-0 -z-10"
+          />
           <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
             <line x1="8" y1="6" x2="16" y2="6" />
@@ -268,7 +345,14 @@ export default function ControlCenter() {
         </div>
 
         {/* Timer */}
-        <div className={`${glassCircleClass} w-[68px] h-[68px] hover:bg-white/[0.12]`}>
+        <div className={`${glassCircleClass} w-[68px] h-[68px] hover:bg-white/[0.04]`}>
+          <GlassSurface
+            tint={isDarkMode ? 0.05 : 0.02}
+            radius={34}
+            blur={20}
+            chroma={0.1}
+            className="absolute inset-0 -z-10"
+          />
           <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />
             <polyline points="12 6 12 12 16 14" />
@@ -276,7 +360,14 @@ export default function ControlCenter() {
         </div>
 
         {/* Screenshot */}
-        <div className={`${glassCircleClass} w-[68px] h-[68px] hover:bg-white/[0.12]`}>
+        <div className={`${glassCircleClass} w-[68px] h-[68px] hover:bg-white/[0.04]`}>
+          <GlassSurface
+            tint={isDarkMode ? 0.05 : 0.02}
+            radius={34}
+            blur={20}
+            chroma={0.1}
+            className="absolute inset-0 -z-10"
+          />
           <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
             <circle cx="12" cy="13" r="4" />
@@ -286,7 +377,14 @@ export default function ControlCenter() {
 
       {/* Edit Controls Button */}
       <div className="flex justify-center mt-1 pb-0.5">
-        <button className={`${glassPanelClass} rounded-full px-5 py-2 text-[11px] font-bold hover:bg-white/[0.15]`}>
+        <button className={`${glassPanelClass} rounded-full px-5 py-2 text-[11px] font-bold hover:bg-white/[0.08]`}>
+          <GlassSurface
+            tint={isDarkMode ? 0.05 : 0.02}
+            radius={999}
+            blur={20}
+            chroma={0.1}
+            className="absolute inset-0 -z-10"
+          />
           Edit Controls
         </button>
       </div>
