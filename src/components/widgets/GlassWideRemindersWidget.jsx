@@ -22,10 +22,10 @@ export default function GlassWideRemindersWidget() {
   return (
     <div className="w-80 h-40 flex text-white p-5 select-none shrink-0 pointer-events-auto relative overflow-hidden transition-all duration-300 rounded-3xl">
       <GlassSurface
-        tint={isDarkMode ? 0.05 : 0.02}
+        tint={0}
         radius={24}
-        blur={20}
-        chroma={0.1}
+        blur={8}
+        chroma={0.3}
         className="absolute inset-0 -z-10"
       />
 

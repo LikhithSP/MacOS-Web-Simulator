@@ -150,10 +150,10 @@ export default function GlassClockWidget() {
   return (
     <div className="w-40 h-40 flex flex-col items-center justify-center text-white select-none shrink-0 pointer-events-auto relative overflow-hidden transition-all duration-300 rounded-3xl">
       <GlassSurface
-        tint={isDarkMode ? 0.05 : 0.02}
+        tint={0}
         radius={24}
-        blur={20}
-        chroma={0.1}
+        blur={8}
+        chroma={0.3}
         className="absolute inset-0 -z-10"
       />
 

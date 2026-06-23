@@ -3,6 +3,7 @@ import { useAppStore } from "../store/Appstore";
 import { songs } from "../constants/songs";
 import { FiShuffle } from "react-icons/fi";
 import { BsFillPlayFill, BsFillPauseFill, BsFillSkipForwardFill, BsFillSkipBackwardFill } from "react-icons/bs";
+import { GlassSurface } from "../components/ui/glass-surface";
 
 // macOS Style Signal Bars Icon
 const MacSignalIcon = () => (
@@ -570,13 +571,20 @@ export default function LockScreen({ goNext, isLocked }) {
             onSubmit={handleSubmitPassword}
             className={`relative w-48 mt-1 ${isWrongPassword ? 'shake-animation' : ''}`}
           >
+            <GlassSurface
+              tint={0.02}
+              radius={999}
+              blur={20}
+              chroma={0.1}
+              className="absolute inset-0 -z-10"
+            />
             <input
               ref={passwordInputRef}
               type="password"
               placeholder="Enter Password"
               value={passwordInput}
               onChange={(e) => setPasswordInput(e.target.value)}
-              className="w-full h-8 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-4 text-white text-[13px] placeholder-white/60 outline-none focus:border-white/50 transition-all"
+              className="w-full h-8 bg-transparent px-4 pr-8 text-white text-[13px] placeholder-white/60 outline-none transition-all"
               style={{
                 fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
               }}
