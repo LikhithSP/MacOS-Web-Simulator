@@ -4,6 +4,7 @@ import { songs } from "../constants/songs";
 import { FiShuffle } from "react-icons/fi";
 import { BsFillPlayFill, BsFillPauseFill, BsFillSkipForwardFill, BsFillSkipBackwardFill } from "react-icons/bs";
 import { GlassSurface } from "../components/ui/glass-surface";
+import LockScreenWidgetLayer from "../components/widgets/LockScreenWidgetLayer";
 
 // macOS Style Signal Bars Icon
 const MacSignalIcon = () => (
@@ -17,8 +18,15 @@ const MacSignalIcon = () => (
 
 // macOS Style Wifi Icon
 const MacWifiIcon = () => (
-  <svg width="18" height="14" viewBox="0 0 24 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="text-white">
-    <circle cx="12" cy="18" r="2" fill="currentColor" stroke="none" />
+  <svg width="18" height="14" viewBox="0 0 24 20" fill="none" stroke="url(#lock-wifi-glass)" strokeWidth="2.5" strokeLinecap="round" aria-label="Wi-Fi">
+    <defs>
+      <linearGradient id="lock-wifi-glass" x1="12" y1="0" x2="12" y2="20" gradientUnits="userSpaceOnUse">
+        <stop stopColor="white" stopOpacity="0.98" />
+        <stop offset="0.48" stopColor="white" stopOpacity="0.72" />
+        <stop offset="1" stopColor="white" stopOpacity="0.32" />
+      </linearGradient>
+    </defs>
+    <circle cx="12" cy="18" r="2" fill="url(#lock-wifi-glass)" stroke="none" />
     <path d="M8.5 14.5a5 5 0 0 1 7 0" />
     <path d="M5 11a10 10 0 0 1 14 0" />
     <path d="M1.5 7.5a15 15 0 0 1 21 0" />
@@ -27,9 +35,16 @@ const MacWifiIcon = () => (
 
 // macOS Style Battery Icon (Full)
 const MacBatteryIcon = () => (
-  <svg width="28" height="14" viewBox="0 0 28 14" fill="currentColor" className="text-white">
-    <rect x="0" y="0" width="24" height="14" rx="4.5" fill="currentColor" />
-    <rect x="25.5" y="4" width="2" height="6" rx="1" fill="currentColor" />
+  <svg width="28" height="14" viewBox="0 0 28 14" fill="none" aria-label="Battery">
+    <defs>
+      <linearGradient id="lock-battery-glass" x1="0" y1="0" x2="0" y2="14" gradientUnits="userSpaceOnUse">
+        <stop stopColor="white" stopOpacity="0.98" />
+        <stop offset="0.5" stopColor="white" stopOpacity="0.72" />
+        <stop offset="1" stopColor="white" stopOpacity="0.34" />
+      </linearGradient>
+    </defs>
+    <rect x="0.5" y="0.5" width="23" height="13" rx="4" fill="url(#lock-battery-glass)" fillOpacity="0.82" stroke="white" strokeOpacity="0.66" />
+    <rect x="25.5" y="4" width="2" height="6" rx="1" fill="url(#lock-battery-glass)" />
   </svg>
 );
 
@@ -329,10 +344,12 @@ export default function LockScreen({ goNext, isLocked }) {
         />
       )}
 
+      <LockScreenWidgetLayer />
+
       {/* Top Right Icons */}
       <div
-        className="absolute top-4 right-5 z-20 flex items-center gap-3 text-white"
-        style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.3))" }}
+        className="absolute top-4 right-5 z-20 flex items-center gap-3"
+        style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.28)) drop-shadow(0 0 5px rgba(255,255,255,0.14))" }}
       >
         <MacWifiIcon />
         <MacBatteryIcon />
@@ -352,9 +369,8 @@ export default function LockScreen({ goNext, isLocked }) {
           onMouseDown={depthEnabled ? handleClockDragStart : undefined}
         >
           <span
-            className="text-[25px] tracking-wide"
+            className="lock-glass-type text-[25px] tracking-wide"
             style={{
-              color: "rgba(255,255,255,0.75)",
               fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
               fontWeight: 600,
               letterSpacing: "-0.01em",
@@ -363,9 +379,8 @@ export default function LockScreen({ goNext, isLocked }) {
             {formattedDate}
           </span>
           <span
-            className="text-[120px] leading-none mt-0"
+            className="lock-glass-type text-[120px] leading-none mt-0"
             style={{
-              color: "rgba(255,255,255,0.75)",
               fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
               fontWeight: 500,
               letterSpacing: "-0.02em",

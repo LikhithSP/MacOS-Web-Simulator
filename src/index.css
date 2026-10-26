@@ -150,6 +150,55 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Shared motion defaults keep frequent interactions responsive while allowing a soft settle. */
+:root {
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.motion-smooth {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+button,
+[role="button"],
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled),
+[role="button"],
+a {
+  transition-timing-function: var(--motion-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Translucent type treatment used by the lock-screen clock without adding a panel behind it. */
+.lock-glass-type {
+  color: rgba(255, 255, 255, 0.78);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.72) 48%, rgba(255, 255, 255, 0.34) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 0.35px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.24), 0 3px 12px rgba(0, 0, 0, 0.18);
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.12));
+}
+
 @keyframes pulse-slow {
   0%,
   100% {

@@ -16,7 +16,7 @@ import {
   FiEyeOff,
   FiLayout,
 } from "react-icons/fi";
-import { BsSortDown, BsSortUp, BsGrid3X3 } from "react-icons/bs";
+import { BsSortDown, BsSortUp, BsGrid3X3, BsLayers } from "react-icons/bs";
 import { useAppStore } from "../store/Appstore";
 
 const wallpaperModules = import.meta.glob("/public/Wallpaper/*.{jpg,jpeg,png,gif,webp}", {
@@ -45,6 +45,7 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, hasClipboard,
   const preloadedWallpapers = useRef(new Set());
   const [submenu, setSubmenu] = useState(null);
   const [showWallpaperPicker, setShowWallpaperPicker] = useState(false);
+  const [customWallpaper, setCustomWallpaper] = useState(null);
   const [showIconsOnDesktop, setShowIconsOnDesktop] = useState(() => {
     return localStorage.getItem("desktop_show_icons") !== "false";
   });
@@ -168,10 +169,34 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, hasClipboard,
 
   const handleChangeWallpaper = (wallpaper) => {
     preloadWallpaper(wallpaper.src);
-    localStorage.setItem("desktop_wallpaper", wallpaper.src);
-    window.dispatchEvent(new CustomEvent("wallpaperChanged", { detail: wallpaper.src }));
+    applyWallpaperTarget(wallpaper.src, "desktop");
     setShowWallpaperPicker(false);
     onClose();
+  };
+
+  const applyWallpaperTarget = (src, target) => {
+    preloadWallpaper(src);
+    if (target === "desktop" || target === "both") {
+      localStorage.setItem("desktop_wallpaper", src);
+      window.dispatchEvent(new CustomEvent("wallpaperChanged", { detail: src }));
+    }
+    if (target === "lockscreen" || target === "both") {
+      localStorage.setItem("lockscreen_wallpaper", src);
+      localStorage.setItem("lockscreen_depth_effect", "false");
+      window.dispatchEvent(new Event("lockscreenDepthChanged"));
+    }
+  };
+
+  const saveCustomWallpaper = (dataUrl, target) => {
+    try {
+      applyWallpaperTarget(dataUrl, target);
+      setCustomWallpaper(null);
+      setShowWallpaperPicker(false);
+      onClose();
+    } catch (error) {
+      console.error("Error applying custom wallpaper:", error);
+      alert("The image could not be applied. Please try a smaller file.");
+    }
   };
 
   const handleCustomWallpaper = () => {
@@ -215,16 +240,13 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, hasClipboard,
             const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.8);
 
             try {
-              localStorage.setItem("desktop_wallpaper", compressedDataUrl);
-              window.dispatchEvent(new CustomEvent("wallpaperChanged", { detail: compressedDataUrl }));
+              setCustomWallpaper(compressedDataUrl);
             } catch (err) {
-              console.error("Error saving compressed wallpaper to localStorage:", err);
-              // Fallback to lower quality if 0.8 still fails
+              console.error("Error preparing compressed wallpaper:", err);
               try {
-                const lowResDataUrl = canvas.toDataURL("image/jpeg", 0.5);
-                localStorage.setItem("desktop_wallpaper", lowResDataUrl);
-                window.dispatchEvent(new CustomEvent("wallpaperChanged", { detail: lowResDataUrl }));
+                setCustomWallpaper(canvas.toDataURL("image/jpeg", 0.5));
               } catch (fallbackErr) {
+                console.error("Error preparing fallback wallpaper:", fallbackErr);
                 alert("The image is too large to set as a wallpaper. Please try a smaller file.");
               }
             }
@@ -234,7 +256,6 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, hasClipboard,
       }
     };
     input.click();
-    onClose();
   };
 
   const handleToggleIcons = () => {
@@ -499,7 +520,53 @@ export default function ContextMenu({ x, y, onClose, onOpenFinder, hasClipboard,
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {customWallpaper && (
+          <motion.div
+            className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/35 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 10 }}
+              transition={{ type: "spring", stiffness: 460, damping: 32 }}
+              className={`w-[360px] overflow-hidden rounded-2xl border p-5 shadow-2xl ${isDarkMode ? "border-white/10 bg-[#202124]/95 text-white" : "border-white/60 bg-white/90 text-zinc-800"}`}
+            >
+              <h2 className="text-center text-[17px] font-semibold">Apply Wallpaper</h2>
+              <p className={`mt-1 text-center text-[12px] ${isDarkMode ? "text-white/60" : "text-zinc-500"}`}>
+                Where would you like to use this image?
+              </p>
+              <img src={customWallpaper} alt="Selected wallpaper preview" className="mt-4 h-32 w-full rounded-xl object-cover shadow-inner" />
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                {[
+                  ["desktop", "Home Screen", <FiMonitor className="h-4 w-4" />],
+                  ["lockscreen", "Lock Screen", <FiEye className="h-4 w-4" />],
+                  ["both", "Both", <BsLayers className="h-4 w-4" />],
+                ].map(([target, label, icon]) => (
+                  <button
+                    key={target}
+                    onClick={() => saveCustomWallpaper(customWallpaper, target)}
+                    className={`flex min-h-[62px] flex-col items-center justify-center gap-1 rounded-xl border text-[11px] font-medium transition-colors ${isDarkMode ? "border-white/10 bg-white/10 hover:bg-white/20" : "border-black/10 bg-black/5 hover:bg-black/10"}`}
+                  >
+                    {icon}
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setCustomWallpaper(null)}
+                className={`mt-3 w-full rounded-lg py-2 text-[12px] font-medium ${isDarkMode ? "text-white/60 hover:bg-white/10" : "text-zinc-500 hover:bg-black/5"}`}
+              >
+                Cancel
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
-

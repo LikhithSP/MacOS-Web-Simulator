@@ -205,12 +205,12 @@ export default function AppWindow({ window: win }) {
               }}
               exit={{
                 opacity: 0,
-                scale: 0.9,
-                y: 30,
-                transition: { duration: 0.2, ease: "easeInOut" },
+                scale: 0.96,
+                y: 14,
+                transition: { duration: 0.16, ease: [0.4, 0, 1, 1] },
               }}
-              transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-              className={`flex flex-col overflow-hidden ${
+              transition={{ type: "spring", stiffness: 520, damping: 34, mass: 0.7 }}
+              className={`motion-smooth flex flex-col overflow-hidden ${
                 win.maximized ? "rounded-none" : "rounded-xl"
               } ${
                 win.appId === "Launchpad"

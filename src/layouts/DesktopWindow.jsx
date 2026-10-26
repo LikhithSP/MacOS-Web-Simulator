@@ -23,6 +23,8 @@ import GlassSFWeatherWidget from "../components/widgets/GlassSFWeatherWidget";
 import GlassDayWidget from "../components/widgets/GlassDayWidget";
 import GlassSmallWorldClockWidget from "../components/widgets/GlassSmallWorldClockWidget";
 import GlassWideRemindersWidget from "../components/widgets/GlassWideRemindersWidget";
+import GlassActivityWidget from "../components/widgets/GlassActivityWidget";
+import GlassStocksWidget from "../components/widgets/GlassStocksWidget";
 import { FiX } from "react-icons/fi";
 
 export default function Desktop({ setStage, isLocked = false }) {
@@ -57,7 +59,17 @@ export default function Desktop({ setStage, isLocked = false }) {
   const [toast, setToast] = useState(null);
 
   const [widgets, setWidgets] = useState(() => {
-    return JSON.parse(localStorage.getItem("os_desktop_widgets") || "[]");
+    const saved = localStorage.getItem("os_desktop_widgets");
+    const defaults = [
+      { id: "lock-calendar", type: "glass_calendar", x: 16, y: 42 },
+      { id: "lock-weather", type: "glass_weather", x: 228, y: 42 },
+      { id: "lock-activity", type: "glass_activity", x: 16, y: 254 },
+      { id: "lock-stocks", type: "glass_stocks", x: 16, y: 466 },
+    ];
+    if (!saved) return defaults;
+    const existing = JSON.parse(saved);
+    const missing = defaults.filter((defaultWidget) => !existing.some((widget) => widget.type === defaultWidget.type));
+    return [...existing, ...missing];
   });
   const [showWidgetGallery, setShowWidgetGallery] = useState(false);
 
@@ -554,6 +566,8 @@ export default function Desktop({ setStage, isLocked = false }) {
                 {widget.type === 'glass_mini_calendar' && <GlassMiniCalendarWidget />}
                 {widget.type === 'glass_sf_weather' && <GlassSFWeatherWidget />}
                 {widget.type === 'glass_day' && <GlassDayWidget />}
+                {widget.type === 'glass_activity' && <GlassActivityWidget />}
+                {widget.type === 'glass_stocks' && <GlassStocksWidget />}
                 
                 {/* Remove button (visible on hover) */}
                 <button
@@ -662,7 +676,7 @@ export default function Desktop({ setStage, isLocked = false }) {
             initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            transition={{ type: "spring", stiffness: 460, damping: 34, mass: 0.72 }}
             className={`absolute top-10 right-4 bottom-24 w-[360px] backdrop-blur-2xl rounded-3xl z-[100000] overflow-hidden flex flex-col border
               ${isDarkMode 
                 ? 'bg-gradient-to-b from-black/45 to-black/20 border-white/10 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.15),0_12px_40px_rgba(0,0,0,0.45)]' 
@@ -805,6 +819,24 @@ export default function Desktop({ setStage, isLocked = false }) {
                   <GlassWeatherWidget />
                 </div>
               </div>
+
+              {[
+                ["Glass Activity", "glass_activity", <GlassActivityWidget />],
+                ["Glass Stocks", "glass_stocks", <GlassStocksWidget />],
+              ].map(([label, type, preview]) => (
+                <div key={type} className="flex flex-col items-center">
+                  <div className="w-full mb-3 flex items-center justify-between">
+                    <span className="text-white/90 font-medium">{label}</span>
+                    <button
+                      onClick={() => window.dispatchEvent(new CustomEvent("os_widget_added", { detail: { type } }))}
+                      className="px-3 py-1 bg-white/20 rounded-full text-xs text-white hover:bg-white/30 transition-colors"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  <div className="pointer-events-none flex w-full justify-center">{preview}</div>
+                </div>
+              ))}
 
               <div className="flex flex-col items-center">
                 <div className="w-full mb-3 flex items-center justify-between">

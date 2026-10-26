@@ -326,12 +326,12 @@ export default function Dock() {
         }
       }
       setBouncingAppId(null);
-    }, 200);
+    }, 120);
   };
 
   return (
     <div
-      className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-end px-1 sm:px-1.5 py-1 rounded-2xl h-[48px] sm:h-[56px] max-w-[calc(100vw-12px)] overflow-x-auto overflow-y-visible dock-scrollbar transition-all duration-300 z-[99999]"
+      className="motion-smooth absolute bottom-1 left-1/2 -translate-x-1/2 flex items-end px-1 sm:px-1.5 py-1 rounded-2xl h-[48px] sm:h-[56px] max-w-[calc(100vw-12px)] overflow-x-auto overflow-y-visible dock-scrollbar transition-all duration-200 z-[99999]"
       onMouseLeave={handleMouseLeave}
     >
       <GlassSurface
