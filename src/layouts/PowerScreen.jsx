@@ -67,27 +67,17 @@ export default function PowerScreen({ goNext, autoBoot = false }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center gap-6 z-10 absolute bottom-32"
+            className="flex flex-col items-center justify-center z-10 absolute bottom-28"
           >
-            {/* Power Button */}
+            {/* Continue Button */}
             <motion.button
               onClick={startBoot}
-              className="w-12 h-12 bg-black/5 hover:bg-black/10 backdrop-blur-md rounded-full flex items-center justify-center transition-colors duration-200 border border-white/20 shadow-lg"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="px-8 py-2 rounded-full bg-[#E5E5EA]/85 hover:bg-[#D1D1D6]/90 active:bg-[#C7C7CC] text-[#1c1c1e] text-sm font-medium backdrop-blur-xl border border-white/30 shadow-sm transition-all duration-200 select-none cursor-pointer"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-white">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
+              Continue
             </motion.button>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-white font-semibold text-xs mt-0 px-4 py-1.5 bg-black/1 backdrop-blur-md rounded-full border border-white/10 shadow-md tracking-wide"
-            >
-              Get Started
-            </motion.p>
           </motion.div>
         ) : !isComplete && (
           <motion.div
